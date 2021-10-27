@@ -1,0 +1,236 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Kritik"
+        xmlns:Data="clr-namespace:System.Data;assembly=System.Data.Common" x:Class="Kritik.MainWindow"
+        mc:Ignorable="d"
+        Title="Kritik" Height="790" Width="1200" MinHeight="630" MinWidth="1000"
+        WindowStartupLocation="CenterScreen" WindowStyle="ThreeDBorderWindow">
+    <Window.Resources>
+        <local:NastaveniVyskyTextBoxuPoznamky x:Key="NastavovacVyskyPoznamky"/>
+    </Window.Resources>
+    <Grid Name="MainGrid">
+        <TabControl>
+            <TabItem Header="Výpočet" Name="vypocetTabItem">
+                <TabItem.Background>
+                    <LinearGradientBrush EndPoint="0,1">
+                        <GradientStop Color="#FFF0F0F0"/>
+                        <GradientStop Color="{DynamicResource {x:Static SystemColors.GradientActiveCaptionColorKey}}" Offset="1"/>
+                    </LinearGradientBrush>
+                </TabItem.Background>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="0">
+                        <Border Margin="10" BorderThickness="1" BorderBrush="Gray" Padding="5" CornerRadius="3" MinHeight="541" VerticalAlignment="Top">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="5" />
+                                    <RowDefinition Height="23" />
+                                    <RowDefinition Height="11" />
+                                    <RowDefinition Height="23" />
+                                    <RowDefinition Height="23" />
+                                    <RowDefinition Height="23" />
+                                    <RowDefinition Height="23" />
+                                    <RowDefinition Height="6" />
+                                    <RowDefinition Height="21" />
+                                    <RowDefinition Height="27" />
+                                    <RowDefinition Height="27" />
+                                    <RowDefinition Height="6" />
+                                    <RowDefinition Height="27" />
+                                    <RowDefinition Height="6" />
+                                    <RowDefinition Height="21" />
+                                    <RowDefinition Height="23" />
+                                    <RowDefinition Height="23" />
+                                    <RowDefinition Height="6" />
+                                    <RowDefinition Height="23" />
+                                    <RowDefinition Height="23" />
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="6" />
+                                    <RowDefinition Height="119" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Text="KRITICKÉ OTÁČKY" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" FontSize="16"/>
+                                <Separator Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
+                                <StackPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0, 3, 0, 0">
+                                    <Button Name="newFileButton" Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Nový výpočet">
+                                        <Image Source="/icons/NewFile_16x.png" />
+                                    </Button>
+                                    <Button Name="openFileButton"  Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Otevřít výpočet">
+                                        <Image Source="/icons/OpenFolder_16x.png" />
+                                    </Button>
+                                    <Button Name="saveFileButton"  Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Uložit výpočet">
+                                        <Image Source="/icons/Save_16x.png" />
+                                    </Button>
+                                    <Button Name="saveAsFileButton"  Height="20" Width="20" Margin="0, 0, 0, 0" ToolTip="Uložit výpočet jako...">
+                                        <Image Source="/icons/SaveAs_16x.png" />
+                                    </Button>
+                                </StackPanel>
+                                <Separator Grid.Row="3" Grid.ColumnSpan="2" Margin="0, 5, 0, 5"/>
+                                <TextBlock Text="Název:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
+                                <TextBox Text="" Name="nazevTextBox" Grid.Row="4" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5"/>
+                                <TextBlock Text="Popis:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
+                                <TextBox Text="" Name="popisTextBox" Grid.Row="5" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5" />
+                                <TextBlock Text="Řešil:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
+                                <TextBox Text="" Name="resilTextBox" Grid.Row="6" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5" />
+                                <TextBlock Text="Datum:" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
+                                <TextBox Text="" Name="datumTextBox" Grid.Row="7" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5" />
+                                <Separator Grid.Row="8" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
+                                <TextBlock Text="Okrajové podmínky:" Grid.Row="9" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
+                                <StackPanel Grid.Row="10" Grid.ColumnSpan="2" Orientation="Horizontal">
+                                    <TextBlock Text="Levý konec:" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
+                                    <ComboBox Name="opLevaComboBox" Width="95" Margin="10, 0, 0, 5" VerticalAlignment="Center">
+                                        <ComboBoxItem Content="volný"/>
+                                        <ComboBoxItem Content="kloub"/>
+                                        <ComboBoxItem Content="vetknutí"/>
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel Grid.Row="11" Grid.ColumnSpan="2" Orientation="Horizontal">
+                                    <TextBlock Text="Pravý konec:" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
+                                    <ComboBox Name="opPravaComboBox" Width="95" Margin="5, 0, 0, 5" VerticalAlignment="Center">
+                                        <ComboBoxItem Content="volný"/>
+                                        <ComboBoxItem Content="kloub"/>
+                                        <ComboBoxItem Content="vetknutí"/>
+                                    </ComboBox>
+                                </StackPanel>
+                                <Separator Grid.Row="12" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
+                                <StackPanel Grid.Row="13" Grid.ColumnSpan="2" Orientation="Horizontal">
+                                    <TextBlock Margin="0, 0, 0, 5" VerticalAlignment="Center"><Run Text="Gyrosk"/><Run Language="cs-cz" Text="o"/><Run Text="pické účinky:"/></TextBlock>
+                                    <ComboBox Name="gyrosComboBox" Width="84" Margin="5, 0, 0, 5" VerticalAlignment="Center">
+                                        <ComboBoxItem Content="zanedbání" />
+                                        <ComboBoxItem Content="souběžná precese" />
+                                        <ComboBoxItem Content="protiběžná precese" />
+                                    </ComboBox>
+                                </StackPanel>
+                                <Separator Grid.Row="14" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
+                                <TextBlock Text="Materiál hřídele:" Grid.Row="15" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
+                                <StackPanel Grid.Row="16" Grid.ColumnSpan="2" Orientation="Horizontal">
+                                    <TextBlock Text="E =" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
+                                    <TextBox Name="modulPruznostiTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center"/>
+                                    <TextBlock Text="GPa" Margin="5, 0, 0, 5" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="17" Grid.ColumnSpan="2" Orientation="Horizontal">
+                                    <TextBlock Text="ρ =" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
+                                    <TextBox Name="rhoTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center"/>
+                                    <TextBlock Margin="5, 0, 0, 5" VerticalAlignment="Center">
+                                            <Run Text="kg.m&#x207B;&#x00B3;" />
+                                    </TextBlock>
+                                </StackPanel>
+                                <Separator Grid.Row="18" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
+                                <StackPanel Grid.Row="19" Grid.ColumnSpan="2" Orientation="Horizontal">
+                                    <TextBlock Text="Provozní otáčky:" Margin="0, 0, 0, 5" VerticalAlignment="Center"/>
+                                    <TextBox Name="provozniOtackyTextBox" Width="50" Margin="9, 0, 0, 5" VerticalAlignment="Center"/>
+                                    <TextBlock Margin="5, 0, 0, 5" VerticalAlignment="Center">
+                                            <Run Text="min&#x207B;&#x00B9;" />
+                                    </TextBlock>
+                                </StackPanel>
+                                <StackPanel Grid.Row="20" Grid.ColumnSpan="2" Orientation="Horizontal">
+                                    <TextBlock Text="Průběžné otáčky:" Margin="0, 0, 0, 5" VerticalAlignment="Center"/>
+                                    <TextBox Name="prubezneOtackyTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center"/>
+                                    <TextBlock Margin="5, 0, 0, 5" VerticalAlignment="Center">
+                                            <Run Text="min&#x207B;&#x00B9;" />
+                                    </TextBlock>
+                                </StackPanel>
+                                <Separator Grid.Row="22" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
+                                <StackPanel Grid.Row="23" Grid.ColumnSpan="2" Margin="0, 0, 0, 5" Orientation="Vertical" Name="hridelPlusStackPanel">
+                                    <TextBlock Text="Hřídel +" Margin="0, 0, 0, 5"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
+                                        <TextBlock Text="Prvek číslo:" VerticalAlignment="Center"/>
+                                        <ComboBox Name="cisloPrvkuHridelPlusComboBox" Width="40" Margin="5, 0, 0, 0"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
+                                        <TextBlock Text="Rozdělit na"/>
+                                        <TextBox Name="deleniHridelPlusTextBox" Width="25" Margin="5, 0, 5, 0"/>
+                                        <TextBlock Text="částí."/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
+                                        <TextBlock Text="Výpočet Id&#x1D62;" ToolTip="Způsob výpočtu momentu setrvačnosti kolmého k ose rotoru" VerticalAlignment="Center"/>
+                                        <ComboBox Name="IdNZpusobComboBox" Width="65" Margin="5, 0, 5, 0" SelectedIndex="0">
+                                            <ComboBoxItem Content="=Id/n*"/>
+                                            <ComboBoxItem Content="vlastní hodnota"/>
+                                        </ComboBox>
+                                        <TextBox Name="idNTextBox" MinWidth="28" MaxWidth="50" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                    <TextBlock Text="(Id= ...... kg.m&#x00B2;)" Name="idNHodnotaTextBlock" VerticalAlignment="Center" Margin="65, 0, 0, 0"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <Grid Grid.Row="0" Grid.Column="1" Margin="0, 10, 0, 10">
+                        <DataGrid/>
+                    </Grid>
+
+                    <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Height="Auto">
+                        <Border Margin="10" BorderThickness="1" BorderBrush="Gray" Padding="5" CornerRadius="3" MinHeight="541" VerticalAlignment="Top">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="130"/>
+                                    <RowDefinition Height="80"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="65"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Row="0" Orientation="Vertical" Margin="0, 3, 0, 0">
+                                    <TextBlock Text="Vypočtené kritické otáčky:" Margin="0, 0, 0, 5"/>
+                                    <TextBox Name="kritOtTextBox" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Height="100" IsReadOnly="True"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Orientation="Vertical" Margin="0, 10, 0, 0">
+                                    <TextBlock Text="1. kritické otáčky odpovídají:" Margin="0, 0, 0, 5"/>
+                                    <TextBox Name="kritOtPorovnaniTextBox" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Hidden" Height="38" IsReadOnly="True"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="2" Orientation="Vertical" Name="pravyStackPanel" Margin="0, 0, 0, 10">
+                                    <TextBlock Text="Poznámky k výpočtu:" Margin="0, 0, 0, 5"/>
+                                    <TextBox AcceptsReturn="True" MinHeight="190" Width="182" Name="poznamkaVypocetTextBox"
+                                                     ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"
+                                                     MaxHeight="{Binding ElementName=MainGrid, Path=ActualHeight,Converter={StaticResource NastavovacVyskyPoznamky}}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="3" Orientation="Vertical">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Max. kritické otáčky:" Margin="0, 0, 5, 0" VerticalAlignment="Center"/>
+                                        <TextBox Text="5000" Name="kritOtMaxTextBox" Width="35"/>
+                                        <TextBlock Margin="5, 0, 5, 0" Text="min&#x207B;&#x00B9;" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <Button Name="vypocetKritOtButton" Height="30" Margin="0, 10, 0, 0">
+                                        Výpočet kritických otáček
+                                    </Button>
+
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <Border Grid.Row="1" Grid.Column="1" Height="150" Margin="0, 0, 0, 10" BorderThickness="1" BorderBrush="Gray" Padding="5" CornerRadius="3" VerticalAlignment="Bottom">
+                        <TextBlock Text="Tady bude nakreslená hřídel" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Border>
+
+
+                </Grid>
+
+            </TabItem>
+            <TabItem Header="Tvary kmitů" Name="tvaryKmituTabItem">
+                <Grid />
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
