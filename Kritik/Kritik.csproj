@@ -7,6 +7,8 @@
     <ApplicationIcon />
     <StartupObject />
     <Version>0.0.0</Version>
+    <FileVersion>0.0.0.0</FileVersion>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,13 +17,6 @@
     <None Remove="icons\ProjectFolderOpen_16x.png" />
     <None Remove="icons\SaveAs_16x.png" />
     <None Remove="icons\Save_16x.png" />
-    <None Remove="ZZupdater0.exe" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="ZZupdater0.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

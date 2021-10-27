@@ -83,7 +83,7 @@
                                 </StackPanel>
                                 <Separator Grid.Row="3" Grid.ColumnSpan="2" Margin="0, 5, 0, 5"/>
                                 <TextBlock Text="Název:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
-                                <TextBox Text="v0.0.0.0" Name="nazevTextBox" Grid.Row="4" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5"/>
+                                <TextBox Text="" Name="nazevTextBox" Grid.Row="4" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5"/>
                                 <TextBlock Text="Popis:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
                                 <TextBox Text="" Name="popisTextBox" Grid.Row="5" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5" />
                                 <TextBlock Text="Řešil:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
