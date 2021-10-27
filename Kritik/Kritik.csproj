@@ -6,6 +6,7 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon />
     <StartupObject />
+    <Version>0.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,6 +15,13 @@
     <None Remove="icons\ProjectFolderOpen_16x.png" />
     <None Remove="icons\SaveAs_16x.png" />
     <None Remove="icons\Save_16x.png" />
+    <None Remove="ZZupdater0.exe" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="ZZupdater0.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
@@ -25,6 +33,9 @@
     <Reference Include="EPPlus">
       <HintPath>EPPlus.dll</HintPath>
     </Reference>
+    <Reference Include="ZZupdater0">
+      <HintPath>ZZupdater0.exe</HintPath>
+    </Reference>
 	<PackageReference Include="System.Text.Encoding.CodePages" Version="4.3.0" />
   </ItemGroup>
 
@@ -33,6 +44,21 @@
     <Resource Include="icons\OpenFolder_16x.png" />
     <Resource Include="icons\SaveAs_16x.png" />
     <Resource Include="icons\Save_16x.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 
 </Project>

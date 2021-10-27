@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using AutoUpdate;
 
 namespace Kritik
 {
@@ -23,6 +24,12 @@ namespace Kritik
     {
         public MainWindow()
         {
+
+            AutoUpdate.Updater.GitHubRepo = "/moonsterx/Kritik";
+            string[] args = null;
+            if (AutoUpdate.Updater.AutoUpdate(args))
+                return;
+            
             InitializeComponent();
 
             TestovaciFunkce();
