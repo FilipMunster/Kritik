@@ -19,23 +19,24 @@ namespace AutoUpdate
 			{
 				Update(args);
 				return true;
-			} else
-			{
-				// delete the updater files. We scan the resources so we know what they are
-				var names = Assembly.GetExecutingAssembly().GetManifestResourceNames();
-				for (var i = 0; i < names.Length; i++)
-				{
-					var name = names[i];
-					if (name.Contains(".ZZupdater0."))
-					{
-						try
-						{
-							File.Delete(name.Substring(name.IndexOf('.') + 1));
-						}
-						catch { }
-					}
-				}
 			}
+			//} else
+			//{
+			//	// delete the updater files. We scan the resources so we know what they are
+			//	var names = Assembly.GetExecutingAssembly().GetManifestResourceNames();
+			//	for (var i = 0; i < names.Length; i++)
+			//	{
+			//		var name = names[i];
+			//		if (name.Contains(".ZZupdater0."))
+			//		{
+			//			try
+			//			{
+			//				File.Delete(name.Substring(name.IndexOf('.') + 1));
+			//			}
+			//			catch { }
+			//		}
+			//	}
+			//}
 			return false;
 		}
 		static IDictionary<Version, Uri>  _VersionUrls 
