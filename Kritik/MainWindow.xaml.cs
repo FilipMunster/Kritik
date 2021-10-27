@@ -29,6 +29,7 @@ namespace Kritik
             string[] args = null;
             if (AutoUpdate.Updater.AutoUpdate(args))
                 return;
+            Console.WriteLine("ok");
             
             InitializeComponent();
 
