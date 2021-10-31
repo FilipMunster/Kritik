@@ -21,9 +21,15 @@ namespace Kritik
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// Globální instance třídy Hridel
+        /// </summary>
+        public static readonly Hridel hridel = new Hridel();
         public MainWindow()
         {
             InitializeComponent();
+
+            DataContext = hridel;
 
             TestovaciFunkce();
 
@@ -31,8 +37,6 @@ namespace Kritik
 
         private void TestovaciFunkce()
         {
-            Hridel hridel = new Hridel();
-
             string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test.xlsx";
             bool nacteno = hridel.NacistData(vstupniSoubor);
 

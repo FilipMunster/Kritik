@@ -17,7 +17,7 @@ namespace Kritik
     /// <summary>
     /// 
     /// </summary>
-    internal class Hridel
+    public class Hridel
     {
         // klíčová slova ve vstupním souboru
         public readonly string[] nazvySloupcu = { "Typ", "L", "De", "Di", "m", "Io", "Id", "k", "Cm", "Deleni", "Id/N", "Id/Nvalue"};

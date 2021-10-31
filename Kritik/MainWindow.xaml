@@ -83,13 +83,13 @@
                                 </StackPanel>
                                 <Separator Grid.Row="3" Grid.ColumnSpan="2" Margin="0, 5, 0, 5"/>
                                 <TextBlock Text="Název:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
-                                <TextBox Text="" Name="nazevTextBox" Grid.Row="4" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5"/>
+                                <TextBox Text="{Binding Path=VypocetNazev}" Name="nazevTextBox" Grid.Row="4" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5"/>
                                 <TextBlock Text="Popis:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
-                                <TextBox Text="" Name="popisTextBox" Grid.Row="5" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5" />
+                                <TextBox Text="{Binding Path=VypocetPopis}" Name="popisTextBox" Grid.Row="5" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5" />
                                 <TextBlock Text="Řešil:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
-                                <TextBox Text="" Name="resilTextBox" Grid.Row="6" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5" />
+                                <TextBox Text="{Binding Path=VypocetResil}" Name="resilTextBox" Grid.Row="6" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5" />
                                 <TextBlock Text="Datum:" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
-                                <TextBox Text="" Name="datumTextBox" Grid.Row="7" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5" />
+                                <TextBox Text="{Binding Path=VypocetDatum}" Name="datumTextBox" Grid.Row="7" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5" />
                                 <Separator Grid.Row="8" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
                                 <TextBlock Text="Okrajové podmínky:" Grid.Row="9" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
                                 <StackPanel Grid.Row="10" Grid.ColumnSpan="2" Orientation="Horizontal">
@@ -121,12 +121,12 @@
                                 <TextBlock Text="Materiál hřídele:" Grid.Row="15" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
                                 <StackPanel Grid.Row="16" Grid.ColumnSpan="2" Orientation="Horizontal">
                                     <TextBlock Text="E =" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
-                                    <TextBox Name="modulPruznostiTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center"/>
+                                    <TextBox Text="{Binding Path=ModulPruznosti}" Name="modulPruznostiTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center"/>
                                     <TextBlock Text="GPa" Margin="5, 0, 0, 5" VerticalAlignment="Center"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="17" Grid.ColumnSpan="2" Orientation="Horizontal">
                                     <TextBlock Text="ρ =" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
-                                    <TextBox Name="rhoTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center"/>
+                                    <TextBox Text="{Binding Path=Rho}" Name="rhoTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center"/>
                                     <TextBlock Margin="5, 0, 0, 5" VerticalAlignment="Center">
                                             <Run Text="kg.m&#x207B;&#x00B3;" />
                                     </TextBlock>
@@ -134,14 +134,14 @@
                                 <Separator Grid.Row="18" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
                                 <StackPanel Grid.Row="19" Grid.ColumnSpan="2" Orientation="Horizontal">
                                     <TextBlock Text="Provozní otáčky:" Margin="0, 0, 0, 5" VerticalAlignment="Center"/>
-                                    <TextBox Name="provozniOtackyTextBox" Width="50" Margin="9, 0, 0, 5" VerticalAlignment="Center"/>
+                                    <TextBox Text="{Binding Path=OtackyProvozni}" Name="provozniOtackyTextBox" Width="50" Margin="9, 0, 0, 5" VerticalAlignment="Center"/>
                                     <TextBlock Margin="5, 0, 0, 5" VerticalAlignment="Center">
                                             <Run Text="min&#x207B;&#x00B9;" />
                                     </TextBlock>
                                 </StackPanel>
                                 <StackPanel Grid.Row="20" Grid.ColumnSpan="2" Orientation="Horizontal">
                                     <TextBlock Text="Průběžné otáčky:" Margin="0, 0, 0, 5" VerticalAlignment="Center"/>
-                                    <TextBox Name="prubezneOtackyTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center"/>
+                                    <TextBox Text="{Binding Path=OtackyPrubezne}" Name="prubezneOtackyTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center"/>
                                     <TextBlock Margin="5, 0, 0, 5" VerticalAlignment="Center">
                                             <Run Text="min&#x207B;&#x00B9;" />
                                     </TextBlock>
@@ -202,7 +202,7 @@
                                     <TextBlock Text="Poznámky k výpočtu:" Margin="0, 0, 0, 5"/>
                                     <TextBox AcceptsReturn="True" MinHeight="190" Width="182" Name="poznamkaVypocetTextBox"
                                                      ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"
-                                                     MaxHeight="{Binding ElementName=MainGrid, Path=ActualHeight,Converter={StaticResource NastavovacVyskyPoznamky}}"/>
+                                                     MaxHeight="{Binding ElementName=MainGrid, Path=ActualHeight,Converter={StaticResource NastavovacVyskyPoznamky}}" Text="{Binding Path=Poznamka}"/>
                                 </StackPanel>
 
                                 <StackPanel Grid.Row="3" Orientation="Vertical">
