@@ -28,9 +28,6 @@
     <Reference Include="EPPlus">
       <HintPath>EPPlus.dll</HintPath>
     </Reference>
-    <Reference Include="ZZupdater0">
-      <HintPath>ZZupdater0.exe</HintPath>
-    </Reference>
 	<PackageReference Include="System.Text.Encoding.CodePages" Version="4.3.0" />
   </ItemGroup>
 
