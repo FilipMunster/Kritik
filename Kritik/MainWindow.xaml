@@ -68,16 +68,16 @@
                                 <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Text="KRITICKÉ OTÁČKY" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" FontSize="16"/>
                                 <Separator Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
                                 <StackPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0, 3, 0, 0">
-                                    <Button Name="newFileButton" Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Nový výpočet">
+                                    <Button Name="newFileButton" Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Nový výpočet" Click="newFileButton_Click">
                                         <Image Source="/icons/NewFile_16x.png" />
                                     </Button>
-                                    <Button Name="openFileButton"  Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Otevřít výpočet">
+                                    <Button Name="openFileButton"  Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Otevřít výpočet" Click="openFileButton_Click">
                                         <Image Source="/icons/OpenFolder_16x.png" />
                                     </Button>
-                                    <Button Name="saveFileButton"  Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Uložit výpočet">
+                                    <Button Name="saveFileButton"  Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Uložit výpočet" Click="saveFileButton_Click">
                                         <Image Source="/icons/Save_16x.png" />
                                     </Button>
-                                    <Button Name="saveAsFileButton"  Height="20" Width="20" Margin="0, 0, 0, 0" ToolTip="Uložit výpočet jako...">
+                                    <Button Name="saveAsFileButton"  Height="20" Width="20" Margin="0, 0, 0, 0" ToolTip="Uložit výpočet jako..." Click="saveAsFileButton_Click">
                                         <Image Source="/icons/SaveAs_16x.png" />
                                     </Button>
                                 </StackPanel>
@@ -94,7 +94,7 @@
                                 <TextBlock Text="Okrajové podmínky:" Grid.Row="9" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
                                 <StackPanel Grid.Row="10" Grid.ColumnSpan="2" Orientation="Horizontal">
                                     <TextBlock Text="Levý konec:" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
-                                    <ComboBox Name="opLevaComboBox" Width="95" Margin="10, 0, 0, 5" VerticalAlignment="Center">
+                                    <ComboBox SelectedIndex="{Binding Path=OpLevaIndex}" Name="opLevaComboBox" Width="95" Margin="10, 0, 0, 5" VerticalAlignment="Center">
                                         <ComboBoxItem Content="volný"/>
                                         <ComboBoxItem Content="kloub"/>
                                         <ComboBoxItem Content="vetknutí"/>
@@ -102,7 +102,7 @@
                                 </StackPanel>
                                 <StackPanel Grid.Row="11" Grid.ColumnSpan="2" Orientation="Horizontal">
                                     <TextBlock Text="Pravý konec:" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
-                                    <ComboBox Name="opPravaComboBox" Width="95" Margin="5, 0, 0, 5" VerticalAlignment="Center">
+                                    <ComboBox SelectedIndex="{Binding Path=OpPravaIndex}" Name="opPravaComboBox" Width="95" Margin="5, 0, 0, 5" VerticalAlignment="Center">
                                         <ComboBoxItem Content="volný"/>
                                         <ComboBoxItem Content="kloub"/>
                                         <ComboBoxItem Content="vetknutí"/>
@@ -111,7 +111,7 @@
                                 <Separator Grid.Row="12" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
                                 <StackPanel Grid.Row="13" Grid.ColumnSpan="2" Orientation="Horizontal">
                                     <TextBlock Margin="0, 0, 0, 5" VerticalAlignment="Center"><Run Text="Gyrosk"/><Run Language="cs-cz" Text="o"/><Run Text="pické účinky:"/></TextBlock>
-                                    <ComboBox Name="gyrosComboBox" Width="84" Margin="5, 0, 0, 5" VerticalAlignment="Center">
+                                    <ComboBox SelectedIndex="{Binding Path=GyrosIndex}" Name="gyrosComboBox" Width="84" Margin="5, 0, 0, 5" VerticalAlignment="Center">
                                         <ComboBoxItem Content="zanedbání" />
                                         <ComboBoxItem Content="souběžná precese" />
                                         <ComboBoxItem Content="protiběžná precese" />
@@ -208,10 +208,10 @@
                                 <StackPanel Grid.Row="3" Orientation="Vertical">
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="Max. kritické otáčky:" Margin="0, 0, 5, 0" VerticalAlignment="Center"/>
-                                        <TextBox Text="5000" Name="kritOtMaxTextBox" Width="35"/>
+                                        <TextBox Text="{Binding Path=NKritMax}" Name="kritOtMaxTextBox" Width="35"/>
                                         <TextBlock Margin="5, 0, 5, 0" Text="min&#x207B;&#x00B9;" VerticalAlignment="Center"/>
                                     </StackPanel>
-                                    <Button Name="vypocetKritOtButton" Height="30" Margin="0, 10, 0, 0">
+                                    <Button Name="vypocetKritOtButton" Height="30" Margin="0, 10, 0, 0" Click="vypocetKritOtButton_Click">
                                         Výpočet kritických otáček
                                     </Button>
 

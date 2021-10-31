@@ -31,7 +31,7 @@ namespace Kritik
 
             DataContext = hridel;
 
-            TestovaciFunkce();
+            //TestovaciFunkce();
 
         }
 
@@ -92,5 +92,46 @@ namespace Kritik
             //hridel.UlozitData(@"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test_out2.xlsx");
         }
 
+        private void newFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            hridel.HridelNova();
+            return;
+        }
+
+        private void openFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test.xlsx";
+            bool nacteno = hridel.NacistData(vstupniSoubor);
+            return;
+        }
+
+        private void saveFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            string vystupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test_out.xlsx";
+            hridel.UlozitData(vystupniSoubor);
+            return;
+        }
+
+        private void saveAsFileButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void vypocetKritOtButton_Click(object sender, RoutedEventArgs e)
+        {
+            Vypocet vypocet = new Vypocet();
+            hridel.VytvorPrvky();
+            var kO = vypocet.KritickeOtacky(hridel, hridel.NKritMax);
+
+            string kOText ="";
+            int i = 1;
+            foreach (double otacky in kO.kritOt)
+            {
+                kOText += i + ". kritické otáčky: " + String.Format("{0:0.000}",otacky) + "\n";
+                i++;
+            }
+            kritOtTextBox.Text = kOText;
+
+        }
     }
 }

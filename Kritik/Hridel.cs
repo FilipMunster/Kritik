@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using OfficeOpenXml;
 using MathNet.Numerics;
 using MathNet.Numerics.LinearAlgebra;
@@ -17,8 +19,16 @@ namespace Kritik
     /// <summary>
     /// 
     /// </summary>
-    public class Hridel
+    public class Hridel : INotifyPropertyChanged
     {
+        // NotifyPropertyChanged je nutné zavolat v setteru Vlastnosti, aby se hodnota updatovala v okně
+        // https://docs.microsoft.com/cs-cz/dotnet/api/system.componentmodel.inotifypropertychanged?view=net-5.0
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         // klíčová slova ve vstupním souboru
         public readonly string[] nazvySloupcu = { "Typ", "L", "De", "Di", "m", "Io", "Id", "k", "Cm", "Deleni", "Id/N", "Id/Nvalue"};
         public const string vypocetNazevKeyword = "Nazev";
@@ -50,38 +60,91 @@ namespace Kritik
         public const int radJednotkyModuluPruznosti = 9;
 
         // proměnné s parametry výpočtu
-        public string VypocetNazev { get; set; }
-        public string VypocetPopis { get; set; }
-        public string VypocetResil { get; set; }
-        public DateTime VypocetDatum { get; set; }
-        public string OpLeva { get; set; }
-        public string OpPrava { get; set; }
-        public string Gyros { get; set; }
-        public double ModulPruznosti { get; set; }
-        public double Rho { get; set; }
-        public double OtackyProvozni { get; set; }
-        public double OtackyPrubezne { get; set; }
-        public double NKritMax { get; set; }
-        public string Poznamka { get; set; }
+        private string vypocetNazev;
+        public string VypocetNazev { get { return vypocetNazev; } set { vypocetNazev = value; NotifyPropertyChanged(); } }
+        private string vypocetPopis;
+        public string VypocetPopis { get { return vypocetPopis; } set { vypocetPopis = value; NotifyPropertyChanged(); } }
+        private string vypocetResil;
+        public string VypocetResil { get { return vypocetResil; } set { vypocetResil = value; NotifyPropertyChanged(); } }
+        private string vypocetDatum;
+        public string VypocetDatum { get { return vypocetDatum; } set { vypocetDatum = value; NotifyPropertyChanged(); } }
+        private string opLeva;
+        public string OpLeva { get { return opLeva; } set { opLeva = value; NotifyPropertyChanged("OpLevaIndex"); } }
+        private string opPrava;
+        public string OpPrava { get { return opPrava; } set { opPrava = value; NotifyPropertyChanged("OpPravaIndex"); } }
+        private string gyros;
+        public string Gyros { get { return gyros; } set { gyros = value; NotifyPropertyChanged("GyrosIndex"); } }
+        private double modulPruznosti;
+        public double ModulPruznosti { get { return modulPruznosti; } set { modulPruznosti = value; NotifyPropertyChanged(); } }
+        private double rho;
+        public double Rho { get { return rho; } set { rho = value; NotifyPropertyChanged(); } }
+        private double otackyProvozni;
+        public double OtackyProvozni { get { return otackyProvozni; } set { otackyProvozni = value; NotifyPropertyChanged(); } }
+        private double otackyPrubezne;
+        public double OtackyPrubezne { get { return otackyPrubezne; } set { otackyPrubezne = value; NotifyPropertyChanged(); } }
+        private double nKritMax;
+        public double NKritMax { get { return nKritMax; } set { nKritMax = value; NotifyPropertyChanged(); } }
+        private string poznamka;
+        public string Poznamka { get { return poznamka; } set { poznamka = value; NotifyPropertyChanged(); } }
+
+        // Vlastnosti pro provázání ComboBoxů s Vlastnostmi hřídele
+        public static Dictionary<int, string> opDict = new Dictionary<int, string> {
+            {0,opVolnyKeyword},
+            {1,opKloubKeyword},
+            {2,opVetknutiKeyword}
+        };
+        public static Dictionary<int, string> gyrosDict = new Dictionary<int, string> {
+            {0,gyrosZanedbaniKeyword},
+            {1,gyrosSoubeznaKeyword},
+            {2,gyrosProtibeznaKeyword}
+        };
+        public static Dictionary<string, int> opDictInv = new Dictionary<string, int> {
+            {opVolnyKeyword,0},
+            {opKloubKeyword,1},
+            {opVetknutiKeyword,2}
+        };
+        public static Dictionary<string, int> gyrosDictInv = new Dictionary<string, int> {
+            {gyrosZanedbaniKeyword,0},
+            {gyrosSoubeznaKeyword,1},
+            {gyrosProtibeznaKeyword,2}
+        };
+
+        public int OpLevaIndex {
+            get { try { return opDictInv[OpLeva]; } catch { return -1; } }
+            set { OpLeva = opDict[value]; }
+        }
+        public int OpPravaIndex
+        {
+            get { try { return opDictInv[OpPrava]; } catch { return -1; } }
+            set { OpPrava = opDict[value]; }
+        }
+        public int GyrosIndex
+        {
+            get { try { return gyrosDictInv[Gyros]; } catch { return -1; } }
+            set { Gyros = gyrosDict[value]; }
+        }
 
         /// <summary>
-        /// Nastavení výchozích parametrů
+        /// Vytvoření nové prázdné hřídele
         /// </summary>
-        public Hridel()
+        public void HridelNova()
         {
-            VypocetNazev = "";
-            VypocetPopis = "";
-            VypocetResil = "";
-            VypocetDatum = DateTime.Today;
-            OpLeva = opVolnyKeyword;
-            OpPrava = opVolnyKeyword;
-            Gyros = gyrosZanedbaniKeyword;
+            VypocetNazev = string.Empty;
+            VypocetPopis = string.Empty;
+            VypocetResil = Environment.UserName;
+            VypocetDatum = DateTime.Today.ToShortDateString();
+            OpLeva = string.Empty;
+            OpPrava = string.Empty;
+            Gyros = string.Empty;
             ModulPruznosti = 210;
             Rho = 7850;
             OtackyProvozni = 0;
             OtackyPrubezne = 0;
             NKritMax = 5000;
-    }
+            DataClankuTab = null;
+            PrvkyHridele = null;
+            Poznamka = string.Empty;
+        }
 
         /// <summary>
         /// Tabulka s daty článků
@@ -296,7 +359,16 @@ namespace Kritik
                                 VypocetResil = excel.Cells[i, 2].Value.ToString();
                                 break;
                             case vypocetDatumKeyword:
-                                VypocetDatum = DateTime.Parse(excel.Cells[i, 2].Value.ToString());
+                                try
+                                {
+                                    DateTime datum = DateTime.Parse(excel.Cells[i, 2].Value.ToString());
+                                    VypocetDatum = datum.ToShortDateString();
+                                }
+                                catch
+                                {
+                                    VypocetDatum = String.Empty;
+                                }
+
                                 break;
                             case opLevaKeyword:
                                 OpLeva = excel.Cells[i, 2].Value.ToString();
@@ -446,7 +518,7 @@ namespace Kritik
                 ws.Cells[5, 1].Value = vypocetResilKeyword;
                 ws.Cells[5, 2].Value = VypocetResil;
                 ws.Cells[6, 1].Value = vypocetDatumKeyword;
-                ws.Cells[6, 2].Value = VypocetDatum.ToShortDateString();
+                ws.Cells[6, 2].Value = VypocetDatum;
                 ws.Cells[8, 1].Value = "Okrajové podmínky:";
                 ws.Cells[8, 3].Value = "("+opVolnyKeyword+" / "+opKloubKeyword+" / "+opVetknutiKeyword+")";
                 ws.Cells[9, 1].Value = opLevaKeyword;
