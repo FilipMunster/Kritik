@@ -9,20 +9,15 @@ using MathNet.Numerics.Data.Text;
 
 namespace Kritik
 {
-    internal class Vypocet
+    internal static class Vypocet
     {
-        /// <summary>
-        /// Obsahuje pole hodnot kritických otáček kritOt a průběh determinantu - pole detUc=f(rpmi)
-        /// </summary>
-        public (double[] kritOt, double[] detUc, double[] rpmi) KritOt { get; private set; }
-
         /// <summary>
         /// Vypočte kritické otáčky hřídele, které uloží do vlastnosti KritOt.
         /// </summary>
         /// <param name="hridel">Instance hřídele třídy Hridel</param>
         /// <param name="rpmMax">Maximální hodnota otáček</param>
         /// <returns>Vrátí pole vypočtených kritických otáček</returns>
-        public (double[] kritOt, double[] detUc, double[] rpmi) KritickeOtacky(Hridel hridel, double rpmMax)
+        public static (double[] kritOt, double[] rpmi, double[] detUc) KritickeOtacky(Hridel hridel, double rpmMax)
         {            
             List<Hridel.Prvek> prvky = hridel.PrvkyHridele;
             
@@ -56,8 +51,7 @@ namespace Kritik
             }
 
             double[] kritOt = kritOtList.ToArray();
-            KritOt = (kritOt, detUc, rpmi);
-            return (kritOt, detUc, rpmi);
+            return (kritOt, rpmi, detUc);
         }
         /// <summary>
         /// Z celkové přenosové matice 4x4 vytvoří matici 2x2 s vybranými prvky na základě okrajových podmínek.
@@ -66,7 +60,7 @@ namespace Kritik
         /// <param name="BCleft">Levá OP</param>
         /// <param name="BCright">Pravá OP</param>
         /// <returns></returns>
-        private Matrix<double> VytvorMatici2x2(Matrix<double> matice, string BCleft, string BCright)
+        private static Matrix<double> VytvorMatici2x2(Matrix<double> matice, string BCleft, string BCright)
         {
             int col1 = 0;
             int col2 = 0;
@@ -134,7 +128,7 @@ namespace Kritik
         /// <param name="rpmL"></param>
         /// <param name="rpmR"></param>
         /// <returns></returns>
-        private double NajdiKritOt(Hridel hridel, double rpmL, double rpmR)
+        private static double NajdiKritOt(Hridel hridel, double rpmL, double rpmR)
         {
             List<Hridel.Prvek> prvky = hridel.PrvkyHridele;
             Matrix<double> uc;

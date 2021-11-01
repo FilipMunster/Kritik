@@ -22,7 +22,7 @@ namespace Kritik
     public class Hridel : INotifyPropertyChanged
     {
         // NotifyPropertyChanged je nutné zavolat v setteru Vlastnosti, aby se hodnota updatovala v okně
-        // https://docs.microsoft.com/cs-cz/dotnet/api/system.componentmodel.inotifypropertychanged?view=net-5.0
+        // viz https://docs.microsoft.com/cs-cz/dotnet/api/system.componentmodel.inotifypropertychanged?view=net-5.0
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
@@ -151,7 +151,38 @@ namespace Kritik
         /// </summary>
         public DataTable DataClankuTab { get; set; }
 
+        /// <summary>
+        /// List Prvků hřídele
+        /// </summary>
         public List<Prvek> PrvkyHridele { get; private set; }
+
+        //Vlastnosti s výsledky výpočtu
+        /// <summary>
+        /// Obsahuje pole hodnot kritických otáček
+        /// </summary>
+        public double[] KritOt { 
+            get { return kritOt; }
+            set { kritOt = value; }
+        }
+        private double[] kritOt;
+        /// <summary>
+        /// Obsahuje průběh determinantu - pole detUc=f(rpmi)
+        /// </summary>
+        public double[] PrubehDeterminantu {
+            get { return prubehDeterminantu; }
+            set { prubehDeterminantu = value; }
+        }
+        private double[] prubehDeterminantu;
+        /// <summary>
+        /// Obsahuje pole rpmi - pole detUc=f(rpmi)
+        /// </summary>
+        public double[] PrubehRpm
+        {
+            get { return prubehRpm; }
+            set { prubehRpm = value; }
+        }
+        private double[] prubehRpm;
+
 
         /// <summary>
         /// Třída Prvků hřídele
