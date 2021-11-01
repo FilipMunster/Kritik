@@ -27,6 +27,7 @@ namespace Kritik
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            VyslekyPlatne = false;
         }
 
         // klíčová slova ve vstupním souboru
@@ -141,9 +142,12 @@ namespace Kritik
             OtackyProvozni = 0;
             OtackyPrubezne = 0;
             NKritMax = 5000;
+            Poznamka = string.Empty;
             DataClankuTab = null;
             PrvkyHridele = null;
-            Poznamka = string.Empty;
+            KritOt = null;
+            PrubehDeterminantu = null;
+            PrubehRpm = null;
         }
 
         /// <summary>
@@ -162,7 +166,7 @@ namespace Kritik
         /// </summary>
         public double[] KritOt { 
             get { return kritOt; }
-            set { kritOt = value; }
+            set { kritOt = value; NotifyPropertyChanged("KritOtText"); NotifyPropertyChanged("KritOtOdpovidajiText"); }
         }
         private double[] kritOt;
         /// <summary>
@@ -182,7 +186,48 @@ namespace Kritik
             set { prubehRpm = value; }
         }
         private double[] prubehRpm;
-
+        public bool VyslekyPlatne { get; set; }
+        /// <summary>
+        /// Text kritických otáček do TextBoxu
+        /// </summary>
+        public string KritOtText
+        {
+            get
+            {
+                if ((KritOt != null) && (KritOt.Length>0))
+                {
+                    string kOText = "";
+                    int i = 1;
+                    foreach (double otacky in KritOt)
+                    {
+                        kOText += i + ". kritické otáčky: " + String.Format("{0:0.000}", otacky) + " rpm\n";
+                        i++;
+                    }
+                    return kOText;
+                }
+                else { return String.Empty; }
+            }
+        }
+        public string KritOtOdpovidajiText
+        {
+            get
+            {
+                if ((KritOt != null) && (KritOt.Length > 0))
+                {
+                    string kOText = "";
+                    if (OtackyProvozni > 0)
+                    {
+                        kOText += String.Format("{0:0.000}", (KritOt[0] / OtackyProvozni) * 100) + " % provozních otáček\n";
+                    }
+                    if (OtackyPrubezne > 0)
+                    {
+                        kOText += String.Format("{0:0.000}", (KritOt[0] / OtackyPrubezne) * 100) + " % průběžných otáček";
+                    }
+                    return kOText;
+                }
+                else { return String.Empty; }
+            }
+        }
 
         /// <summary>
         /// Třída Prvků hřídele

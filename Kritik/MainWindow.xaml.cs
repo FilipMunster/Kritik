@@ -100,6 +100,7 @@ namespace Kritik
         private void openFileButton_Click(object sender, RoutedEventArgs e)
         {
             string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test.xlsx";
+            hridel.HridelNova();
             bool nacteno = hridel.NacistData(vstupniSoubor);
             return;
         }
@@ -120,15 +121,9 @@ namespace Kritik
         {
             hridel.VytvorPrvky();
             (hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
+            hridel.VyslekyPlatne = true;
 
-            string kOText ="";
-            int i = 1;
-            foreach (double otacky in hridel.KritOt)
-            {
-                kOText += i + ". kritické otáčky: " + String.Format("{0:0.000}",otacky) + "\n";
-                i++;
-            }
-            kritOtTextBox.Text = kOText;
+
             // Krit. Ot. dát jako vlastnost hřídele. A text "1 kritické..." dát taky jako vlastnost,
             // a její obsah se bude tvořit při get. A bude mít private set. A na set krit. ot. (double[]) se nastaví
             // NotifyPropertyChanged vlastnosti s textem. Vymazat krit. ot. při novém a otevření výpočtu.
