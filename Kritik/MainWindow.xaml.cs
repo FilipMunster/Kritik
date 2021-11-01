@@ -31,64 +31,11 @@ namespace Kritik
 
             DataContext = hridel;
 
-            //TestovaciFunkce();
-
-        }
-
-        private void TestovaciFunkce()
-        {
             string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test.xlsx";
+            hridel.HridelNova();
             bool nacteno = hridel.NacistData(vstupniSoubor);
-
-            if (nacteno)
-            {
-                // Vypsání zadaných dat do konzole:
-                Console.WriteLine(hridel.VypocetNazev);
-                Console.WriteLine(hridel.VypocetPopis);
-                Console.WriteLine(hridel.VypocetResil);
-                Console.WriteLine(hridel.VypocetDatum);
-                Console.WriteLine(hridel.OpLeva);
-                Console.WriteLine(hridel.OpPrava);
-                Console.WriteLine(hridel.Gyros);
-                Console.WriteLine(hridel.ModulPruznosti);
-                Console.WriteLine(hridel.Rho);
-                Console.WriteLine(hridel.Poznamka);
-                Console.WriteLine();
-                Console.WriteLine(hridel.DataClankuTab);
-                Console.Write("#\t");
-                foreach (string n in hridel.nazvySloupcu)
-                {
-                    Console.Write("{0}\t", n);
-                }
-                Console.Write("\n");
-                foreach (DataRow r in hridel.DataClankuTab.Rows)
-                {
-                    foreach (var item in r.ItemArray)
-                    {
-                        Console.Write("{0}\t", item);
-                    }
-                    Console.Write("\n");
-                }
-                // konec vypsání zadaných dat do konzole
-            }
-
-            string vystupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test_out.xlsx";
-            hridel.UlozitData(vystupniSoubor);
-
             hridel.VytvorPrvky();
-            var kO = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
 
-            // Výpis kritických otáček do konzole
-            Console.WriteLine("\nKritické otáčky:");
-            foreach (var x in kO.kritOt)
-            {
-                Console.Write("{0}; ", x);
-            }
-            Console.WriteLine();
-            // Konec výpisu
-
-            //hridel = new Hridel();
-            //hridel.UlozitData(@"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test_out2.xlsx");
         }
 
         private void newFileButton_Click(object sender, RoutedEventArgs e)

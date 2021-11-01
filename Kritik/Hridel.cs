@@ -153,12 +153,14 @@ namespace Kritik
         /// <summary>
         /// Tabulka s daty článků
         /// </summary>
-        public DataTable DataClankuTab { get; set; }
+        public DataTable DataClankuTab { get { return dataClankuTab; } set { dataClankuTab = value; NotifyPropertyChanged(); } }
+        private DataTable dataClankuTab;
 
         /// <summary>
         /// List Prvků hřídele
         /// </summary>
-        public List<Prvek> PrvkyHridele { get; private set; }
+        public List<Prvek> PrvkyHridele { get { return prvkyHridele; } set { prvkyHridele = value; NotifyPropertyChanged(); } }
+        private List<Prvek> prvkyHridele;
 
         //Vlastnosti s výsledky výpočtu
         /// <summary>
