@@ -13,6 +13,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Win32;
+
+
+// Udělat: Název souboru v hlavičce okna (viz PSPad)
 
 namespace Kritik
 {
@@ -25,6 +29,7 @@ namespace Kritik
         /// Globální instance třídy Hridel
         /// </summary>
         public static readonly Hridel hridel = new Hridel();
+        private string NazevSouboru { get; set; }
         public MainWindow()
         {
             InitializeComponent();
@@ -46,22 +51,33 @@ namespace Kritik
 
         private void openFileButton_Click(object sender, RoutedEventArgs e)
         {
-            string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test.xlsx";
-            hridel.HridelNova();
-            bool nacteno = hridel.NacistData(vstupniSoubor);
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Zadání hřídele (*.xlsx)|*.xlsx";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                hridel.HridelNova();
+                NazevSouboru = openFileDialog.FileName;
+                hridel.NacistData(NazevSouboru);
+            }
             return;
         }
 
         private void saveFileButton_Click(object sender, RoutedEventArgs e)
         {
-            string vystupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test_out.xlsx";
-            hridel.UlozitData(vystupniSoubor);
+            hridel.UlozitData(NazevSouboru);
             return;
         }
 
         private void saveAsFileButton_Click(object sender, RoutedEventArgs e)
         {
-
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Zadání hřídele (*.xlsx)|*.xlsx";
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                NazevSouboru = saveFileDialog.FileName;
+                hridel.UlozitData(NazevSouboru);
+                return;
+            }
         }
 
         private void vypocetKritOtButton_Click(object sender, RoutedEventArgs e)
@@ -69,11 +85,6 @@ namespace Kritik
             hridel.VytvorPrvky();
             (hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
             hridel.VyslekyPlatne = true;
-
-
-            // Krit. Ot. dát jako vlastnost hřídele. A text "1 kritické..." dát taky jako vlastnost,
-            // a její obsah se bude tvořit při get. A bude mít private set. A na set krit. ot. (double[]) se nastaví
-            // NotifyPropertyChanged vlastnosti s textem. Vymazat krit. ot. při novém a otevření výpočtu.
         }
     }
 }
