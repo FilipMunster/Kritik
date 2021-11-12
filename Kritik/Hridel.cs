@@ -12,7 +12,7 @@ using OfficeOpenXml;
 using MathNet.Numerics;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.Data.Text;
-
+using System.Collections.ObjectModel;
 
 namespace Kritik
 {
@@ -87,6 +87,14 @@ namespace Kritik
         public double NKritMax { get { return nKritMax; } set { nKritMax = value; NotifyPropertyChanged(); } }
         private string poznamka;
         public string Poznamka { get { return poznamka; } set { poznamka = value; NotifyPropertyChanged(); } }
+        public string HridelPlusDeleni { 
+            get { 
+                if (OznacenyRadek != null) {
+                    return OznacenyRadek.Deleni.ToString();
+                }
+                else { return string.Empty; }                
+            } 
+            set { OznacenyRadek.Deleni = Convert.ToDouble(value);} }
 
         // Vlastnosti pro provázání ComboBoxů s Vlastnostmi hřídele
         public static Dictionary<int, string> opDict = new Dictionary<int, string> {
@@ -109,7 +117,6 @@ namespace Kritik
             {gyrosSoubeznaKeyword,1},
             {gyrosProtibeznaKeyword,2}
         };
-
         public int OpLevaIndex {
             get { try { return opDictInv[OpLeva]; } catch { return -1; } }
             set { OpLeva = opDict[value]; }
@@ -124,6 +131,15 @@ namespace Kritik
             get { try { return gyrosDictInv[Gyros]; } catch { return -1; } }
             set { Gyros = gyrosDict[value]; }
         }
+
+        // další vlastnosti
+        public PrvekTab OznacenyRadek {
+            set { 
+                oznacenyRadek = value;
+                NotifyPropertyChanged("HridelPlusDeleni");
+
+            } get { return oznacenyRadek; } }
+        private PrvekTab oznacenyRadek;
 
         /// <summary>
         /// Vytvoření nové prázdné hřídele
@@ -143,7 +159,7 @@ namespace Kritik
             OtackyPrubezne = 0;
             NKritMax = 5000;
             Poznamka = string.Empty;
-            DataClankuTab = null;
+            PrvkyHrideleTab = new ObservableCollection<PrvekTab>();
             PrvkyHridele = null;
             KritOt = null;
             PrubehDeterminantu = null;
@@ -151,16 +167,16 @@ namespace Kritik
         }
 
         /// <summary>
-        /// Tabulka s daty článků
-        /// </summary>
-        public DataTable DataClankuTab { get { return dataClankuTab; } set { dataClankuTab = value; NotifyPropertyChanged(); } }
-        private DataTable dataClankuTab;
-
-        /// <summary>
         /// List Prvků hřídele
         /// </summary>
         public List<Prvek> PrvkyHridele { get { return prvkyHridele; } set { prvkyHridele = value; NotifyPropertyChanged(); } }
         private List<Prvek> prvkyHridele;
+
+        /// <summary>
+        /// List Prvků hřídele, zobrazené v DataGridu
+        /// </summary>
+        public ObservableCollection<PrvekTab> PrvkyHrideleTab { get { return prvkyHrideleTab; } set { prvkyHrideleTab = value; NotifyPropertyChanged(); } }
+        private ObservableCollection<PrvekTab> prvkyHrideleTab;
 
         //Vlastnosti s výsledky výpočtu
         /// <summary>
@@ -231,6 +247,8 @@ namespace Kritik
             }
         }
 
+        // Třídy
+
         /// <summary>
         /// Třída Prvků hřídele
         /// </summary>
@@ -280,24 +298,6 @@ namespace Kritik
             /// <param name="gyros">Gyroskopické účinky</param>
             /// <param name="rho">Měrná hmotnost materiálu [kg/m3]</param>
             /// <param name="e">Modul pružnosti materiálu [Pa]</param>
-            public Prvek(string typ, double l, double de, double di, double m, double io, double id, double k, double cm, double rpm, string gyros, double rho, double e)
-            {
-                this.typ = typ;
-                this.l = l;
-                this.de = de;
-                this.di = di;
-                this.m = m;
-                this.io = io;
-                this.id = id;
-                this.k = k;
-                this.cm = cm;
-                this.rpm = rpm;
-                this.gyros = gyros;
-                this.rho = rho;
-                this.e = e;
-                VytvorMatici();
-            }
-
             private void VytvorMatici()
             {
                 switch (typ)
@@ -389,9 +389,39 @@ namespace Kritik
                 }
             }
         }    
+        /// <summary>
+        /// Třída prvků hřídele v tabulce v Datagridu
+        /// </summary>
+        public class PrvekTab
+        {
+            public string Typ { get { return typ; } set { typ = value; } }
+            private string typ;
+            public double L { get { return l; } set { l = value; } }
+            private double l;
+            public double De { get { return de; } set { de = value; } }
+            private double de;
+            public double Di { get { return di; } set { di = value; } }
+            private double di;
+            public double M { get { return m; } set { m = value; } }
+            private double m;
+            public double Io { get { return io; } set { io = value; } }
+            private double io;
+            public double Id { get { return id; } set { id = value; } }
+            private double id;
+            public double K { get { return k; } set { k = value; } }
+            private double k;
+            public double Cm { get { return cm; } set { cm = value; } }
+            private double cm;
+            public double Deleni { get { return deleni; } set { deleni = value; } }
+            private double deleni;
+            public double IdN { get { return idN; } set { idN = value; } }
+            private double idN;
+            public double IdNValue { get { return idNValue; } set { idNValue = value; } }
+            private double idNValue;
+        }
 
         /// <summary>
-        /// Načtení vstupních dat hřídele z excelu
+        /// Načtení vstupních dat hřídele z excelu do kolekce PrvkyHrideleTab
         /// </summary>
         /// <param name="fileName">Plná cesta k souboru</param>
         /// <returns>Vrací true, pokud se soubor podařilo načíst</returns>
@@ -414,7 +444,6 @@ namespace Kritik
                 else
                 {
                     Console.WriteLine("Chyba: Nepodařilo se načíst soubor se vstupními daty.");
-                    DataClankuTab = InicializaceTabulky();
                     return false;
                 }
 
@@ -494,82 +523,32 @@ namespace Kritik
                     }
                 }
 
-                // vytvořit a naplnit tabulku DataClankuTab daty článku z excelu
-                DataTable dataClanku = InicializaceTabulky();
-                DataRow row;
-                int cisloRadku = 0;
-
+                // Naplnit kolekci PrvkyHrideleTab daty ze vstupního souboru
                 if (dataClankuPrvniRadek>0)
                 {
+                    PrvkyHrideleTab = new ObservableCollection<PrvekTab>();
                     for (int i = dataClankuPrvniRadek; i <= xRows; i++)
                     {
-                        row = dataClanku.NewRow();
-                        if (excel.Cells[i, 1].Value != null) // pokud v prvním sloupci nic není, načítání skončí
+                        PrvkyHrideleTab.Add(new PrvekTab
                         {
-                            cisloRadku++;
-                            row[0] = cisloRadku.ToString();
-                            row[1] = excel.Cells[i, 1].Value.ToString();
-                        }
-                        else { break; }
-                    
-
-                        for (int j = 2; j <= nazvySloupcu.Length; j++)
-                        {
-                            if (excel.Cells[i, j].Value != null)
-                            {
-                                row[j] = Convert.ToDouble(excel.Cells[i, j].Value);
-                            }
-                            else
-                            {
-                                row[j] = 0.0;
-                            }
-                        }
-                        dataClanku.Rows.Add(row);
+                            Typ = excel.Cells[i, 1].Value.ToString(),
+                            L = Convert.ToDouble(excel.Cells[i, 2].Value),
+                            De = Convert.ToDouble(excel.Cells[i, 3].Value),
+                            Di = Convert.ToDouble(excel.Cells[i, 4].Value),
+                            M = Convert.ToDouble(excel.Cells[i, 5].Value),
+                            Io = Convert.ToDouble(excel.Cells[i, 6].Value),
+                            Id = Convert.ToDouble(excel.Cells[i, 7].Value),
+                            K = Convert.ToDouble(excel.Cells[i, 8].Value),
+                            Cm = Convert.ToDouble(excel.Cells[i, 9].Value),
+                            Deleni = Convert.ToDouble(excel.Cells[i, 10].Value),
+                            IdN = Convert.ToDouble(excel.Cells[i, 11].Value),
+                            IdNValue = Convert.ToDouble(excel.Cells[i, 12].Value)
+                        });
                     }
                 }
-
-
-                DataClankuTab = dataClanku;
                 Console.WriteLine("Soubor {0} byl načten.", fileName);
                 return true;
             }
-        }
-
-        /// <summary>
-        /// Vytvoří a vrátí prázdnou tabulku s pojmenovanými sloupci parametrů hřídele
-        /// </summary>
-        public DataTable InicializaceTabulky()
-        {
-            // Vytvořit tabulku
-            DataTable dataClanku = new DataTable("Data článků");
-            // Vytvořit proměnnou pro objekt DataColumn
-            DataColumn column;
-
-            // Vytvořit jednotlivé sloupce
-            column = new DataColumn();
-            column.DataType = Type.GetType("System.Int32");
-            column.ColumnName = "#";
-            column.ReadOnly = false;
-            column.Unique = true;
-            dataClanku.Columns.Add(column);
-
-            column = new DataColumn();
-            column.DataType = Type.GetType("System.String");
-            column.ColumnName = nazvySloupcu[0];
-            column.ReadOnly = false;
-            column.Unique = false;
-            dataClanku.Columns.Add(column);
-
-            foreach (string nazevSloupce in nazvySloupcu.Skip(1))
-            {
-                column = new DataColumn();
-                column.DataType = Type.GetType("System.Double");
-                column.ColumnName = nazevSloupce;
-                column.ReadOnly = false;
-                column.Unique = false;
-                dataClanku.Columns.Add(column);
-            }
-            return dataClanku;
         }
 
         /// <summary>
@@ -633,23 +612,24 @@ namespace Kritik
                 {
                     ws.Cells[28, i + 1].Value = nazvySloupcu[i];
                 }
-                int row = 29;
-                int col = 1;
 
-                if ((DataClankuTab != null) && (DataClankuTab.Rows != null))
+                int row = 29; // první řádek dat prvků
+                foreach (PrvekTab a in PrvkyHrideleTab)
                 {
-                    foreach (DataRow r in DataClankuTab.Rows)
-                    {
-                        foreach (var item in r.ItemArray.Skip(1))
-                        {
-                            ws.Cells[row, col].Value = item;
-                            col++;
-                        }
-                        row++;
-                        col = 1;
-                    }
+                    ws.Cells[row, 1].Value = a.Typ;
+                    ws.Cells[row, 2].Value = a.L;
+                    ws.Cells[row, 3].Value = a.De;
+                    ws.Cells[row, 4].Value = a.Di;
+                    ws.Cells[row, 5].Value = a.M;
+                    ws.Cells[row, 6].Value = a.Io;
+                    ws.Cells[row, 7].Value = a.Id;
+                    ws.Cells[row, 8].Value = a.K;
+                    ws.Cells[row, 9].Value = a.Cm;
+                    ws.Cells[row, 10].Value = a.Deleni;
+                    ws.Cells[row, 11].Value = a.IdN;
+                    ws.Cells[row, 12].Value = a.IdNValue;
+                    row++;
                 }
-
 
                 try
                 {
@@ -666,30 +646,32 @@ namespace Kritik
             return true;
         }
         /// <summary>
-        /// Vytvoří List prvků hřídele z tabulky DataClankuTab a uloží je do vlastnosti PrvkyHridele
+        /// Vytvoří List prvků hřídele z kolekce PrvkyHrideleTab a uloží je do vlastnosti PrvkyHridele
         /// </summary>
         public void VytvorPrvky()
         {
             List<Prvek> prvkyHridele = new List<Prvek>();
 
-            foreach (DataRow row in DataClankuTab.Rows)
+            foreach (PrvekTab p in PrvkyHrideleTab)
             {
-                var i = row.ItemArray;
-                string typ = i[1].ToString();
-                double l = Convert.ToDouble(i[2]) / 1000;
-                double de = Convert.ToDouble(i[3]) / 1000;
-                double di = Convert.ToDouble(i[4]) / 1000;
-                double m = Convert.ToDouble(i[5]);
-                double io = Convert.ToDouble(i[6]);
-                double id = Convert.ToDouble(i[7]);
-                double k = Convert.ToDouble(i[8]);
-                double cm = Convert.ToDouble(i[9]);
-
-                prvkyHridele.Add(new Prvek(typ, l, de, di, m, io, id, k, cm, 0, Gyros, Rho, ModulPruznosti*Math.Pow(10,radJednotkyModuluPruznosti)));
+                prvkyHridele.Add(new Prvek() { 
+                    L = p.L / 1000.0,
+                    De = p.De / 1000.0,
+                    Di = p.Di / 1000.0,
+                    M = p.M,
+                    Io = p.Io,
+                    Id = p.Id,
+                    K = p.K,
+                    Cm = p.Cm,
+                    Rpm = 0,
+                    Gyros = Gyros,
+                    Rho = Rho,
+                    E = ModulPruznosti * Math.Pow(10, radJednotkyModuluPruznosti),
+                    Typ = p.Typ
+                });
 
                 // JEŠTĚ DODĚLAT ROZDĚLOVÁNÍ PRVKU HRIDEL+ !!!
             }
-           
             PrvkyHridele = prvkyHridele;
         }
     }
