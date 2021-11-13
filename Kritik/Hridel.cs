@@ -59,7 +59,30 @@ namespace Kritik
         public const string magnetKeyword = "magnet";
         public const string jednotkaModuluPruznosti = "GPa";
         public const int radJednotkyModuluPruznosti = 9;
-
+        public static Dictionary<string, string> TypDict = new Dictionary<string, string>
+        {
+            {beamKeyword, "Hřídel" },
+            {beamPlusKeyword, "Hřídel+" },
+            {rigidKeyword, "Tuhý" },
+            {diskKeyword, "Disk" },
+            {springKeyword, "Podpora" },
+            {magnetKeyword, "Magnet. tah" },
+            {"Hřídel", beamKeyword},
+            {"Hřídel+", beamPlusKeyword},
+            {"Tuhý", rigidKeyword},
+            {"Disk", diskKeyword},
+            {"Podpora", springKeyword},
+            {"Magnet. tah", magnetKeyword}
+        };
+        public readonly List<string> ListTypuPrvku = new List<string>() { 
+            TypDict[beamKeyword],
+            TypDict[beamPlusKeyword],
+            TypDict[rigidKeyword],
+            TypDict[diskKeyword],
+            TypDict[springKeyword],
+            TypDict[magnetKeyword]
+        };
+        
         // proměnné s parametry výpočtu
         private string vypocetNazev;
         public string VypocetNazev { get { return vypocetNazev; } set { vypocetNazev = value; NotifyPropertyChanged(); } }
@@ -392,9 +415,25 @@ namespace Kritik
         /// <summary>
         /// Třída prvků hřídele v tabulce v Datagridu
         /// </summary>
-        public class PrvekTab
+        public class PrvekTab : INotifyPropertyChanged
         {
-            public string Typ { get { return typ; } set { typ = value; } }
+            public event PropertyChangedEventHandler PropertyChanged;
+            private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+            private void NotifyPropertyChangedVsechno()
+            {
+                NotifyPropertyChanged("IsEditableL");
+                NotifyPropertyChanged("IsEditableDe");
+                NotifyPropertyChanged("IsEditableDi");
+                NotifyPropertyChanged("IsEditableM");
+                NotifyPropertyChanged("IsEditableIo");
+                NotifyPropertyChanged("IsEditableId");
+                NotifyPropertyChanged("IsEditableK");
+                NotifyPropertyChanged("IsEditableCm");
+            }
+            public string Typ { get { return typ; } set { typ = value; NotifyPropertyChangedVsechno(); } }
             private string typ;
             public double L { get { return l; } set { l = value; } }
             private double l;
@@ -418,6 +457,28 @@ namespace Kritik
             private double idN;
             public double IdNValue { get { return idNValue; } set { idNValue = value; } }
             private double idNValue;
+
+            /// <summary>
+            /// Text typu prvku tak, jak je zobrazen v tabulce
+            /// </summary>
+            public string TypZobrazeny { get { if (Typ != null) { return TypDict[Typ]; } else { return String.Empty; } } set { Typ = TypDict[value]; } }
+            /// <summary>
+            /// Zda je editovatelná buňka na základě typu prvku
+            /// </summary>
+            public bool IsEditableL { get { return (Typ == beamKeyword) || (Typ == beamPlusKeyword) || (Typ == rigidKeyword); } }
+            public bool IsEditableDe { get { return (Typ == beamKeyword) || (Typ == beamPlusKeyword); } }
+            public bool IsEditableDi { get { return (Typ == beamKeyword) || (Typ == beamPlusKeyword); } }
+            public bool IsEditableM { get { return (Typ == diskKeyword) || (Typ == beamPlusKeyword); } }
+            public bool IsEditableIo { get { return (Typ == diskKeyword) || (Typ == beamPlusKeyword); } }
+            public bool IsEditableId { get { return (Typ == diskKeyword) || (Typ == beamPlusKeyword); } }
+            public bool IsEditableK { get { return Typ == springKeyword; } }
+            public bool IsEditableCm { get { return (Typ == magnetKeyword) || (Typ == beamPlusKeyword); } }
+            /// <summary>
+            /// Pole IsEditable v pořadí, jako jsou sloupce v tabulce
+            /// </summary>
+            public bool[] IsEditableArray { get {
+                    bool[] b = { true, IsEditableL, IsEditableDe, IsEditableDi, IsEditableM, IsEditableIo, IsEditableId, IsEditableK, IsEditableCm};
+                    return b; } }
         }
 
         /// <summary>

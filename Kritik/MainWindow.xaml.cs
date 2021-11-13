@@ -17,6 +17,7 @@ using Microsoft.Win32;
 
 
 // Udělat: Název souboru v hlavičce okna (viz PSPad)
+// Udělat: Lépe zvýraznit označenou buňku
 
 namespace Kritik
 {
@@ -35,11 +36,11 @@ namespace Kritik
             InitializeComponent();
 
             DataContext = hridel;
+            SloupecTyp.ItemsSource = hridel.ListTypuPrvku;
 
             string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test.xlsx";
             hridel.HridelNova();
             bool nacteno = hridel.NacistData(vstupniSoubor);
-            hridel.VytvorPrvky();
 
         }
 
@@ -90,6 +91,33 @@ namespace Kritik
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
+        }
+
+        private bool posledniBunkaBylaFalse = false;
+        /// <summary>
+        /// Funkce pro přeskakování needitovatelných buněk
+        /// </summary>
+        private void DataGridCell_PreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            if (e.OldFocus is DataGridCell oldCell && sender is DataGridCell newCell)
+            {
+                try
+                {
+                    DataGridColumn col = newCell.Column;
+                    Hridel.PrvekTab prvek = (Hridel.PrvekTab)newCell.DataContext;
+                    bool isCellEditable = prvek.IsEditableArray[col.DisplayIndex];
+
+                    if (!isCellEditable)
+                    {
+                        var isNext = oldCell.Column.DisplayIndex < newCell.Column.DisplayIndex;
+                        var direction = isNext ? FocusNavigationDirection.Next : FocusNavigationDirection.Previous;
+                        newCell.MoveFocus(new TraversalRequest(direction));
+                        e.Handled = true;
+                    }
+                    posledniBunkaBylaFalse = false;
+                }
+                catch { }
+            }
         }
     }
 }
