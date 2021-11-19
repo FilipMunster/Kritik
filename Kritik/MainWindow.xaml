@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Kritik"
         xmlns:Data="clr-namespace:System.Data;assembly=System.Data.Common" x:Class="Kritik.MainWindow"
         mc:Ignorable="d"
-        Title="Kritik" Height="790" Width="1200" MinHeight="630" MinWidth="1000"
+        Title="{Binding Path=TextTitulkyOkna}" Height="790" Width="1200" MinHeight="630" MinWidth="1000"
         WindowStartupLocation="CenterScreen" WindowStyle="ThreeDBorderWindow">
     <Window.Resources>
         <local:NastaveniVyskyTextBoxuPoznamky x:Key="NastavovacVyskyPoznamky"/>

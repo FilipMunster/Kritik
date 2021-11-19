@@ -17,8 +17,7 @@ using System.Windows.Threading;
 using Microsoft.Win32;
 
 
-// Udělat: Název souboru v hlavičce okna (viz PSPad)
-// Udělat: Lépe zvýraznit označenou buňku
+// Udělat: Název souboru v hlavičce okna (viz PSPad) - nový soubor -> náze v něco jako Nový výpočet.xlsx. Uložit jako - předvyplnit název souboru
 
 namespace Kritik
 {
@@ -31,7 +30,6 @@ namespace Kritik
         /// Globální instance třídy Hridel
         /// </summary>
         public static readonly Hridel hridel = new Hridel();
-        private string NazevSouboru { get; set; }
         public MainWindow()
         {
             InitializeComponent();
@@ -39,15 +37,18 @@ namespace Kritik
             DataContext = hridel;
             SloupecTyp.ItemsSource = hridel.ListTypuPrvku;
 
-            string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test.xlsx";
-            hridel.HridelNova();
-            bool nacteno = hridel.NacistData(vstupniSoubor);
+            //string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test.xlsx";
+            //hridel.nazevSouboru = vstupniSoubor;
+            //hridel.HridelNova();
+            //bool nacteno = hridel.NacistData(vstupniSoubor);
 
         }
 
         private void newFileButton_Click(object sender, RoutedEventArgs e)
         {
             hridel.HridelNova();
+            hridel.nazevSouboru = null;
+            hridel.AnyPropertyChanged = false;
             return;
         }
 
@@ -58,16 +59,23 @@ namespace Kritik
             if (openFileDialog.ShowDialog() == true)
             {
                 hridel.HridelNova();
-                NazevSouboru = openFileDialog.FileName;
-                hridel.NacistData(NazevSouboru);
+                hridel.nazevSouboru = openFileDialog.FileName;
+                hridel.NacistData(hridel.nazevSouboru);
+                hridel.AnyPropertyChanged = false;
             }
             return;
         }
 
         private void saveFileButton_Click(object sender, RoutedEventArgs e)
         {
-            hridel.UlozitData(NazevSouboru);
-            return;
+            if (hridel.nazevSouboru != null)
+            {
+                hridel.UlozitData(hridel.nazevSouboru);
+                hridel.AnyPropertyChanged = false;
+                return;
+            }
+            else { saveAsFileButton_Click(sender, e); }
+            
         }
 
         private void saveAsFileButton_Click(object sender, RoutedEventArgs e)
@@ -76,8 +84,9 @@ namespace Kritik
             saveFileDialog.Filter = "Zadání hřídele (*.xlsx)|*.xlsx";
             if (saveFileDialog.ShowDialog() == true)
             {
-                NazevSouboru = saveFileDialog.FileName;
-                hridel.UlozitData(NazevSouboru);
+                hridel.nazevSouboru = saveFileDialog.FileName;
+                hridel.UlozitData(hridel.nazevSouboru);
+                hridel.AnyPropertyChanged = false;
                 return;
             }
         }
@@ -86,7 +95,6 @@ namespace Kritik
         {
             hridel.VytvorPrvky();
             (hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
-            hridel.VyslekyPlatne = true;
         }
 
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)

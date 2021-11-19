@@ -27,8 +27,24 @@ namespace Kritik
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            VyslekyPlatne = false;
+            AnyPropertyChanged = true;
         }
+
+        public bool AnyPropertyChanged { get { return anyPropertyChanged; } set { anyPropertyChanged = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TextTitulkyOkna")); } }
+        private bool anyPropertyChanged;
+        public string nazevSouboru;
+        public string TextTitulkyOkna {
+            get { 
+                if (nazevSouboru != null)
+                {
+                    string title = "Kritik - [" + nazevSouboru;
+                    if (anyPropertyChanged) { title += " *"; }
+                    title += "]";
+                    return title;
+                }
+                else { return "Kritik"; }
+            } }
+
 
         // klíčová slova ve vstupním souboru
         public readonly string[] nazvySloupcu = { "Typ", "L", "De", "Di", "m", "Io", "Id", "k", "Cm", "Deleni", "Id/N", "Id/Nvalue"};
@@ -187,6 +203,7 @@ namespace Kritik
             KritOt = null;
             PrubehDeterminantu = null;
             PrubehRpm = null;
+            AnyPropertyChanged = false;
         }
 
         /// <summary>
@@ -227,7 +244,7 @@ namespace Kritik
             set { prubehRpm = value; }
         }
         private double[] prubehRpm;
-        public bool VyslekyPlatne { get; set; }
+
         /// <summary>
         /// Text kritických otáček do TextBoxu
         /// </summary>
@@ -421,6 +438,7 @@ namespace Kritik
             private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                MainWindow.hridel.AnyPropertyChanged = true;
             }
             private void NotifyPropertyChangedVsechno()
             {
