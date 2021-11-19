@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using Microsoft.Win32;
 
 
@@ -93,7 +94,37 @@ namespace Kritik
 
         }
 
-        private bool posledniBunkaBylaFalse = false;
+        private void DataGridCell_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var cell = sender as DataGridCell;
+            GridColumnFastEdit(cell, e);
+        }
+
+        /// <summary>
+        /// Funkce pro rozbalení Comboboxu v datgridu hned po kliknutí
+        /// </summary>
+        private void GridColumnFastEdit(DataGridCell cell, RoutedEventArgs e)
+        {
+            if (cell == null || cell.IsEditing || cell.IsReadOnly)
+                return;
+
+            var dataGrid = TabulkaDataGrid;
+            if (dataGrid == null)
+                return;
+
+            if (!cell.IsFocused)
+            {
+                cell.Focus();
+            }
+
+            var cb = cell.Content as ComboBox;
+            if (cb == null) return;
+            TabulkaDataGrid.BeginEdit(e);
+            cell.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
+            cb.IsDropDownOpen = true;
+        }
+
+
         /// <summary>
         /// Funkce pro přeskakování needitovatelných buněk
         /// </summary>
@@ -114,7 +145,6 @@ namespace Kritik
                         newCell.MoveFocus(new TraversalRequest(direction));
                         e.Handled = true;
                     }
-                    posledniBunkaBylaFalse = false;
                 }
                 catch { }
             }

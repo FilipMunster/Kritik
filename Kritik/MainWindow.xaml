@@ -10,6 +10,7 @@
         WindowStartupLocation="CenterScreen" WindowStyle="ThreeDBorderWindow">
     <Window.Resources>
         <local:NastaveniVyskyTextBoxuPoznamky x:Key="NastavovacVyskyPoznamky"/>
+        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="SlateGray"/>
     </Window.Resources>
     <Grid Name="MainGrid">
         <TabControl>
@@ -181,7 +182,7 @@
                                   CanUserReorderColumns="False"
                                   CanUserSortColumns="False"
                                   CanUserResizeRows="False"
-                                  Name="TabulkaDataGrid" Margin="0,-2,0,2">
+                                  Name="TabulkaDataGrid" Margin="0,-2,0,2" CanUserResizeColumns="False" SelectionUnit="FullRow">
                             <DataGrid.ColumnHeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="ContentTemplate">
@@ -202,7 +203,21 @@
                                                         Width="*"
                                                         ItemsSource="{Binding TypyList}"
                                                         SelectedItemBinding="{Binding TypZobrazeny, UpdateSourceTrigger=PropertyChanged}"
-                                                        x:Name="SloupecTyp" />
+                                                        x:Name="SloupecTyp">
+                                    <DataGridComboBoxColumn.CellStyle>
+                                        <Style TargetType="{x:Type DataGridCell}">
+                                            <EventSetter Event="MouseUp" Handler="DataGridCell_PreviewMouseLeftButtonDown" />
+                                            <Style.Triggers>
+                                                <Trigger Property="IsFocused" Value="True">
+                                                    <Setter Property="BorderBrush" Value="GhostWhite"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                                    <Setter Property="Background" Value="SteelBlue"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </DataGridComboBoxColumn.CellStyle>
+                                </DataGridComboBoxColumn>
                                 <DataGridTextColumn Header="Délka úseku&#x0a;L [mm]" Binding="{Binding L}" Width="*">
                                     <DataGridTextColumn.CellStyle>
                                         <Style TargetType="{x:Type DataGridCell}">
@@ -213,6 +228,12 @@
                                                     <Setter Property="IsHitTestVisible" Value="False" />
                                                     <Setter Property="IsTabStop" Value="False" />
                                                 </DataTrigger>
+                                                <Trigger Property="IsFocused" Value="True">
+                                                    <Setter Property="BorderBrush" Value="GhostWhite"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                                    <Setter Property="Background" Value="SteelBlue"/>
+                                                </Trigger> 
                                             </Style.Triggers>
                                             <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
                                         </Style>
@@ -228,6 +249,12 @@
                                                     <Setter Property="IsHitTestVisible" Value="False" />
                                                     <Setter Property="IsTabStop" Value="False" />
                                                 </DataTrigger>
+                                                <Trigger Property="IsFocused" Value="True">
+                                                    <Setter Property="BorderBrush" Value="GhostWhite"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                                    <Setter Property="Background" Value="SteelBlue"/>
+                                                </Trigger>
                                             </Style.Triggers>
                                             <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
                                         </Style>
@@ -243,6 +270,12 @@
                                                     <Setter Property="IsHitTestVisible" Value="False" />
                                                     <Setter Property="IsTabStop" Value="False" />
                                                 </DataTrigger>
+                                                <Trigger Property="IsFocused" Value="True">
+                                                    <Setter Property="BorderBrush" Value="GhostWhite"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                                    <Setter Property="Background" Value="SteelBlue"/>
+                                                </Trigger>
                                             </Style.Triggers>
                                             <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
                                         </Style>
@@ -258,6 +291,12 @@
                                                     <Setter Property="IsHitTestVisible" Value="False" />
                                                     <Setter Property="IsTabStop" Value="False" />
                                                 </DataTrigger>
+                                                <Trigger Property="IsFocused" Value="True">
+                                                    <Setter Property="BorderBrush" Value="GhostWhite"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                                    <Setter Property="Background" Value="SteelBlue"/>
+                                                </Trigger>
                                             </Style.Triggers>
                                             <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
                                         </Style>
@@ -273,6 +312,12 @@
                                                     <Setter Property="IsHitTestVisible" Value="False" />
                                                     <Setter Property="IsTabStop" Value="False" />
                                                 </DataTrigger>
+                                                <Trigger Property="IsFocused" Value="True">
+                                                    <Setter Property="BorderBrush" Value="GhostWhite"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                                    <Setter Property="Background" Value="SteelBlue"/>
+                                                </Trigger>
                                             </Style.Triggers>
                                             <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
                                         </Style>
@@ -288,6 +333,12 @@
                                                     <Setter Property="IsHitTestVisible" Value="False" />
                                                     <Setter Property="IsTabStop" Value="False" />
                                                 </DataTrigger>
+                                                <Trigger Property="IsFocused" Value="True">
+                                                    <Setter Property="BorderBrush" Value="GhostWhite"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                                    <Setter Property="Background" Value="SteelBlue"/>
+                                                </Trigger>
                                             </Style.Triggers>
                                             <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
                                         </Style>
@@ -303,6 +354,12 @@
                                                     <Setter Property="IsHitTestVisible" Value="False" />
                                                     <Setter Property="IsTabStop" Value="False" />
                                                 </DataTrigger>
+                                                <Trigger Property="IsFocused" Value="True">
+                                                    <Setter Property="BorderBrush" Value="GhostWhite"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                                    <Setter Property="Background" Value="SteelBlue"/>
+                                                </Trigger>
                                             </Style.Triggers>
                                             <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
                                         </Style>
@@ -318,6 +375,12 @@
                                                     <Setter Property="IsHitTestVisible" Value="False" />
                                                     <Setter Property="IsTabStop" Value="False" />
                                                 </DataTrigger>
+                                                <Trigger Property="IsFocused" Value="True">
+                                                    <Setter Property="BorderBrush" Value="GhostWhite"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                                    <Setter Property="Background" Value="SteelBlue"/>
+                                                </Trigger>
                                             </Style.Triggers>
                                             <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
                                         </Style>
