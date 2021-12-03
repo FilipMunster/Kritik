@@ -189,9 +189,9 @@ namespace Kritik
             VypocetPopis = string.Empty;
             VypocetResil = Environment.UserName;
             VypocetDatum = DateTime.Today.ToShortDateString();
-            OpLeva = string.Empty;
-            OpPrava = string.Empty;
-            Gyros = string.Empty;
+            OpLeva = opVolnyKeyword;
+            OpPrava = opVolnyKeyword;
+            Gyros = gyrosZanedbaniKeyword;
             ModulPruznosti = 210;
             Rho = 7850;
             OtackyProvozni = 0;
@@ -203,7 +203,7 @@ namespace Kritik
             KritOt = null;
             PrubehDeterminantu = null;
             PrubehRpm = null;
-            AnyPropertyChanged = false;
+            AnyPropertyChanged = true;
         }
 
         /// <summary>
@@ -637,6 +637,7 @@ namespace Kritik
         /// <returns>Vrací true, pokud se soubor podařilo uložit</returns>
         public bool UlozitData(string fileName)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             FileInfo fileInfo = new FileInfo(fileName);
             using (ExcelPackage p = new ExcelPackage(fileInfo))
             {
@@ -693,22 +694,26 @@ namespace Kritik
                 }
 
                 int row = 29; // první řádek dat prvků
-                foreach (PrvekTab a in PrvkyHrideleTab)
+                if (PrvkyHrideleTab != null)
                 {
-                    ws.Cells[row, 1].Value = a.Typ;
-                    ws.Cells[row, 2].Value = a.L;
-                    ws.Cells[row, 3].Value = a.De;
-                    ws.Cells[row, 4].Value = a.Di;
-                    ws.Cells[row, 5].Value = a.M;
-                    ws.Cells[row, 6].Value = a.Io;
-                    ws.Cells[row, 7].Value = a.Id;
-                    ws.Cells[row, 8].Value = a.K;
-                    ws.Cells[row, 9].Value = a.Cm;
-                    ws.Cells[row, 10].Value = a.Deleni;
-                    ws.Cells[row, 11].Value = a.IdN;
-                    ws.Cells[row, 12].Value = a.IdNValue;
-                    row++;
+                    foreach (PrvekTab a in PrvkyHrideleTab)
+                    {
+                        ws.Cells[row, 1].Value = a.Typ;
+                        ws.Cells[row, 2].Value = a.L;
+                        ws.Cells[row, 3].Value = a.De;
+                        ws.Cells[row, 4].Value = a.Di;
+                        ws.Cells[row, 5].Value = a.M;
+                        ws.Cells[row, 6].Value = a.Io;
+                        ws.Cells[row, 7].Value = a.Id;
+                        ws.Cells[row, 8].Value = a.K;
+                        ws.Cells[row, 9].Value = a.Cm;
+                        ws.Cells[row, 10].Value = a.Deleni;
+                        ws.Cells[row, 11].Value = a.IdN;
+                        ws.Cells[row, 12].Value = a.IdNValue;
+                        row++;
+                    }
                 }
+
 
                 try
                 {
@@ -719,7 +724,7 @@ namespace Kritik
                     Console.WriteLine("Chyba při ukládání dat hřídele do souboru: {0}", fileName);
                     return false;
                 }
-                
+
             }
             Console.WriteLine("Soubor {0} byl uložen.", fileName);
             return true;

@@ -344,7 +344,7 @@
                                         </Style>
                                     </DataGridTextColumn.CellStyle>
                                 </DataGridTextColumn>
-                                <DataGridTextColumn Header="Rad. tuhost podpory&#x0a;k [N/m]" Binding="{Binding K}"  Width="*">
+                                <DataGridTextColumn Header="Radiální tuhost podpory&#x0a;k [N/m]" Binding="{Binding K}"  Width="*">
                                     <DataGridTextColumn.CellStyle>
                                         <Style TargetType="{x:Type DataGridCell}">
                                             <Style.Triggers>
@@ -365,7 +365,7 @@
                                         </Style>
                                     </DataGridTextColumn.CellStyle>
                                 </DataGridTextColumn>
-                                <DataGridTextColumn Header="Magneticko elastická konst.&#x0a;Cm [N/m]" Binding="{Binding Cm}"  Width="*">
+                                <DataGridTextColumn Header="Magneticko elastická konstanta&#x0a;Cm [N/m]" Binding="{Binding Cm}"  Width="*">
                                     <DataGridTextColumn.CellStyle>
                                         <Style TargetType="{x:Type DataGridCell}">
                                             <Style.Triggers>
