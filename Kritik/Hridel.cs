@@ -13,6 +13,7 @@ using MathNet.Numerics;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.Data.Text;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace Kritik
 {
@@ -135,6 +136,76 @@ namespace Kritik
             } 
             set { OznacenyRadek.Deleni = Convert.ToDouble(value);} }
 
+        /// <summary>
+        /// Seznam indexů prvků typu Hřídel+
+        /// </summary>
+        public List<int> IndexyHrideliPlus
+        {
+            get
+            {
+                List<int> szn = new List<int>();
+                for (int i = 0; i < PrvkyHrideleTab.Count(); i++)
+                {
+                    if (PrvkyHrideleTab[i].Typ == beamPlusKeyword)
+                    {
+                        szn.Add(i + 1);
+                    }
+                }
+                return szn;
+            }
+        }
+
+        /// <summary>
+        /// Způsob výpočtu Id Hřídele+. 0 = vynásobení konstantou, 1 = vlastní hodnota
+        /// </summary>
+        public int HridelPlusZpusobSelectedIndex 
+        { 
+            get { 
+                if (OznacenyRadek != null && OznacenyRadek.Typ == beamPlusKeyword) return OznacenyRadek.IdN;
+                else return -1;
+            }
+            set
+            {
+                if (OznacenyRadek != null) { OznacenyRadek.IdN = value; }
+            }
+        }
+        /// <summary>
+        /// Vybrané číslo prvku hřídel+ v comboboxu
+        /// </summary>
+        public int HridelPlusSelectedValue
+        {
+            get
+            {
+                if ((OznacenyRadek != null) && (OznacenyRadek.Typ == beamPlusKeyword))
+                {
+                    return PrvkyHrideleTab.IndexOf(OznacenyRadek) + 1;
+                }
+                else return -1;
+            }
+        }
+        /// <summary>
+        /// Zadaná / vypočtená hodnota Id u prvku Hridel+
+        /// </summary>
+        public string HridelPlusHodnota
+        {
+            get
+            {
+                if (OznacenyRadek != null) return OznacenyRadek.IdNValue.ToString();
+                else return String.Empty;
+            }
+            set
+            {
+                if (OznacenyRadek != null) { OznacenyRadek.IdNValue = Convert.ToDouble(value); }
+            }
+        }
+        public bool HridelPlusOvlPrvkyEnabled 
+        {
+            get
+            {
+                if ((OznacenyRadek != null) && (OznacenyRadek.Typ == beamPlusKeyword)) { return true; } else { return false; }
+            }
+        }
+
         // Vlastnosti pro provázání ComboBoxů s Vlastnostmi hřídele
         public static Dictionary<int, string> opDict = new Dictionary<int, string> {
             {0,opVolnyKeyword},
@@ -176,6 +247,10 @@ namespace Kritik
             set { 
                 oznacenyRadek = value;
                 NotifyPropertyChanged("HridelPlusDeleni");
+                NotifyPropertyChanged("HridelPlusZpusobSelectedIndex");
+                NotifyPropertyChanged("HridelPlusSelectedValue");
+                NotifyPropertyChanged("HridelPlusHodnota");
+                NotifyPropertyChanged("HridelPlusOvlPrvkyEnabled");
 
             } get { return oznacenyRadek; } }
         private PrvekTab oznacenyRadek;
@@ -392,7 +467,7 @@ namespace Kritik
                                     id = 0;
                                     break;
                                 default:
-                                    Console.WriteLine("Špatně zadané gyroskopické účinky ({0})", Gyros);
+                                    Debug.WriteLine("Špatně zadané gyroskopické účinky ({0})", Gyros);
                                     break;
                             }
 
@@ -424,7 +499,7 @@ namespace Kritik
                             break;
                         }
                     default:
-                        Console.WriteLine("Špatně zadaný typ prvku ({0})", typ);
+                        Debug.WriteLine("Špatně zadaný typ prvku ({0})", typ);
                         break;
                 }
             }
@@ -471,8 +546,8 @@ namespace Kritik
             private double cm;
             public double Deleni { get { return deleni; } set { deleni = value; } }
             private double deleni;
-            public double IdN { get { return idN; } set { idN = value; } }
-            private double idN;
+            public int IdN { get { return idN; } set { idN = value; } }
+            private int idN;
             public double IdNValue { get { return idNValue; } set { idNValue = value; } }
             private double idNValue;
 
@@ -522,7 +597,7 @@ namespace Kritik
                 }
                 else
                 {
-                    Console.WriteLine("Chyba: Nepodařilo se načíst soubor se vstupními daty.");
+                    Debug.WriteLine("Chyba: Nepodařilo se načíst soubor se vstupními daty.");
                     return false;
                 }
 
@@ -590,7 +665,7 @@ namespace Kritik
                                     {
                                         if (excel.Cells[i, j + 1].Value.ToString() != nazvySloupcu[j])
                                         {
-                                            Console.WriteLine("Chyba ve vstupním souboru - špatně zadané sloupce dat článků.");
+                                            Debug.WriteLine("Chyba ve vstupním souboru - špatně zadané sloupce dat článků.");
                                             return false;
                                         }
                                     }
@@ -620,12 +695,12 @@ namespace Kritik
                             K = Convert.ToDouble(excel.Cells[i, 8].Value),
                             Cm = Convert.ToDouble(excel.Cells[i, 9].Value),
                             Deleni = Convert.ToDouble(excel.Cells[i, 10].Value),
-                            IdN = Convert.ToDouble(excel.Cells[i, 11].Value),
+                            IdN = Convert.ToInt32(excel.Cells[i, 11].Value),
                             IdNValue = Convert.ToDouble(excel.Cells[i, 12].Value)
                         });
                     }
                 }
-                Console.WriteLine("Soubor {0} byl načten.", fileName);
+                Debug.WriteLine("Soubor {0} byl načten.", fileName);
                 return true;
             }
         }
@@ -721,12 +796,12 @@ namespace Kritik
                 }
                 catch
                 {
-                    Console.WriteLine("Chyba při ukládání dat hřídele do souboru: {0}", fileName);
+                    Debug.WriteLine("Chyba při ukládání dat hřídele do souboru: {0}", fileName);
                     return false;
                 }
 
             }
-            Console.WriteLine("Soubor {0} byl uložen.", fileName);
+            Debug.WriteLine("Soubor {0} byl uložen.", fileName);
             return true;
         }
         /// <summary>

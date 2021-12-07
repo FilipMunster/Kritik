@@ -17,13 +17,16 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using Microsoft.Win32;
 using System.Timers;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Diagnostics;
 
 namespace Kritik
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         /// <summary>
         /// Globální instance třídy Hridel
@@ -42,10 +45,14 @@ namespace Kritik
             hridel.nazevSouboru = "Nový výpočet.xlsx";
             novySoubor = true;
 
-            //string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test.xlsx";
-            //hridel.nazevSouboru = vstupniSoubor;
-            //hridel.HridelNova();
-            //bool nacteno = hridel.NacistData(vstupniSoubor);
+            //////////////////
+            string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_testPlus.xlsx";
+            hridel.HridelNova();
+            hridel.nazevSouboru = vstupniSoubor;
+            hridel.NacistData(hridel.nazevSouboru);
+            hridel.AnyPropertyChanged = false;
+            novySoubor = false;
+            //////////////////
 
         }
 
@@ -167,6 +174,77 @@ namespace Kritik
             }
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
+        private void cisloPrvkuHridelPlusComboBox_DropDownOpened(object sender, EventArgs e)
+        {
+            ((ComboBox)sender).ItemsSource = hridel.IndexyHrideliPlus;
+            NotifyPropertyChanged("IndexyHrideliPlus");
+        }
+        private void cisloPrvkuHridelPlusComboBox_DropDownClosed(object sender, EventArgs e)
+        {
+            int id;
+            if (((ComboBox)sender).HasItems)
+            {
+                id = (int)((ComboBox)sender).SelectedValue;
+                TabulkaDataGrid.SelectedItem = hridel.PrvkyHrideleTab[id - 1];
+                TabulkaDataGrid.Focus();
+                return;
+            }
+        }
+
+        private void HridelPlus_MenuChanged()
+        {
+            var r = hridel.OznacenyRadek;
+            if (r != null && r.Typ == Hridel.beamPlusKeyword)
+            {
+                double val;
+                double deleni;
+                double hodnota;
+                try { deleni = Convert.ToDouble(deleniHridelPlusTextBox.Text); } catch { deleni = 1; }
+                try { hodnota = Convert.ToDouble(idNTextBox.Text); } catch { hodnota = 0; }
+
+                switch (r.IdN)
+                {
+                    case 0:
+                        val = r.Id / deleni * hodnota;
+                        break;
+                    case 1:
+                        val = hodnota; ;
+                        break;
+                    default:
+                        val = 0;
+                        break;
+                }
+                idNHodnotaTextBlock.Text = "(Idᵢ = " + val.ToString("0.###") + " kg.m²)";
+                Debug.WriteLine(val.ToString());
+                hridel.AnyPropertyChanged = true;
+            }  
+            else { idNHodnotaTextBlock.Text = "(Idᵢ =  . . .  kg.m²)"; }
+        }
+
+        private void deleniHridelPlusTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            HridelPlus_MenuChanged();
+        }
+
+        private void cisloPrvkuHridelPlusComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            HridelPlus_MenuChanged();
+        }
+
+        private void IdNZpusobComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            HridelPlus_MenuChanged();
+        }
+
+        private void idNTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            HridelPlus_MenuChanged();
+        }
     }
 }

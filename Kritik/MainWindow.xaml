@@ -152,22 +152,51 @@
                                     <TextBlock Text="Hřídel +" Margin="0, 0, 0, 5"/>
                                     <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
                                         <TextBlock Text="Prvek číslo:" VerticalAlignment="Center"/>
-                                        <ComboBox Name="cisloPrvkuHridelPlusComboBox" Width="40" Margin="5, 0, 0, 0"/>
+                                        <ComboBox Name="cisloPrvkuHridelPlusComboBox" 
+                                                  ItemsSource="{Binding Path=IndexyHrideliPlus, Mode=OneWay}" 
+                                                  DropDownClosed="cisloPrvkuHridelPlusComboBox_DropDownClosed"
+                                                  DropDownOpened="cisloPrvkuHridelPlusComboBox_DropDownOpened"
+                                                  SelectionChanged="cisloPrvkuHridelPlusComboBox_SelectionChanged"
+                                                  SelectedValue="{Binding Path=HridelPlusSelectedValue, Mode=OneWay}"
+                                                  Width="40" Margin="5, 0, 0, 0"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
                                         <TextBlock Text="Rozdělit na"/>
-                                        <TextBox Name="deleniHridelPlusTextBox" Text="{Binding Path=HridelPlusDeleni}" Width="25" Margin="5, 0, 5, 0"/>
+                                        <TextBox Name="deleniHridelPlusTextBox"
+                                                 Text="{Binding Path=HridelPlusDeleni}"
+                                                 TextChanged="deleniHridelPlusTextBox_TextChanged"
+                                                 IsEnabled="{Binding Path=HridelPlusOvlPrvkyEnabled}"
+                                                 Width="25" Margin="5, 0, 5, 0"/>
                                         <TextBlock Text="částí."/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
                                         <TextBlock Text="Výpočet Id&#x1D62;" ToolTip="Způsob výpočtu momentu setrvačnosti kolmého k ose rotoru" VerticalAlignment="Center"/>
-                                        <ComboBox Name="IdNZpusobComboBox" Width="65" Margin="5, 0, 5, 0" SelectedIndex="0">
+                                        <ComboBox Name="IdNZpusobComboBox" Width="65" Margin="5, 0, 5, 0" 
+                                                  SelectedIndex="{Binding Path=HridelPlusZpusobSelectedIndex}" 
+                                                  SelectionChanged="IdNZpusobComboBox_SelectionChanged"
+                                                  IsEnabled="{Binding Path=HridelPlusOvlPrvkyEnabled}">
                                             <ComboBoxItem Content="=Id/n*"/>
                                             <ComboBoxItem Content="vlastní hodnota"/>
                                         </ComboBox>
-                                        <TextBox Name="idNTextBox" MinWidth="28" MaxWidth="50" VerticalAlignment="Center" />
+                                        <TextBox Name="idNTextBox" 
+                                                 Text="{Binding Path=HridelPlusHodnota}" 
+                                                 TextChanged="idNTextBox_TextChanged" 
+                                                 IsEnabled="{Binding Path=HridelPlusOvlPrvkyEnabled}"
+                                                 MinWidth="28" MaxWidth="50" VerticalAlignment="Center" />
                                     </StackPanel>
-                                    <TextBlock Text="(Id= ...... kg.m&#x00B2;)" Name="idNHodnotaTextBlock" VerticalAlignment="Center" Margin="65, 0, 0, 0"/>
+                                    <TextBlock Text="(Id&#x1D62; =  . . .  kg.m&#x00B2;)" Name="idNHodnotaTextBlock" 
+                                               IsEnabled="{Binding Path=HridelPlusOvlPrvkyEnabled}"
+                                               VerticalAlignment="Center" Margin="65, 0, 0, 0">
+                                        <TextBlock.Style>
+                                            <Style TargetType="{x:Type TextBlock}">
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter Property="Foreground" Value="{StaticResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                 </StackPanel>
                             </Grid>
                         </Border>
@@ -177,7 +206,7 @@
                         <DataGrid ItemsSource="{Binding Path=PrvkyHrideleTab}" 
                                   AutoGenerateColumns="False" 
                                   SelectionMode="Single"
-                                  SelectedItem="{Binding Path=OznacenyRadek}"
+                                  SelectedItem="{Binding Path=OznacenyRadek, Mode=TwoWay}"
                                   SelectionChanged="DataGrid_SelectionChanged" 
                                   CanUserReorderColumns="False"
                                   CanUserSortColumns="False"

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MathNet.Numerics;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.Data.Text;
+using System.Diagnostics;
 
 namespace Kritik
 {
@@ -82,7 +83,7 @@ namespace Kritik
                     col2 = 4;
                     break;
                 default:
-                    Console.WriteLine("Špatně zadaná okrajová podmínka ({0})", BCleft);
+                    Debug.WriteLine("Špatně zadaná okrajová podmínka ({0})", BCleft);
                     break;
             }
 
@@ -101,7 +102,7 @@ namespace Kritik
                     row2 = 2;
                     break;
                 default:
-                    Console.WriteLine("Špatně zadaná okrajová podmínka ({0})", BCright);
+                    Debug.WriteLine("Špatně zadaná okrajová podmínka ({0})", BCright);
                     break;
             }
 
