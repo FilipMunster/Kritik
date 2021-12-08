@@ -28,6 +28,8 @@ namespace Kritik
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        //public static MainWindow AppWindow; - díky tomuto můžu z ostatních tříd přistupovat do MainWindow (vlastnosti, metody, prvky okna)
+
         /// <summary>
         /// Globální instance třídy Hridel
         /// </summary>
@@ -107,10 +109,14 @@ namespace Kritik
             }
         }
 
-        private void vypocetKritOtButton_Click(object sender, RoutedEventArgs e)
+        private async void vypocetKritOtButton_Click(object sender, RoutedEventArgs e)
         {
-            hridel.VytvorPrvky();
-            (hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
+            hridel.KritOt = new double[] { -1 };
+            
+            await Task.Run(() => {
+                hridel.VytvorPrvky();
+                (hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
+            });
         }
 
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -190,8 +196,12 @@ namespace Kritik
             int id;
             if (((ComboBox)sender).HasItems)
             {
-                id = (int)((ComboBox)sender).SelectedValue;
-                TabulkaDataGrid.SelectedItem = hridel.PrvkyHrideleTab[id - 1];
+                if (((ComboBox)sender).SelectedValue != null)
+                {
+                    id = (int)((ComboBox)sender).SelectedValue;
+                    TabulkaDataGrid.SelectedItem = hridel.PrvkyHrideleTab[id - 1];
+                }
+
                 TabulkaDataGrid.Focus();
                 return;
             }
@@ -246,5 +256,19 @@ namespace Kritik
         {
             HridelPlus_MenuChanged();
         }
+        void DataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
+        {
+            e.Row.Header = (e.Row.GetIndex() + 1).ToString();
+        }
+
+        private void TabulkaDataGrid_AddingNewItem(object sender, AddingNewItemEventArgs e)
+        {
+            e.NewItem = new Hridel.PrvekTab
+            {
+                Typ = Hridel.beamKeyword
+            };
+            TabulkaDataGrid.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
+        }
+
     }
 }

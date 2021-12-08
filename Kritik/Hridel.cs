@@ -327,7 +327,11 @@ namespace Kritik
         {
             get
             {
-                if ((KritOt != null) && (KritOt.Length>0))
+                if ((KritOt != null) && (KritOt[0] == -1))
+                {
+                    return "Probíhá výpočet...";
+                }
+                else if ((KritOt != null) && (KritOt.Length>0))
                 {
                     string kOText = "";
                     int i = 1;
@@ -345,7 +349,7 @@ namespace Kritik
         {
             get
             {
-                if ((KritOt != null) && (KritOt.Length > 0))
+                if ((KritOt != null) && (KritOt.Length > 0) && (KritOt[0] != -1))
                 {
                     string kOText = "";
                     if (OtackyProvozni > 0)
@@ -554,7 +558,13 @@ namespace Kritik
             /// <summary>
             /// Text typu prvku tak, jak je zobrazen v tabulce
             /// </summary>
-            public string TypZobrazeny { get { if (Typ != null) { return TypDict[Typ]; } else { return String.Empty; } } set { Typ = TypDict[value]; } }
+            public string TypZobrazeny { 
+                get { if (Typ != null) { 
+                        MainWindow.hridel.NotifyPropertyChanged("HridelPlusOvlPrvkyEnabled");
+                        MainWindow.hridel.NotifyPropertyChanged("IndexyHrideliPlus");
+                        MainWindow.hridel.NotifyPropertyChanged("HridelPlusSelectedValue");
+                        return TypDict[Typ]; } else { return String.Empty; } } 
+                set { Typ = TypDict[value]; } }
             /// <summary>
             /// Zda je editovatelná buňka na základě typu prvku
             /// </summary>
@@ -564,7 +574,7 @@ namespace Kritik
             public bool IsEditableM { get { return (Typ == diskKeyword) || (Typ == beamPlusKeyword); } }
             public bool IsEditableIo { get { return (Typ == diskKeyword) || (Typ == beamPlusKeyword); } }
             public bool IsEditableId { get { return (Typ == diskKeyword) || (Typ == beamPlusKeyword); } }
-            public bool IsEditableK { get { return Typ == springKeyword; } }
+            public bool IsEditableK { get { return Typ == springKeyword || (Typ == beamPlusKeyword); } }
             public bool IsEditableCm { get { return (Typ == magnetKeyword) || (Typ == beamPlusKeyword); } }
             /// <summary>
             /// Pole IsEditable v pořadí, jako jsou sloupce v tabulce
@@ -813,23 +823,76 @@ namespace Kritik
 
             foreach (PrvekTab p in PrvkyHrideleTab)
             {
-                prvkyHridele.Add(new Prvek() { 
-                    L = p.L / 1000.0,
-                    De = p.De / 1000.0,
-                    Di = p.Di / 1000.0,
-                    M = p.M,
-                    Io = p.Io,
-                    Id = p.Id,
-                    K = p.K,
-                    Cm = p.Cm,
-                    Rpm = 0,
-                    Gyros = Gyros,
-                    Rho = Rho,
-                    E = ModulPruznosti * Math.Pow(10, radJednotkyModuluPruznosti),
-                    Typ = p.Typ
-                });
+                if (p.Typ == beamPlusKeyword)
+                {
+                    double li = p.L / (p.Deleni + 1);
+                    double mi = p.M / p.Deleni;
+                    double ioi = p.Io / p.Deleni;
+                    double idi = p.IdN == 0 ? p.Id / p.Deleni * p.IdNValue : p.IdNValue;
+                    double ki = p.K / p.Deleni;
+                    double cmi = p.Cm / p.Deleni;
 
-                // JEŠTĚ DODĚLAT ROZDĚLOVÁNÍ PRVKU HRIDEL+ !!!
+                    string[] typy = { beamKeyword, diskKeyword, springKeyword, magnetKeyword };
+
+                    for (int i = 0; i < p.Deleni; i++)
+                    {
+                        foreach (string typ in typy)
+                        {
+                            prvkyHridele.Add(new Prvek()
+                            {
+                                L = li / 1000.0,
+                                De = p.De / 1000.0,
+                                Di = p.Di / 1000.0,
+                                M = mi,
+                                Io = ioi,
+                                Id = idi,
+                                K = ki,
+                                Cm = cmi,
+                                Rpm = 0,
+                                Gyros = Gyros,
+                                Rho = Rho,
+                                E = ModulPruznosti * Math.Pow(10, radJednotkyModuluPruznosti),
+                                Typ = typ
+                            });
+                        }
+                    }
+
+                    prvkyHridele.Add(new Prvek()
+                    {
+                        L = li / 1000.0,
+                        De = p.De / 1000.0,
+                        Di = p.Di / 1000.0,
+                        M = mi,
+                        Io = ioi,
+                        Id = idi,
+                        K = ki,
+                        Cm = cmi,
+                        Rpm = 0,
+                        Gyros = Gyros,
+                        Rho = Rho,
+                        E = ModulPruznosti * Math.Pow(10, radJednotkyModuluPruznosti),
+                        Typ = beamKeyword
+                    });
+
+                }
+                else
+                {
+                    prvkyHridele.Add(new Prvek() { 
+                        L = p.L / 1000.0,
+                        De = p.De / 1000.0,
+                        Di = p.Di / 1000.0,
+                        M = p.M,
+                        Io = p.Io,
+                        Id = p.Id,
+                        K = p.K,
+                        Cm = p.Cm,
+                        Rpm = 0,
+                        Gyros = Gyros,
+                        Rho = Rho,
+                        E = ModulPruznosti * Math.Pow(10, radJednotkyModuluPruznosti),
+                        Typ = p.Typ
+                    });
+                }
             }
             PrvkyHridele = prvkyHridele;
         }
