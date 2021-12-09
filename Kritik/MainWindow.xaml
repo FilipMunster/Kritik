@@ -203,222 +203,265 @@
                     </Grid>
 
                     <Grid Grid.Row="0" Grid.Column="1" Margin="0, 10, 0, 10">
-                        <DataGrid ItemsSource="{Binding Path=PrvkyHrideleTab}" 
-                                  AutoGenerateColumns="False" 
-                                  SelectionMode="Single"
-                                  SelectedItem="{Binding Path=OznacenyRadek, Mode=TwoWay}"
-                                  SelectionChanged="DataGrid_SelectionChanged" 
-                                  CanUserReorderColumns="False"
-                                  CanUserSortColumns="False"
-                                  CanUserResizeRows="False"
-                                  LoadingRow="DataGrid_LoadingRow"
-                                  AddingNewItem="TabulkaDataGrid_AddingNewItem"
-                                  Name="TabulkaDataGrid" Margin="0,-2,0,2" CanUserResizeColumns="False" SelectionUnit="FullRow">
-                            <DataGrid.ColumnHeaderStyle>
-                                <Style TargetType="DataGridColumnHeader">
-                                    <Setter Property="ContentTemplate">
-                                        <Setter.Value>
-                                            <DataTemplate>
-                                                <TextBlock TextWrapping="Wrap" Text="{Binding}"></TextBlock>
-                                            </DataTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                    <Setter Property="MaxHeight" Value="80"/>
-                                </Style>
-                            </DataGrid.ColumnHeaderStyle>
-                            <DataGrid.AlternatingRowBackground>
-                                <SolidColorBrush Color="#FFF4F4F4"/>
-                            </DataGrid.AlternatingRowBackground>
-                            <DataGrid.Columns>
-                                <DataGridComboBoxColumn Header="Typ prvku"
-                                                        Width="*"
-                                                        ItemsSource="{Binding TypyList}"
-                                                        SelectedItemBinding="{Binding TypZobrazeny, UpdateSourceTrigger=PropertyChanged}"
-                                                        x:Name="SloupecTyp">
-                                    <DataGridComboBoxColumn.CellStyle>
-                                        <Style TargetType="{x:Type DataGridCell}">
-                                            <EventSetter Event="MouseUp" Handler="DataGridCell_PreviewMouseLeftButtonDown" />
-                                            <Style.Triggers>
-                                                <Trigger Property="IsFocused" Value="True">
-                                                    <Setter Property="BorderBrush" Value="GhostWhite"/>
-                                                    <Setter Property="BorderThickness" Value="1.5"/>
-                                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                                                    <Setter Property="Background" Value="SteelBlue"/>
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </DataGridComboBoxColumn.CellStyle>
-                                </DataGridComboBoxColumn>
-                                <DataGridTextColumn Header="Délka úseku&#x0a;L [mm]" Binding="{Binding L}" Width="*">
-                                    <DataGridTextColumn.CellStyle>
-                                        <Style TargetType="{x:Type DataGridCell}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsEditableL}" Value="False">
-                                                    <Setter Property="Foreground" Value="Transparent" />
-                                                    <Setter Property="Background" Value="Transparent" />
-                                                    <Setter Property="IsHitTestVisible" Value="False" />
-                                                    <Setter Property="IsTabStop" Value="False" />
-                                                </DataTrigger>
-                                                <Trigger Property="IsFocused" Value="True">
-                                                    <Setter Property="BorderBrush" Value="GhostWhite"/>
-                                                    <Setter Property="BorderThickness" Value="1.5"/>
-                                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                                                    <Setter Property="Background" Value="SteelBlue"/>
-                                                </Trigger> 
-                                            </Style.Triggers>
-                                            <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
-                                        </Style>
-                                    </DataGridTextColumn.CellStyle>
-                                </DataGridTextColumn>
-                                <DataGridTextColumn Header="Vnější průměr&#x0a;De [mm]" Binding="{Binding De}"  Width="*">
-                                    <DataGridTextColumn.CellStyle>
-                                        <Style TargetType="{x:Type DataGridCell}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsEditableDe}" Value="False">
-                                                    <Setter Property="Foreground" Value="Transparent" />
-                                                    <Setter Property="Background" Value="Transparent" />
-                                                    <Setter Property="IsHitTestVisible" Value="False" />
-                                                    <Setter Property="IsTabStop" Value="False" />
-                                                </DataTrigger>
-                                                <Trigger Property="IsFocused" Value="True">
-                                                    <Setter Property="BorderBrush" Value="GhostWhite"/>
-                                                    <Setter Property="BorderThickness" Value="1.5"/>
-                                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                                                    <Setter Property="Background" Value="SteelBlue"/>
-                                                </Trigger>
-                                            </Style.Triggers>
-                                            <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
-                                        </Style>
-                                    </DataGridTextColumn.CellStyle>
-                                </DataGridTextColumn>
-                                <DataGridTextColumn Header="Vrtání hřídele&#x0a;Di [mm]" Binding="{Binding Di}"  Width="*">
-                                    <DataGridTextColumn.CellStyle>
-                                        <Style TargetType="{x:Type DataGridCell}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsEditableDi}" Value="False">
-                                                    <Setter Property="Foreground" Value="Transparent" />
-                                                    <Setter Property="Background" Value="Transparent" />
-                                                    <Setter Property="IsHitTestVisible" Value="False" />
-                                                    <Setter Property="IsTabStop" Value="False" />
-                                                </DataTrigger>
-                                                <Trigger Property="IsFocused" Value="True">
-                                                    <Setter Property="BorderBrush" Value="GhostWhite"/>
-                                                    <Setter Property="BorderThickness" Value="1.5"/>
-                                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                                                    <Setter Property="Background" Value="SteelBlue"/>
-                                                </Trigger>
-                                            </Style.Triggers>
-                                            <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
-                                        </Style>
-                                    </DataGridTextColumn.CellStyle>
-                                </DataGridTextColumn>
-                                <DataGridTextColumn Header="Hmotnost disku&#x0a;m [kg]" Binding="{Binding M}"  Width="*">
-                                    <DataGridTextColumn.CellStyle>
-                                        <Style TargetType="{x:Type DataGridCell}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsEditableM}" Value="False">
-                                                    <Setter Property="Foreground" Value="Transparent" />
-                                                    <Setter Property="Background" Value="Transparent" />
-                                                    <Setter Property="IsHitTestVisible" Value="False" />
-                                                    <Setter Property="IsTabStop" Value="False" />
-                                                </DataTrigger>
-                                                <Trigger Property="IsFocused" Value="True">
-                                                    <Setter Property="BorderBrush" Value="GhostWhite"/>
-                                                    <Setter Property="BorderThickness" Value="1.5"/>
-                                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                                                    <Setter Property="Background" Value="SteelBlue"/>
-                                                </Trigger>
-                                            </Style.Triggers>
-                                            <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
-                                        </Style>
-                                    </DataGridTextColumn.CellStyle>
-                                </DataGridTextColumn>
-                                <DataGridTextColumn Header="Moment setrvačnosti&#x0a;k ose rotoru&#x0a;Jo [kg.m&#x00B2;]" Binding="{Binding Io}"  Width="*">
-                                    <DataGridTextColumn.CellStyle>
-                                        <Style TargetType="{x:Type DataGridCell}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsEditableIo}" Value="False">
-                                                    <Setter Property="Foreground" Value="Transparent" />
-                                                    <Setter Property="Background" Value="Transparent" />
-                                                    <Setter Property="IsHitTestVisible" Value="False" />
-                                                    <Setter Property="IsTabStop" Value="False" />
-                                                </DataTrigger>
-                                                <Trigger Property="IsFocused" Value="True">
-                                                    <Setter Property="BorderBrush" Value="GhostWhite"/>
-                                                    <Setter Property="BorderThickness" Value="1.5"/>
-                                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                                                    <Setter Property="Background" Value="SteelBlue"/>
-                                                </Trigger>
-                                            </Style.Triggers>
-                                            <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
-                                        </Style>
-                                    </DataGridTextColumn.CellStyle>
-                                </DataGridTextColumn>
-                                <DataGridTextColumn Header="Mom. setrv. kolmo k ose otáčení&#x0a;Jd [kg.m&#x00B2;]" Binding="{Binding Id}"  Width="*">
-                                    <DataGridTextColumn.CellStyle>
-                                        <Style TargetType="{x:Type DataGridCell}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsEditableId}" Value="False">
-                                                    <Setter Property="Foreground" Value="Transparent" />
-                                                    <Setter Property="Background" Value="Transparent" />
-                                                    <Setter Property="IsHitTestVisible" Value="False" />
-                                                    <Setter Property="IsTabStop" Value="False" />
-                                                </DataTrigger>
-                                                <Trigger Property="IsFocused" Value="True">
-                                                    <Setter Property="BorderBrush" Value="GhostWhite"/>
-                                                    <Setter Property="BorderThickness" Value="1.5"/>
-                                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                                                    <Setter Property="Background" Value="SteelBlue"/>
-                                                </Trigger>
-                                            </Style.Triggers>
-                                            <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
-                                        </Style>
-                                    </DataGridTextColumn.CellStyle>
-                                </DataGridTextColumn>
-                                <DataGridTextColumn Header="Radiální tuhost podpory&#x0a;k [N/m]" Binding="{Binding K}"  Width="*">
-                                    <DataGridTextColumn.CellStyle>
-                                        <Style TargetType="{x:Type DataGridCell}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsEditableK}" Value="False">
-                                                    <Setter Property="Foreground" Value="Transparent" />
-                                                    <Setter Property="Background" Value="Transparent" />
-                                                    <Setter Property="IsHitTestVisible" Value="False" />
-                                                    <Setter Property="IsTabStop" Value="False" />
-                                                </DataTrigger>
-                                                <Trigger Property="IsFocused" Value="True">
-                                                    <Setter Property="BorderBrush" Value="GhostWhite"/>
-                                                    <Setter Property="BorderThickness" Value="1.5"/>
-                                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                                                    <Setter Property="Background" Value="SteelBlue"/>
-                                                </Trigger>
-                                            </Style.Triggers>
-                                            <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
-                                        </Style>
-                                    </DataGridTextColumn.CellStyle>
-                                </DataGridTextColumn>
-                                <DataGridTextColumn Header="Magneticko elastická konstanta&#x0a;Cm [N/m]" Binding="{Binding Cm}"  Width="*">
-                                    <DataGridTextColumn.CellStyle>
-                                        <Style TargetType="{x:Type DataGridCell}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsEditableCm}" Value="False">
-                                                    <Setter Property="Foreground" Value="Transparent" />
-                                                    <Setter Property="Background" Value="Transparent" />
-                                                    <Setter Property="IsHitTestVisible" Value="False" />
-                                                    <Setter Property="IsTabStop" Value="False" />
-                                                </DataTrigger>
-                                                <Trigger Property="IsFocused" Value="True">
-                                                    <Setter Property="BorderBrush" Value="GhostWhite"/>
-                                                    <Setter Property="BorderThickness" Value="1.5"/>
-                                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                                                    <Setter Property="Background" Value="SteelBlue"/>
-                                                </Trigger>
-                                            </Style.Triggers>
-                                            <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
-                                        </Style>
-                                    </DataGridTextColumn.CellStyle>
-                                </DataGridTextColumn>
-                            </DataGrid.Columns>
-                        </DataGrid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="25"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                                <Button Name="addRowBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Přidat prvek" Click="addRowBtn_Click">
+                                    <Image Source="/icons/Add_16x.png" />
+                                </Button>
+                                <Button Name="deleteRowBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Smazat prvek" Click="deleteRowBtn_Click">
+                                    <Image Source="/icons/Remove_16x.png" />
+                                </Button>
+                                <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0, 0, 5, 0" Stroke="Black" />
+                                <Button Name="moveUpBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Posun prvku nahoru" Click="moveUpBtn_Click">
+                                    <Image Source="/icons/Upload_16x.png" />
+                                </Button>
+                                <Button Name="moveDownBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Posun prvku dolů" Click="moveDownBtn_Click">
+                                    <Image Source="/icons/Download_16x.png" />
+                                </Button>
+                                <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0, 0, 5, 0" Stroke="Black" />
+                                <Button Name="mirrorBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Zrcadlit hřídel" Click="mirrorBtn_Click">
+                                    <Image Source="/icons/Mirror.png" />
+                                </Button>
+                                <Button Name="deleteAllBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Smazat vše" Click="deleteAllBtn_Click">
+                                    <Image Source="/icons/DeleteAllRows_16x.png" />
+                                </Button>
+                                <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0, 0, 5, 0" Stroke="Black" />
+                                <Button Name="backBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Zpět" Click="backBtn_Click">
+                                    <Image Source="/icons/StepBackwards_16x.png" />
+                                </Button>
+                                <Button Name="forwardBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Vpřed" Click="forwardBtn_Click">
+                                    <Image Source="/icons/StepForward_16x.png" />
+                                </Button>
+                            </StackPanel>
+                            
+                            
+                            <DataGrid ItemsSource="{Binding Path=PrvkyHrideleTab}" 
+                                      AutoGenerateColumns="False" 
+                                      SelectionMode="Single"
+                                      SelectedItem="{Binding Path=OznacenyRadek, Mode=TwoWay}"
+                                      SelectionChanged="DataGrid_SelectionChanged" 
+                                      CanUserReorderColumns="False"
+                                      CanUserSortColumns="False"
+                                      CanUserResizeRows="False"
+                                      LoadingRow="DataGrid_LoadingRow"
+                                      AddingNewItem="TabulkaDataGrid_AddingNewItem"
+                                      RowEditEnding="TabulkaDataGrid_RowEditEnding"
+                                      Grid.Row="1"
+                                      Name="TabulkaDataGrid" Margin="0,-2,0,2" CanUserResizeColumns="False" SelectionUnit="FullRow">
+                                <DataGrid.ColumnHeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="ContentTemplate">
+                                            <Setter.Value>
+                                                <DataTemplate>
+                                                    <TextBlock TextWrapping="Wrap" Text="{Binding}"></TextBlock>
+                                                </DataTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="MaxHeight" Value="80"/>
+                                    </Style>
+                                </DataGrid.ColumnHeaderStyle>
+                                <DataGrid.AlternatingRowBackground>
+                                    <SolidColorBrush Color="#FFF4F4F4"/>
+                                </DataGrid.AlternatingRowBackground>
+                                <DataGrid.Columns>
+                                    <DataGridComboBoxColumn Header="Typ prvku"
+                                                            Width="*"
+                                                            ItemsSource="{Binding TypyList, UpdateSourceTrigger=PropertyChanged}"
+                                                            SelectedItemBinding="{Binding TypZobrazeny, UpdateSourceTrigger=PropertyChanged}"
+                                                            x:Name="SloupecTyp">
+                                        <DataGridComboBoxColumn.CellStyle>
+                                            <Style TargetType="{x:Type DataGridCell}">
+                                                <EventSetter Event="MouseUp" Handler="DataGridCell_PreviewMouseLeftButtonDown" />
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsFocused" Value="True">
+                                                        <Setter Property="BorderBrush" Value="GhostWhite"/>
+                                                        <Setter Property="BorderThickness" Value="1.5"/>
+                                                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                                        <Setter Property="Background" Value="SteelBlue"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </DataGridComboBoxColumn.CellStyle>
+                                    </DataGridComboBoxColumn>
+                                    <DataGridTextColumn Header="Délka úseku&#x0a;L [mm]" Binding="{Binding L, UpdateSourceTrigger=PropertyChanged}" Width="*">
+                                        <DataGridTextColumn.CellStyle>
+                                            <Style TargetType="{x:Type DataGridCell}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsEditableL}" Value="False">
+                                                        <Setter Property="Foreground" Value="Transparent" />
+                                                        <Setter Property="Background" Value="Transparent" />
+                                                        <Setter Property="IsHitTestVisible" Value="False" />
+                                                        <Setter Property="IsTabStop" Value="False" />
+                                                    </DataTrigger>
+                                                    <Trigger Property="IsFocused" Value="True">
+                                                        <Setter Property="BorderBrush" Value="GhostWhite"/>
+                                                        <Setter Property="BorderThickness" Value="1.5"/>
+                                                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                                        <Setter Property="Background" Value="SteelBlue"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                                <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
+                                            </Style>
+                                        </DataGridTextColumn.CellStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="Vnější průměr&#x0a;De [mm]" Binding="{Binding De, UpdateSourceTrigger=PropertyChanged}"  Width="*">
+                                        <DataGridTextColumn.CellStyle>
+                                            <Style TargetType="{x:Type DataGridCell}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsEditableDe}" Value="False">
+                                                        <Setter Property="Foreground" Value="Transparent" />
+                                                        <Setter Property="Background" Value="Transparent" />
+                                                        <Setter Property="IsHitTestVisible" Value="False" />
+                                                        <Setter Property="IsTabStop" Value="False" />
+                                                    </DataTrigger>
+                                                    <Trigger Property="IsFocused" Value="True">
+                                                        <Setter Property="BorderBrush" Value="GhostWhite"/>
+                                                        <Setter Property="BorderThickness" Value="1.5"/>
+                                                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                                        <Setter Property="Background" Value="SteelBlue"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                                <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
+                                            </Style>
+                                        </DataGridTextColumn.CellStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="Vrtání hřídele&#x0a;Di [mm]" Binding="{Binding Di, UpdateSourceTrigger=PropertyChanged}"  Width="*">
+                                        <DataGridTextColumn.CellStyle>
+                                            <Style TargetType="{x:Type DataGridCell}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsEditableDi}" Value="False">
+                                                        <Setter Property="Foreground" Value="Transparent" />
+                                                        <Setter Property="Background" Value="Transparent" />
+                                                        <Setter Property="IsHitTestVisible" Value="False" />
+                                                        <Setter Property="IsTabStop" Value="False" />
+                                                    </DataTrigger>
+                                                    <Trigger Property="IsFocused" Value="True">
+                                                        <Setter Property="BorderBrush" Value="GhostWhite"/>
+                                                        <Setter Property="BorderThickness" Value="1.5"/>
+                                                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                                        <Setter Property="Background" Value="SteelBlue"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                                <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
+                                            </Style>
+                                        </DataGridTextColumn.CellStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="Hmotnost disku&#x0a;m [kg]" Binding="{Binding M, UpdateSourceTrigger=PropertyChanged}"  Width="*">
+                                        <DataGridTextColumn.CellStyle>
+                                            <Style TargetType="{x:Type DataGridCell}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsEditableM}" Value="False">
+                                                        <Setter Property="Foreground" Value="Transparent" />
+                                                        <Setter Property="Background" Value="Transparent" />
+                                                        <Setter Property="IsHitTestVisible" Value="False" />
+                                                        <Setter Property="IsTabStop" Value="False" />
+                                                    </DataTrigger>
+                                                    <Trigger Property="IsFocused" Value="True">
+                                                        <Setter Property="BorderBrush" Value="GhostWhite"/>
+                                                        <Setter Property="BorderThickness" Value="1.5"/>
+                                                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                                        <Setter Property="Background" Value="SteelBlue"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                                <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
+                                            </Style>
+                                        </DataGridTextColumn.CellStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="Moment setrvačnosti&#x0a;k ose rotoru&#x0a;Jo [kg.m&#x00B2;]" Binding="{Binding Io, UpdateSourceTrigger=PropertyChanged}"  Width="*">
+                                        <DataGridTextColumn.CellStyle>
+                                            <Style TargetType="{x:Type DataGridCell}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsEditableIo}" Value="False">
+                                                        <Setter Property="Foreground" Value="Transparent" />
+                                                        <Setter Property="Background" Value="Transparent" />
+                                                        <Setter Property="IsHitTestVisible" Value="False" />
+                                                        <Setter Property="IsTabStop" Value="False" />
+                                                    </DataTrigger>
+                                                    <Trigger Property="IsFocused" Value="True">
+                                                        <Setter Property="BorderBrush" Value="GhostWhite"/>
+                                                        <Setter Property="BorderThickness" Value="1.5"/>
+                                                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                                        <Setter Property="Background" Value="SteelBlue"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                                <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
+                                            </Style>
+                                        </DataGridTextColumn.CellStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="Mom. setrv. kolmo k ose otáčení&#x0a;Jd [kg.m&#x00B2;]" Binding="{Binding Id, UpdateSourceTrigger=PropertyChanged}"  Width="*">
+                                        <DataGridTextColumn.CellStyle>
+                                            <Style TargetType="{x:Type DataGridCell}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsEditableId}" Value="False">
+                                                        <Setter Property="Foreground" Value="Transparent" />
+                                                        <Setter Property="Background" Value="Transparent" />
+                                                        <Setter Property="IsHitTestVisible" Value="False" />
+                                                        <Setter Property="IsTabStop" Value="False" />
+                                                    </DataTrigger>
+                                                    <Trigger Property="IsFocused" Value="True">
+                                                        <Setter Property="BorderBrush" Value="GhostWhite"/>
+                                                        <Setter Property="BorderThickness" Value="1.5"/>
+                                                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                                        <Setter Property="Background" Value="SteelBlue"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                                <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
+                                            </Style>
+                                        </DataGridTextColumn.CellStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="Radiální tuhost podpory&#x0a;k [N/m]" Binding="{Binding K, UpdateSourceTrigger=PropertyChanged}"  Width="*">
+                                        <DataGridTextColumn.CellStyle>
+                                            <Style TargetType="{x:Type DataGridCell}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsEditableK}" Value="False">
+                                                        <Setter Property="Foreground" Value="Transparent" />
+                                                        <Setter Property="Background" Value="Transparent" />
+                                                        <Setter Property="IsHitTestVisible" Value="False" />
+                                                        <Setter Property="IsTabStop" Value="False" />
+                                                    </DataTrigger>
+                                                    <Trigger Property="IsFocused" Value="True">
+                                                        <Setter Property="BorderBrush" Value="GhostWhite"/>
+                                                        <Setter Property="BorderThickness" Value="1.5"/>
+                                                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                                        <Setter Property="Background" Value="SteelBlue"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                                <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
+                                            </Style>
+                                        </DataGridTextColumn.CellStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="Magneticko elastická konstanta&#x0a;Cm [N/m]" Binding="{Binding Cm, UpdateSourceTrigger=PropertyChanged}"  Width="*">
+                                        <DataGridTextColumn.CellStyle>
+                                            <Style TargetType="{x:Type DataGridCell}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsEditableCm}" Value="False">
+                                                        <Setter Property="Foreground" Value="Transparent" />
+                                                        <Setter Property="Background" Value="Transparent" />
+                                                        <Setter Property="IsHitTestVisible" Value="False" />
+                                                        <Setter Property="IsTabStop" Value="False" />
+                                                    </DataTrigger>
+                                                    <Trigger Property="IsFocused" Value="True">
+                                                        <Setter Property="BorderBrush" Value="GhostWhite"/>
+                                                        <Setter Property="BorderThickness" Value="1.5"/>
+                                                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                                        <Setter Property="Background" Value="SteelBlue"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                                <EventSetter Event="PreviewGotKeyboardFocus" Handler="DataGridCell_PreviewGotKeyboardFocus"/>
+                                            </Style>
+                                        </DataGridTextColumn.CellStyle>
+                                    </DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
                     </Grid>
 
                     <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Height="Auto">

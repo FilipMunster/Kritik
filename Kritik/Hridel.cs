@@ -134,7 +134,7 @@ namespace Kritik
                 }
                 else { return string.Empty; }                
             } 
-            set { OznacenyRadek.Deleni = Convert.ToDouble(value);} }
+            set { OznacenyRadek.Deleni = Convert.ToDouble(value); MainWindow.Historie.Add(); } }
 
         /// <summary>
         /// Seznam indexů prvků typu Hřídel+
@@ -166,7 +166,7 @@ namespace Kritik
             }
             set
             {
-                if (OznacenyRadek != null) { OznacenyRadek.IdN = value; }
+                if (OznacenyRadek != null) { OznacenyRadek.IdN = value; MainWindow.Historie.Add(); }
             }
         }
         /// <summary>
@@ -195,7 +195,7 @@ namespace Kritik
             }
             set
             {
-                if (OznacenyRadek != null) { OznacenyRadek.IdNValue = Convert.ToDouble(value); }
+                if (OznacenyRadek != null) { OznacenyRadek.IdNValue = Convert.ToDouble(value); MainWindow.Historie.Add(); }
             }
         }
         public bool HridelPlusOvlPrvkyEnabled 
@@ -327,7 +327,7 @@ namespace Kritik
         {
             get
             {
-                if ((KritOt != null) && (KritOt[0] == -1))
+                if ((KritOt != null) && (KritOt.Length > 0) && (KritOt[0] == -1))
                 {
                     return "Probíhá výpočet...";
                 }
@@ -503,7 +503,7 @@ namespace Kritik
                             break;
                         }
                     default:
-                        Debug.WriteLine("Špatně zadaný typ prvku ({0})", typ);
+                        //Debug.WriteLine("Špatně zadaný typ prvku ({0})", typ);
                         break;
                 }
             }
@@ -550,6 +550,9 @@ namespace Kritik
             private double cm;
             public double Deleni { get { return deleni; } set { deleni = value; } }
             private double deleni;
+            /// <summary>
+            /// Způsob dělení Hřídele+: IdN=0 -> Idi=Id/n*IdNValue, IdN=0 -> Idi=IdNValue
+            /// </summary>
             public int IdN { get { return idN; } set { idN = value; } }
             private int idN;
             public double IdNValue { get { return idNValue; } set { idNValue = value; } }

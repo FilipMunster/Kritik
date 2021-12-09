@@ -20,6 +20,7 @@ using System.Timers;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
+using System.Collections.ObjectModel;
 
 namespace Kritik
 {
@@ -33,7 +34,7 @@ namespace Kritik
         /// <summary>
         /// Globální instance třídy Hridel
         /// </summary>
-        public static readonly Hridel hridel = new Hridel();
+        public static readonly Hridel hridel = new();
 
         private bool novySoubor; // slouží k rozpoznávání, jestli tlačítko uložit má soubor uložit, nebo uložit jako. true -> uložit jako
         public MainWindow()
@@ -47,13 +48,15 @@ namespace Kritik
             hridel.nazevSouboru = "Nový výpočet.xlsx";
             novySoubor = true;
 
+
             //////////////////
-            string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_testPlus.xlsx";
+            string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test1_pulka.xlsx";
             hridel.HridelNova();
             hridel.nazevSouboru = vstupniSoubor;
             hridel.NacistData(hridel.nazevSouboru);
             hridel.AnyPropertyChanged = false;
             novySoubor = false;
+            Historie.New();
             //////////////////
 
         }
@@ -64,6 +67,7 @@ namespace Kritik
             hridel.nazevSouboru = "Nový výpočet.xlsx";
             hridel.AnyPropertyChanged = false;
             novySoubor = true;
+            Historie.New();
             return;
         }
 
@@ -78,6 +82,7 @@ namespace Kritik
                 hridel.NacistData(hridel.nazevSouboru);
                 hridel.AnyPropertyChanged = false;
                 novySoubor = false;
+                Historie.New();
             }
             return;
         }
@@ -91,7 +96,7 @@ namespace Kritik
                 return;
             }
             else { saveAsFileButton_Click(sender, e); }
-            
+
         }
 
         private void saveAsFileButton_Click(object sender, RoutedEventArgs e)
@@ -112,7 +117,7 @@ namespace Kritik
         private async void vypocetKritOtButton_Click(object sender, RoutedEventArgs e)
         {
             hridel.KritOt = new double[] { -1 };
-            
+
             await Task.Run(() => {
                 hridel.VytvorPrvky();
                 (hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
@@ -231,9 +236,8 @@ namespace Kritik
                         break;
                 }
                 idNHodnotaTextBlock.Text = "(Idᵢ = " + val.ToString("0.###") + " kg.m²)";
-                Debug.WriteLine(val.ToString());
                 hridel.AnyPropertyChanged = true;
-            }  
+            }
             else { idNHodnotaTextBlock.Text = "(Idᵢ =  . . .  kg.m²)"; }
         }
 
@@ -268,7 +272,170 @@ namespace Kritik
                 Typ = Hridel.beamKeyword
             };
             TabulkaDataGrid.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
+            Historie.Add();
         }
+
+        private void addRowBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (hridel.OznacenyRadek != null)
+            {
+                int indx = hridel.PrvkyHrideleTab.IndexOf(hridel.OznacenyRadek);
+                hridel.PrvkyHrideleTab.Insert(indx, new Hridel.PrvekTab() { Typ = Hridel.beamKeyword });
+                TabulkaDataGrid.Focus();
+                TabulkaDataGrid.SelectedIndex = indx;
+                TabulkaDataGrid.Items.Refresh();
+            }
+            Historie.Add();
+        }
+
+        private void deleteRowBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (hridel.OznacenyRadek != null)
+            {
+                int indx = hridel.PrvkyHrideleTab.IndexOf(hridel.OznacenyRadek);
+                hridel.PrvkyHrideleTab.RemoveAt(indx);
+                TabulkaDataGrid.Focus();
+                if (hridel.PrvkyHrideleTab.Count() == indx) { indx--; }
+                TabulkaDataGrid.SelectedIndex = indx;
+                TabulkaDataGrid.Items.Refresh();
+            }
+            Historie.Add();
+        }
+
+        private void moveUpBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (hridel.OznacenyRadek != null)
+            {
+                int indx = hridel.PrvkyHrideleTab.IndexOf(hridel.OznacenyRadek);
+                if (indx > 0) { hridel.PrvkyHrideleTab.Move(indx, indx - 1); }
+                TabulkaDataGrid.Focus();
+                TabulkaDataGrid.Items.Refresh();
+            }
+            Historie.Add();
+        }
+
+        private void moveDownBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (hridel.OznacenyRadek != null)
+            {
+                int indx = hridel.PrvkyHrideleTab.IndexOf(hridel.OznacenyRadek);
+                int tabLen = hridel.PrvkyHrideleTab.Count();
+                if (indx < (tabLen - 1)) { hridel.PrvkyHrideleTab.Move(indx, indx + 1); }
+                TabulkaDataGrid.Focus();
+                TabulkaDataGrid.Items.Refresh();
+            }
+            Historie.Add();
+        }
+
+        private void mirrorBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ObservableCollection<Hridel.PrvekTab> p = hridel.PrvkyHrideleTab;
+            for (int i = p.Count() - 1; i >= 0; i--)
+            {
+                p.Add(new Hridel.PrvekTab
+                {
+                    Typ = p[i].Typ,
+                    L = p[i].L,
+                    De = p[i].De,
+                    Di = p[i].Di,
+                    M = p[i].M,
+                    Io = p[i].Io,
+                    Id = p[i].Id,
+                    K = p[i].K,
+                    Cm = p[i].Cm,
+                    Deleni = p[i].Deleni,
+                    IdN = p[i].IdN,
+                    IdNValue = p[i].IdNValue
+                });
+            }
+            hridel.PrvkyHrideleTab = p;
+            Historie.Add();
+        }
+
+        private void TabulkaDataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+        {
+            Historie.Add();
+        }
+
+        private void backBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Historie.Back();
+            TabulkaDataGrid.Focus();
+        }
+        private void forwardBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Historie.Forward();
+            TabulkaDataGrid.Focus();
+        }
+
+        private void deleteAllBtn_Click(object sender, RoutedEventArgs e)
+        {
+            hridel.PrvkyHrideleTab.Clear();
+            Historie.Add();
+            TabulkaDataGrid.Focus();
+        }
+        public static class Historie
+        {
+            private static List<ObservableCollection<Hridel.PrvekTab>> h = new();
+            private static int hIndex;
+            private const int delkaHistorie = 10;
+            public static void New()
+            {
+                h.Clear();
+                h.Add(new ObservableCollection<Hridel.PrvekTab>(KopieHridele()));
+                hIndex = 0;
+            }
+            public static void Add()
+            {
+                if (hIndex < (h.Count -1)) { h.RemoveRange(hIndex + 1, h.Count - hIndex - 1); }
+                if (h.Count == delkaHistorie) { h.RemoveAt(0); }
+
+                h.Add(new ObservableCollection<Hridel.PrvekTab>(KopieHridele()));
+                hIndex = h.Count() - 1;
+            }
+            public static void Back()
+            {
+                var hh = h;
+                if (hIndex > 0)
+                {
+                    hIndex--;
+                    hridel.PrvkyHrideleTab = new ObservableCollection<Hridel.PrvekTab>(h[hIndex]);
+                }
+            }
+            public static void Forward()
+            {
+                if (hIndex < (h.Count - 1))
+                {
+                    hIndex++;
+                    hridel.PrvkyHrideleTab = new ObservableCollection<Hridel.PrvekTab>(h[hIndex]);
+                }
+            }
+            private static ObservableCollection<Hridel.PrvekTab> KopieHridele()
+            {
+                ObservableCollection<Hridel.PrvekTab> p = hridel.PrvkyHrideleTab;
+                ObservableCollection<Hridel.PrvekTab> pH = new();
+                for (int i = 0; i < p.Count(); i++)
+                {
+                    pH.Add(new Hridel.PrvekTab
+                    {
+                        Typ = p[i].Typ,
+                        L = p[i].L,
+                        De = p[i].De,
+                        Di = p[i].Di,
+                        M = p[i].M,
+                        Io = p[i].Io,
+                        Id = p[i].Id,
+                        K = p[i].K,
+                        Cm = p[i].Cm,
+                        Deleni = p[i].Deleni,
+                        IdN = p[i].IdN,
+                        IdNValue = p[i].IdNValue
+                    });
+                }
+                return pH;
+            }
+        }
+
 
     }
 }
