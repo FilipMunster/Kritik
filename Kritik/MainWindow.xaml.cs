@@ -21,6 +21,8 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
+using OxyPlot;
+using OxyPlot.Series;
 
 namespace Kritik
 {
@@ -48,9 +50,8 @@ namespace Kritik
             hridel.nazevSouboru = "Nový výpočet.xlsx";
             novySoubor = true;
 
-
             //////////////////
-            string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test1_pulka.xlsx";
+            string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test1.xlsx";
             hridel.HridelNova();
             hridel.nazevSouboru = vstupniSoubor;
             hridel.NacistData(hridel.nazevSouboru);
@@ -59,6 +60,25 @@ namespace Kritik
             Historie.New();
             backBtn.IsEnabled = Historie.BackBtnEnabled;
             forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
+            hridel.VytvorPrvky();
+            (hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
+
+            PlotModel plt = Plot.NewModel();
+            plt.Series.Add(Plot.NewLine(hridel.PrubehRpm, hridel.PrubehDeterminantu));
+            hlavniPlot.Model = plt;
+
+            PlotModel plt1 = Plot.NewModel();
+            plt1.Series.Add(Plot.NewLine(hridel.PrubehRpm, hridel.PrubehDeterminantu, OxyColors.Blue));
+            plotView1.Model = plt1;
+            PlotModel plt2 = Plot.NewModel();
+            plt2.Series.Add(Plot.NewLine(hridel.PrubehRpm, hridel.PrubehDeterminantu, OxyColors.Red));
+            plotView2.Model = plt2;
+            PlotModel plt3 = Plot.NewModel();
+            plt3.Series.Add(Plot.NewLine(hridel.PrubehRpm, hridel.PrubehDeterminantu, OxyColors.Tan));
+            plotView3.Model = plt3;
+            PlotModel plt4 = Plot.NewModel();
+            plt4.Series.Add(Plot.NewLine(hridel.PrubehRpm, hridel.PrubehDeterminantu, OxyColors.Plum));
+            plotView4.Model = plt4;
             //////////////////
 
         }
@@ -128,11 +148,6 @@ namespace Kritik
                 hridel.VytvorPrvky();
                 (hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
             });
-        }
-
-        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
         }
 
         private void DataGridCell_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -391,69 +406,7 @@ namespace Kritik
             backBtn.IsEnabled = Historie.BackBtnEnabled;
             forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
         }
-        public static class Historie
-        {
-            private static List<ObservableCollection<Hridel.PrvekTab>> h = new();
-            private static int hIndex;
-            private const int delkaHistorie = 33;
-            public static bool BackBtnEnabled { get { return hIndex == 0 ? false : true; } private set { } }
-            public static bool ForwardBtnEnabled { get { return hIndex == (h.Count() - 1) ? false : true; } private set { } }
-            public static void New()
-            {
-                h.Clear();
-                h.Add(new ObservableCollection<Hridel.PrvekTab>(KopieHridele()));
-                hIndex = 0;
-            }
-            public static void Add()
-            {
-                if (hIndex < (h.Count - 1)) { h.RemoveRange(hIndex + 1, h.Count - hIndex - 1); }
-                if (h.Count == delkaHistorie) { h.RemoveAt(0); }
-
-                h.Add(new ObservableCollection<Hridel.PrvekTab>(KopieHridele()));
-                hIndex = h.Count() - 1;
-            }
-            public static void Back()
-            {
-                if (hIndex > 0)
-                {
-                    hIndex--;
-                    hridel.PrvkyHrideleTab = new ObservableCollection<Hridel.PrvekTab>(KopieHridele(h[hIndex]));
-                }
-
-            }
-            public static void Forward()
-            {
-                if (hIndex < (h.Count - 1))
-                {
-                    hIndex++;
-                    hridel.PrvkyHrideleTab = new ObservableCollection<Hridel.PrvekTab>(KopieHridele(h[hIndex]));
-                }
-            }
-            private static ObservableCollection<Hridel.PrvekTab> KopieHridele(ObservableCollection<Hridel.PrvekTab> p = default)
-            {
-                if (p == null) { p = hridel.PrvkyHrideleTab; }
-                ObservableCollection<Hridel.PrvekTab> pH = new();
-                for (int i = 0; i < p.Count(); i++)
-                {
-                    pH.Add(new Hridel.PrvekTab
-                    {
-                        Typ = p[i].Typ,
-                        L = p[i].L,
-                        De = p[i].De,
-                        Di = p[i].Di,
-                        M = p[i].M,
-                        Io = p[i].Io,
-                        Id = p[i].Id,
-                        K = p[i].K,
-                        Cm = p[i].Cm,
-                        Deleni = p[i].Deleni,
-                        IdN = p[i].IdN,
-                        IdNValue = p[i].IdNValue
-                    });
-                }
-                return pH;
-            }
-        }
+        
 
 
     }

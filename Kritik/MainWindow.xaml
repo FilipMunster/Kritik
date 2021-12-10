@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:local="clr-namespace:Kritik"
         xmlns:Data="clr-namespace:System.Data;assembly=System.Data.Common" x:Class="Kritik.MainWindow"
         mc:Ignorable="d"
@@ -13,7 +14,7 @@
         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="SlateGray"/>
     </Window.Resources>
     <Grid Name="MainGrid">
-        <TabControl>
+        <TabControl SelectedIndex="1">
             <TabItem Header="Výpočet" Name="vypocetTabItem">
                 <TabItem.Background>
                     <LinearGradientBrush EndPoint="0,1">
@@ -247,7 +248,6 @@
                                       AutoGenerateColumns="False" 
                                       SelectionMode="Single"
                                       SelectedItem="{Binding Path=OznacenyRadek, Mode=TwoWay}"
-                                      SelectionChanged="DataGrid_SelectionChanged" 
                                       CanUserReorderColumns="False"
                                       CanUserSortColumns="False"
                                       CanUserResizeRows="False"
@@ -517,7 +517,32 @@
 
             </TabItem>
             <TabItem Header="Tvary kmitů" Name="tvaryKmituTabItem">
-                <Grid />
+                <Grid Margin="15">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="160"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="150"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Row="0" Height="146" Margin="7" BorderThickness="1" BorderBrush="Black" CornerRadius="0" VerticalAlignment="Top">
+                        <TextBlock Text="Tady bude nakreslená hřídel" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Border>
+                    <oxy:PlotView x:Name="hlavniPlot" DefaultTrackerTemplate="{x:Null}" Grid.Row="1"/>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>                        
+                        <oxy:PlotView x:Name="plotView1" DefaultTrackerTemplate="{x:Null}" Grid.Column="0"/>
+                        <oxy:PlotView x:Name="plotView2" DefaultTrackerTemplate="{x:Null}" Grid.Column="1"/>
+                        <oxy:PlotView x:Name="plotView3" DefaultTrackerTemplate="{x:Null}" Grid.Column="2"/>
+                        <oxy:PlotView x:Name="plotView4" DefaultTrackerTemplate="{x:Null}" Grid.Column="3"/>
+                    </Grid>                                 
+                </Grid>
             </TabItem>
         </TabControl>
     </Grid>

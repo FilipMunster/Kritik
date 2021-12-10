@@ -14,6 +14,8 @@ using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.Data.Text;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using OxyPlot;
+using OxyPlot.Series;
 
 namespace Kritik
 {
@@ -134,7 +136,7 @@ namespace Kritik
                 }
                 else { return string.Empty; }                
             } 
-            set { OznacenyRadek.Deleni = Convert.ToDouble(value); MainWindow.Historie.Add(); } }
+            set { OznacenyRadek.Deleni = Convert.ToDouble(value); Historie.Add(); } }
 
         /// <summary>
         /// Seznam indexů prvků typu Hřídel+
@@ -166,7 +168,7 @@ namespace Kritik
             }
             set
             {
-                if (OznacenyRadek != null) { OznacenyRadek.IdN = value; MainWindow.Historie.Add(); }
+                if (OznacenyRadek != null) { OznacenyRadek.IdN = value; Historie.Add(); }
             }
         }
         /// <summary>
@@ -195,7 +197,7 @@ namespace Kritik
             }
             set
             {
-                if (OznacenyRadek != null) { OznacenyRadek.IdNValue = Convert.ToDouble(value); MainWindow.Historie.Add(); }
+                if (OznacenyRadek != null) { OznacenyRadek.IdNValue = Convert.ToDouble(value); Historie.Add(); }
             }
         }
         public bool HridelPlusOvlPrvkyEnabled 
@@ -319,6 +321,14 @@ namespace Kritik
             set { prubehRpm = value; }
         }
         private double[] prubehRpm;
+
+        public PlotModel PlotDeterminant { 
+            get { return plotDeterminant; }
+            set { plotDeterminant = value; NotifyPropertyChanged(); }
+        }
+        private PlotModel plotDeterminant;
+
+
 
         /// <summary>
         /// Text kritických otáček do TextBoxu
