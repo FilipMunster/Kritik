@@ -387,11 +387,14 @@ namespace Kritik
             }
             public static void Add()
             {
-                if (hIndex < (h.Count -1)) { h.RemoveRange(hIndex + 1, h.Count - hIndex - 1); }
+                Debug.WriteLine(hIndex);
+                if (hIndex < (h.Count - 1)) { h.RemoveRange(hIndex + 1, h.Count - hIndex - 1); }
                 if (h.Count == delkaHistorie) { h.RemoveAt(0); }
 
                 h.Add(new ObservableCollection<Hridel.PrvekTab>(KopieHridele()));
                 hIndex = h.Count() - 1;
+                Debug.WriteLine(hIndex);
+                Debug.WriteLine("---");
             }
             public static void Back()
             {
@@ -399,20 +402,22 @@ namespace Kritik
                 if (hIndex > 0)
                 {
                     hIndex--;
-                    hridel.PrvkyHrideleTab = new ObservableCollection<Hridel.PrvekTab>(h[hIndex]);
+                    hridel.PrvkyHrideleTab = new ObservableCollection<Hridel.PrvekTab>(KopieHridele(h[hIndex]));
                 }
+                Debug.WriteLine(hIndex);
             }
             public static void Forward()
             {
                 if (hIndex < (h.Count - 1))
                 {
                     hIndex++;
-                    hridel.PrvkyHrideleTab = new ObservableCollection<Hridel.PrvekTab>(h[hIndex]);
+                    hridel.PrvkyHrideleTab = new ObservableCollection<Hridel.PrvekTab>(KopieHridele(h[hIndex]));
                 }
+                Debug.WriteLine(hIndex);
             }
-            private static ObservableCollection<Hridel.PrvekTab> KopieHridele()
+            private static ObservableCollection<Hridel.PrvekTab> KopieHridele(ObservableCollection<Hridel.PrvekTab> p = default)
             {
-                ObservableCollection<Hridel.PrvekTab> p = hridel.PrvkyHrideleTab;
+                if (p == null) { p = hridel.PrvkyHrideleTab; }
                 ObservableCollection<Hridel.PrvekTab> pH = new();
                 for (int i = 0; i < p.Count(); i++)
                 {
