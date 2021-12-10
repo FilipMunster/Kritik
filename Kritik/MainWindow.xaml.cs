@@ -57,6 +57,8 @@ namespace Kritik
             hridel.AnyPropertyChanged = false;
             novySoubor = false;
             Historie.New();
+            backBtn.IsEnabled = Historie.BackBtnEnabled;
+            forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
             //////////////////
 
         }
@@ -68,6 +70,8 @@ namespace Kritik
             hridel.AnyPropertyChanged = false;
             novySoubor = true;
             Historie.New();
+            backBtn.IsEnabled = Historie.BackBtnEnabled;
+            forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
             return;
         }
 
@@ -83,6 +87,8 @@ namespace Kritik
                 hridel.AnyPropertyChanged = false;
                 novySoubor = false;
                 Historie.New();
+                backBtn.IsEnabled = Historie.BackBtnEnabled;
+                forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
             }
             return;
         }
@@ -272,7 +278,7 @@ namespace Kritik
                 Typ = Hridel.beamKeyword
             };
             TabulkaDataGrid.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
-            Historie.Add();
+            HistorieAdd();
         }
 
         private void addRowBtn_Click(object sender, RoutedEventArgs e)
@@ -285,7 +291,7 @@ namespace Kritik
                 TabulkaDataGrid.SelectedIndex = indx;
                 TabulkaDataGrid.Items.Refresh();
             }
-            Historie.Add();
+            HistorieAdd();
         }
 
         private void deleteRowBtn_Click(object sender, RoutedEventArgs e)
@@ -299,7 +305,7 @@ namespace Kritik
                 TabulkaDataGrid.SelectedIndex = indx;
                 TabulkaDataGrid.Items.Refresh();
             }
-            Historie.Add();
+            HistorieAdd();
         }
 
         private void moveUpBtn_Click(object sender, RoutedEventArgs e)
@@ -311,7 +317,7 @@ namespace Kritik
                 TabulkaDataGrid.Focus();
                 TabulkaDataGrid.Items.Refresh();
             }
-            Historie.Add();
+            HistorieAdd();
         }
 
         private void moveDownBtn_Click(object sender, RoutedEventArgs e)
@@ -324,7 +330,7 @@ namespace Kritik
                 TabulkaDataGrid.Focus();
                 TabulkaDataGrid.Items.Refresh();
             }
-            Historie.Add();
+            HistorieAdd();
         }
 
         private void mirrorBtn_Click(object sender, RoutedEventArgs e)
@@ -349,36 +355,49 @@ namespace Kritik
                 });
             }
             hridel.PrvkyHrideleTab = p;
-            Historie.Add();
+            HistorieAdd();
         }
 
         private void TabulkaDataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
-            Historie.Add();
+            HistorieAdd();
         }
 
         private void backBtn_Click(object sender, RoutedEventArgs e)
         {
             Historie.Back();
+            backBtn.IsEnabled = Historie.BackBtnEnabled;
+            forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
             TabulkaDataGrid.Focus();
         }
         private void forwardBtn_Click(object sender, RoutedEventArgs e)
         {
             Historie.Forward();
+            backBtn.IsEnabled = Historie.BackBtnEnabled;
+            forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
             TabulkaDataGrid.Focus();
         }
 
         private void deleteAllBtn_Click(object sender, RoutedEventArgs e)
         {
             hridel.PrvkyHrideleTab.Clear();
-            Historie.Add();
+            HistorieAdd();
             TabulkaDataGrid.Focus();
+        }
+
+        private void HistorieAdd()
+        {
+            Historie.Add();
+            backBtn.IsEnabled = Historie.BackBtnEnabled;
+            forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
         }
         public static class Historie
         {
             private static List<ObservableCollection<Hridel.PrvekTab>> h = new();
             private static int hIndex;
-            private const int delkaHistorie = 10;
+            private const int delkaHistorie = 33;
+            public static bool BackBtnEnabled { get { return hIndex == 0 ? false : true; } private set { } }
+            public static bool ForwardBtnEnabled { get { return hIndex == (h.Count() - 1) ? false : true; } private set { } }
             public static void New()
             {
                 h.Clear();
@@ -387,24 +406,20 @@ namespace Kritik
             }
             public static void Add()
             {
-                Debug.WriteLine(hIndex);
                 if (hIndex < (h.Count - 1)) { h.RemoveRange(hIndex + 1, h.Count - hIndex - 1); }
                 if (h.Count == delkaHistorie) { h.RemoveAt(0); }
 
                 h.Add(new ObservableCollection<Hridel.PrvekTab>(KopieHridele()));
                 hIndex = h.Count() - 1;
-                Debug.WriteLine(hIndex);
-                Debug.WriteLine("---");
             }
             public static void Back()
             {
-                var hh = h;
                 if (hIndex > 0)
                 {
                     hIndex--;
                     hridel.PrvkyHrideleTab = new ObservableCollection<Hridel.PrvekTab>(KopieHridele(h[hIndex]));
                 }
-                Debug.WriteLine(hIndex);
+
             }
             public static void Forward()
             {
@@ -413,7 +428,6 @@ namespace Kritik
                     hIndex++;
                     hridel.PrvkyHrideleTab = new ObservableCollection<Hridel.PrvekTab>(KopieHridele(h[hIndex]));
                 }
-                Debug.WriteLine(hIndex);
             }
             private static ObservableCollection<Hridel.PrvekTab> KopieHridele(ObservableCollection<Hridel.PrvekTab> p = default)
             {

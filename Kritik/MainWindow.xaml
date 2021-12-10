@@ -234,10 +234,10 @@
                                     <Image Source="/icons/DeleteAllRows_16x.png" />
                                 </Button>
                                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0, 0, 5, 0" Stroke="Black" />
-                                <Button Name="backBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Zpět" Click="backBtn_Click">
+                                <Button Name="backBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Zpět" Click="backBtn_Click" IsEnabled="False">
                                     <Image Source="/icons/StepBackwards_16x.png" />
                                 </Button>
-                                <Button Name="forwardBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Vpřed" Click="forwardBtn_Click">
+                                <Button Name="forwardBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Vpřed" Click="forwardBtn_Click" IsEnabled="False">
                                     <Image Source="/icons/StepForward_16x.png" />
                                 </Button>
                             </StackPanel>
