@@ -327,6 +327,12 @@ namespace Kritik
             set { plotDeterminant = value; NotifyPropertyChanged(); }
         }
         private PlotModel plotDeterminant;
+        public TvarKmitu[] TvaryKmitu
+        {
+            get { return tvaryKmitu; }
+            set { tvaryKmitu = value; NotifyPropertyChanged(); }
+        }
+        private TvarKmitu[] tvaryKmitu;
 
 
 
@@ -386,7 +392,9 @@ namespace Kritik
             private string typ;
             public string Typ { get { return typ; } set { typ = value; VytvorMatici(); } }
             private double l;
-            public double L { get { return l; } set { l = value; VytvorMatici(); } }
+            public double L { 
+                get { if (typ == diskKeyword || typ == springKeyword || typ == magnetKeyword) { return 0; } else { return l; } }
+                set { l = value; VytvorMatici(); } }
             private double de;
             public double De { get { return de; } set { de = value; VytvorMatici(); } }
             private double di;

@@ -125,7 +125,7 @@ namespace Kritik
         /// <summary>
         /// Najde přesnou hodnotu kritických otáček pomocí metody půlení intervalů
         /// </summary>
-        /// <param name="prvky">Instance hřídele</param>
+        /// <param name="hridel">Instance hřídele</param>
         /// <param name="rpmL"></param>
         /// <param name="rpmR"></param>
         /// <returns></returns>
@@ -170,6 +170,142 @@ namespace Kritik
                 rpmC = (rpmL + rpmR) / 2;
             }
             return rpmC;
+        }
+
+        public static TvarKmitu[] TvaryKmitu(Hridel hridel, double[] kritOt = default)
+        {
+            if (kritOt == null)
+            {
+                if (hridel.KritOt != null)
+                {
+                    kritOt = hridel.KritOt;
+                }
+                else { return null; }                
+            }
+            TvarKmitu[] tvary = new TvarKmitu[kritOt.Length];
+            List<Hridel.Prvek> prvky = hridel.PrvkyHridele;
+
+            const int deleniHridele = 1000;
+            double delkaHridele = 0;
+            foreach (Hridel.Prvek p in prvky)
+            {
+                delkaHridele = delkaHridele + p.L;
+            }
+            double dx = delkaHridele / deleniHridele;
+
+            for (int i = 0; i < kritOt.Length; i++)
+            {
+                tvary[i] = new TvarKmitu();
+                tvary[i].Rpm = kritOt[i];
+
+                Matrix<double> uc = Matrix<double>.Build.DenseIdentity(4); // Jednotková matice 4x4
+                // Nastavit všem prvkům rpm a vynásobit matice
+                foreach (var prvek in prvky)
+                {
+                    prvek.Rpm = tvary[i].Rpm;
+                    uc.Multiply(prvek.Matice, uc);
+                }
+                uc = VytvorMatici2x2(uc, hridel.OpLeva, hridel.OpPrava); // celková přenosová matice pro dané kritické otáčky
+
+                // Řešení dle Pilkey: FORMULAS FOR STRESS, STRAIN, AND STRUCTURAL MATRICES, str. 1426 - 1428
+                double ucRatio = -uc[1, 0] / uc[1, 1]; // poměr hodnot mezi dvěma neznámými hodnotami na levém konci
+
+                // Tvary kmitů v uzlech
+                List<double> wUzly = new List<double>(prvky.Count);
+                List<double> phiUzly = new List<double>(prvky.Count);
+                List<double> mUzly = new List<double>(prvky.Count);
+                List<double> tUzly = new List<double>(prvky.Count);
+                List<double> xUzly = new List<double>(prvky.Count);
+
+                // Tvary kmitů po celé délce hřídele
+                List<double> w = new List<double>(prvky.Count);
+                List<double> phi = new List<double>(prvky.Count);
+                List<double> m = new List<double>(prvky.Count);
+                List<double> t = new List<double>(prvky.Count);
+                List<double> x = new List<double>(prvky.Count);
+
+                switch (hridel.OpLeva)
+                {
+                    case Hridel.opVolnyKeyword:
+                        wUzly.Add(1);
+                        phiUzly.Add(ucRatio);
+                        mUzly.Add(0);
+                        tUzly.Add(0);
+                        break;
+                    case Hridel.opKloubKeyword:
+                        wUzly.Add(0);
+                        phiUzly.Add(1);
+                        mUzly.Add(0);
+                        tUzly.Add(ucRatio);
+                        break;
+                    case Hridel.opVetknutiKeyword:
+                        wUzly.Add(0);
+                        phiUzly.Add(0);
+                        mUzly.Add(1);
+                        tUzly.Add(ucRatio);
+                        break;
+                    default:
+                        break;
+                }
+                xUzly.Add(0);
+
+                w.Add(wUzly[0]);
+                phi.Add(phiUzly[0]);
+                m.Add(mUzly[0]);
+                t.Add(tUzly[0]);
+                x.Add(xUzly[0]);
+
+                foreach (Hridel.Prvek p in prvky)
+                {
+                    Vector<double> v = Vector<double>.Build.DenseOfArray(new[] { wUzly.Last(), phiUzly.Last(), mUzly.Last(), tUzly.Last() }); // vektor levého konce prvku
+
+                    if (p.L > 0)
+                    {
+                        double lPuvodni = p.L; // uložím si původní délku prvku, abych nemusel vytvářet prvek nový. L budu měnit, na konci mu původní délku vrátím.
+                        double xRel = dx;
+
+                        while (xRel < lPuvodni)
+                        {
+                            p.L = xRel;
+                            Vector<double> vX = p.Matice.Multiply(v);
+                            w.Add(vX[0]);
+                            phi.Add(vX[1]);
+                            m.Add(vX[2]);
+                            t.Add(vX[3]);
+                            x.Add(x.Last() + dx);
+                            xRel = xRel + dx;
+                        }
+                        p.L = lPuvodni;
+                    }
+
+                    // tvar na konci prvku (v uzlu)
+                    Vector<double> vNext = p.Matice.Multiply(v);
+                    wUzly.Add(vNext[0]);
+                    phiUzly.Add(vNext[1]);
+                    mUzly.Add(vNext[2]);
+                    tUzly.Add(vNext[3]);
+                    xUzly.Add(xUzly.Last() + p.L);
+
+                    w.Add(vNext[0]);
+                    phi.Add(vNext[1]);
+                    m.Add(vNext[2]);
+                    t.Add(vNext[3]);
+                    x.Add(xUzly.Last());
+                }
+
+                tvary[i].wUzly = wUzly.ToArray();
+                tvary[i].phiUzly = phiUzly.ToArray();
+                tvary[i].mUzly = mUzly.ToArray();
+                tvary[i].tUzly = tUzly.ToArray();
+                tvary[i].xUzly = xUzly.ToArray();
+
+                tvary[i].w = w.ToArray();
+                tvary[i].phi = phi.ToArray();
+                tvary[i].m = m.ToArray();
+                tvary[i].t = t.ToArray();
+                tvary[i].x = x.ToArray();
+            }
+            return tvary;
         }
 
 

@@ -62,23 +62,8 @@ namespace Kritik
             forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
             hridel.VytvorPrvky();
             (hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
-
-            PlotModel plt = Plot.NewModel();
-            plt.Series.Add(Plot.NewLine(hridel.PrubehRpm, hridel.PrubehDeterminantu));
-            hlavniPlot.Model = plt;
-
-            PlotModel plt1 = Plot.NewModel();
-            plt1.Series.Add(Plot.NewLine(hridel.PrubehRpm, hridel.PrubehDeterminantu, OxyColors.Blue));
-            plotView1.Model = plt1;
-            PlotModel plt2 = Plot.NewModel();
-            plt2.Series.Add(Plot.NewLine(hridel.PrubehRpm, hridel.PrubehDeterminantu, OxyColors.Red));
-            plotView2.Model = plt2;
-            PlotModel plt3 = Plot.NewModel();
-            plt3.Series.Add(Plot.NewLine(hridel.PrubehRpm, hridel.PrubehDeterminantu, OxyColors.Tan));
-            plotView3.Model = plt3;
-            PlotModel plt4 = Plot.NewModel();
-            plt4.Series.Add(Plot.NewLine(hridel.PrubehRpm, hridel.PrubehDeterminantu, OxyColors.Plum));
-            plotView4.Model = plt4;
+            hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
+            VykreslitKmity();
             //////////////////
 
         }
@@ -147,7 +132,9 @@ namespace Kritik
             await Task.Run(() => {
                 hridel.VytvorPrvky();
                 (hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
+                hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
             });
+            VykreslitKmity();
         }
 
         private void DataGridCell_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -405,6 +392,29 @@ namespace Kritik
             Historie.Add();
             backBtn.IsEnabled = Historie.BackBtnEnabled;
             forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
+        }
+
+        private void VykreslitKmity()
+        {
+            int id = 1;
+
+            PlotModel plt = Plot.NewModel();
+            plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].w));
+            plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].wUzly));
+            hlavniPlot.Model = plt;
+
+            PlotModel plt1 = Plot.NewModel();
+            plt1.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].w, OxyColors.Blue));
+            plotView1.Model = plt1;
+            PlotModel plt2 = Plot.NewModel();
+            plt2.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].phi, OxyColors.Red));
+            plotView2.Model = plt2;
+            PlotModel plt3 = Plot.NewModel();
+            plt3.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].m, OxyColors.Tan));
+            plotView3.Model = plt3;
+            PlotModel plt4 = Plot.NewModel();
+            plt4.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].t, OxyColors.Plum));
+            plotView4.Model = plt4;
         }
         
 
