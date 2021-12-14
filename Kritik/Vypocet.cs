@@ -211,18 +211,18 @@ namespace Kritik
                 double ucRatio = -uc[1, 0] / uc[1, 1]; // poměr hodnot mezi dvěma neznámými hodnotami na levém konci
 
                 // Tvary kmitů v uzlech
-                List<double> wUzly = new List<double>(prvky.Count);
-                List<double> phiUzly = new List<double>(prvky.Count);
-                List<double> mUzly = new List<double>(prvky.Count);
-                List<double> tUzly = new List<double>(prvky.Count);
-                List<double> xUzly = new List<double>(prvky.Count);
+                List<double> wUzly = new List<double>(prvky.Count + 1);
+                List<double> phiUzly = new List<double>(prvky.Count + 1);
+                List<double> mUzly = new List<double>(prvky.Count + 1);
+                List<double> tUzly = new List<double>(prvky.Count + 1);
+                List<double> xUzly = new List<double>(prvky.Count + 1);
 
                 // Tvary kmitů po celé délce hřídele
-                List<double> w = new List<double>(prvky.Count);
-                List<double> phi = new List<double>(prvky.Count);
-                List<double> m = new List<double>(prvky.Count);
-                List<double> t = new List<double>(prvky.Count);
-                List<double> x = new List<double>(prvky.Count);
+                List<double> w = new List<double>(prvky.Count + deleniHridele);
+                List<double> phi = new List<double>(prvky.Count + deleniHridele);
+                List<double> m = new List<double>(prvky.Count + deleniHridele);
+                List<double> t = new List<double>(prvky.Count + deleniHridele);
+                List<double> x = new List<double>(prvky.Count + deleniHridele);
 
                 switch (hridel.OpLeva)
                 {

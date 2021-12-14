@@ -377,6 +377,7 @@ namespace Kritik
             Historie.Forward();
             backBtn.IsEnabled = Historie.BackBtnEnabled;
             forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
+            TabulkaDataGrid.Items.Refresh();
             TabulkaDataGrid.Focus();
         }
 
@@ -396,25 +397,29 @@ namespace Kritik
 
         private void VykreslitKmity()
         {
-            int id = 1;
+            int id = 0;
 
-            PlotModel plt = Plot.NewModel();
-            plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].w));
-            plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].wUzly));
-            hlavniPlot.Model = plt;
+            if (hridel.TvaryKmitu != null && hridel.TvaryKmitu.Length > 0)
+            {
+                PlotModel plt = Plot.NewModel();
+                plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].w));
+                plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].wUzly));
+                hlavniPlot.Model = plt;
 
-            PlotModel plt1 = Plot.NewModel();
-            plt1.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].w, OxyColors.Blue));
-            plotView1.Model = plt1;
-            PlotModel plt2 = Plot.NewModel();
-            plt2.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].phi, OxyColors.Red));
-            plotView2.Model = plt2;
-            PlotModel plt3 = Plot.NewModel();
-            plt3.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].m, OxyColors.Tan));
-            plotView3.Model = plt3;
-            PlotModel plt4 = Plot.NewModel();
-            plt4.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].t, OxyColors.Plum));
-            plotView4.Model = plt4;
+                PlotModel plt1 = Plot.NewModel();
+                plt1.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].w, OxyColors.Blue));
+                plotView1.Model = plt1;
+                PlotModel plt2 = Plot.NewModel();
+                plt2.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].phi, OxyColors.Red));
+                plotView2.Model = plt2;
+                PlotModel plt3 = Plot.NewModel();
+                plt3.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].m, OxyColors.Tan));
+                plotView3.Model = plt3;
+                PlotModel plt4 = Plot.NewModel();
+                plt4.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].t, OxyColors.Plum));
+                plotView4.Model = plt4;
+            }
+
         }
         
 
