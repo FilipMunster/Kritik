@@ -10,11 +10,20 @@ namespace Kritik
 {
     internal static class Plot
     {
-        public static PlotModel NewModel()
+        public static PlotModel NewVelky()
         {
             PlotModel model = new();
             model.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Bottom, MajorGridlineStyle = LineStyle.Dot });
-            model.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Left, MajorGridlineStyle = LineStyle.Dot, TextColor = OxyColors.Transparent });
+            model.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Left, IsAxisVisible = false });
+            model.Padding = new OxyThickness(4);
+            return model;
+        }
+        public static PlotModel NewMaly()
+        {
+            PlotModel model = new();
+            model.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Bottom, IsAxisVisible = false });
+            model.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Left, IsAxisVisible = false });
+            model.Padding = new OxyThickness(4);
             return model;
         }
 
@@ -42,6 +51,17 @@ namespace Kritik
             line.MarkerType = MarkerType.Circle;
             line.MarkerFill = color == default ? OxyColors.DarkGray : color;
             line.LineStyle = LineStyle.None;
+            return line;
+        }
+
+        public static LineSeries NewOsa(double[] x, OxyColor color = default)
+        {
+            LineSeries line = new();
+            line.Points.Add(new DataPoint(0, 0));
+            line.Points.Add(new DataPoint(x[^1], 0));
+            line.Color = color == default ? OxyColors.Black : color;
+            line.LineStyle = LineStyle.LongDashDot;
+            line.StrokeThickness = 1;
             return line;
         }
     }

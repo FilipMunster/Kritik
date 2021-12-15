@@ -39,6 +39,8 @@ namespace Kritik
         public static readonly Hridel hridel = new();
 
         private bool novySoubor; // slouží k rozpoznávání, jestli tlačítko uložit má soubor uložit, nebo uložit jako. true -> uložit jako
+
+        private string vykreslenyHlavniGraf;
         public MainWindow()
         {
             InitializeComponent();
@@ -65,6 +67,70 @@ namespace Kritik
             hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
             VykreslitKmity();
             //////////////////
+
+        }
+        private void VykreslitHlavniGraf(string value)
+        {
+            plot1Border.BorderBrush = Brushes.Transparent;
+            plot2Border.BorderBrush = Brushes.Transparent;
+            plot3Border.BorderBrush = Brushes.Transparent;
+            plot4Border.BorderBrush = Brushes.Transparent;
+
+            int id = Convert.ToInt32(cisloKritOtZobrazitTextBox.Text) - 1;
+            PlotModel plt = Plot.NewVelky();
+            switch (value)
+            {
+                case "w":
+                default:                    
+                    plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].wUzly));
+                    plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].w));
+                    plot1Border.BorderBrush = Brushes.SteelBlue;
+                    break;
+                case "phi":
+                    plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].phiUzly));
+                    plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].phi));
+                    plot2Border.BorderBrush = Brushes.SteelBlue;
+                    break;
+                case "m":
+                    plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].mUzly));
+                    plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].m));
+                    plot3Border.BorderBrush = Brushes.SteelBlue;
+                    break;
+                case "t":
+                    plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].tUzly));
+                    plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].t));
+                    plot4Border.BorderBrush = Brushes.SteelBlue;
+                    break;
+            }
+            plt.Series.Add(Plot.NewOsa(hridel.TvaryKmitu[id].x));
+            hlavniPlot.Model = plt;
+            vykreslenyHlavniGraf = value;            
+        }
+        private void VykreslitKmity()
+        {
+            int id = Convert.ToInt32(cisloKritOtZobrazitTextBox.Text) - 1;
+
+            if (hridel.TvaryKmitu != null && hridel.TvaryKmitu.Length > 0)
+            {
+                VykreslitHlavniGraf(vykreslenyHlavniGraf);
+
+                PlotModel plt1 = Plot.NewMaly();
+                plt1.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].w, OxyColors.Blue));
+                plt1.Series.Add(Plot.NewOsa(hridel.TvaryKmitu[id].x));
+                plotView1.Model = plt1;
+                PlotModel plt2 = Plot.NewMaly();
+                plt2.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].phi, OxyColors.Red));
+                plt2.Series.Add(Plot.NewOsa(hridel.TvaryKmitu[id].x));
+                plotView2.Model = plt2;
+                PlotModel plt3 = Plot.NewMaly();
+                plt3.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].m, OxyColors.Tan));
+                plt3.Series.Add(Plot.NewOsa(hridel.TvaryKmitu[id].x));
+                plotView3.Model = plt3;
+                PlotModel plt4 = Plot.NewMaly();
+                plt4.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].t, OxyColors.Plum));
+                plt4.Series.Add(Plot.NewOsa(hridel.TvaryKmitu[id].x));
+                plotView4.Model = plt4;
+            }
 
         }
 
@@ -134,6 +200,7 @@ namespace Kritik
                 (hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
                 hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
             });
+            cisloKritOtZobrazitTextBox.Text = "1";
             VykreslitKmity();
         }
 
@@ -395,34 +462,35 @@ namespace Kritik
             forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
         }
 
-        private void VykreslitKmity()
+        private void plotView1_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            int id = 0;
-
-            if (hridel.TvaryKmitu != null && hridel.TvaryKmitu.Length > 0)
-            {
-                PlotModel plt = Plot.NewModel();
-                plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].w));
-                plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].wUzly));
-                hlavniPlot.Model = plt;
-
-                PlotModel plt1 = Plot.NewModel();
-                plt1.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].w, OxyColors.Blue));
-                plotView1.Model = plt1;
-                PlotModel plt2 = Plot.NewModel();
-                plt2.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].phi, OxyColors.Red));
-                plotView2.Model = plt2;
-                PlotModel plt3 = Plot.NewModel();
-                plt3.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].m, OxyColors.Tan));
-                plotView3.Model = plt3;
-                PlotModel plt4 = Plot.NewModel();
-                plt4.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].t, OxyColors.Plum));
-                plotView4.Model = plt4;
-            }
-
+            VykreslitHlavniGraf("w");
         }
-        
 
+        private void plotView2_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            VykreslitHlavniGraf("phi");
+        }
 
+        private void plotView3_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            VykreslitHlavniGraf("m");
+        }
+
+        private void plotView4_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            VykreslitHlavniGraf("t");
+        }
+
+        private void CisloKritOtUpButton_Click(object sender, RoutedEventArgs e)
+        {
+            int c = Convert.ToInt32(cisloKritOtZobrazitTextBox.Text);
+            if (c < hridel.TvaryKmitu.Length) { cisloKritOtZobrazitTextBox.Text = (c + 1).ToString(); VykreslitKmity(); }
+        }
+        private void CisloKritOtDownButton_Click(object sender, RoutedEventArgs e)
+        {
+            int c = Convert.ToInt32(cisloKritOtZobrazitTextBox.Text);
+            if (c > 1) { cisloKritOtZobrazitTextBox.Text = (c - 1).ToString(); VykreslitKmity(); }
+        }
     }
 }

@@ -12,10 +12,12 @@
     <Window.Resources>
         <local:NastaveniVyskyTextBoxuPoznamky x:Key="NastavovacVyskyPoznamky"/>
         <local:FormatEConverter x:Key="FormatEConverterX"/>
+        <local:FormatZadnyConverter x:Key="FormatZadnyConverterX"/>
+        <local:FormatMezeryConverter x:Key="FormatMezeryConverterX"/>
         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="SlateGray"/>
     </Window.Resources>
     <Grid Name="MainGrid">
-        <TabControl SelectedIndex="0">
+        <TabControl SelectedIndex="1">
             <TabItem Header="Výpočet" Name="vypocetTabItem">
                 <TabItem.Background>
                     <LinearGradientBrush EndPoint="0,1">
@@ -292,7 +294,7 @@
                                             </Style>
                                         </DataGridComboBoxColumn.CellStyle>
                                     </DataGridComboBoxColumn>
-                                    <DataGridTextColumn Header="Délka úseku&#x0a;L [mm]" Binding="{Binding L, UpdateSourceTrigger=LostFocus}" Width="*">
+                                    <DataGridTextColumn Header="Délka úseku&#x0a;L [mm]" Binding="{Binding L, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverterX}}" Width="*">
                                         <DataGridTextColumn.CellStyle>
                                             <Style TargetType="{x:Type DataGridCell}">
                                                 <Style.Triggers>
@@ -313,7 +315,7 @@
                                             </Style>
                                         </DataGridTextColumn.CellStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Vnější průměr&#x0a;De [mm]" Binding="{Binding De, UpdateSourceTrigger=LostFocus}"  Width="*">
+                                    <DataGridTextColumn Header="Vnější průměr&#x0a;De [mm]" Binding="{Binding De, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverterX}}"  Width="*">
                                         <DataGridTextColumn.CellStyle>
                                             <Style TargetType="{x:Type DataGridCell}">
                                                 <Style.Triggers>
@@ -334,7 +336,7 @@
                                             </Style>
                                         </DataGridTextColumn.CellStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Vrtání hřídele&#x0a;Di [mm]" Binding="{Binding Di, UpdateSourceTrigger=LostFocus}"  Width="*">
+                                    <DataGridTextColumn Header="Vrtání hřídele&#x0a;Di [mm]" Binding="{Binding Di, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverterX}}"  Width="*">
                                         <DataGridTextColumn.CellStyle>
                                             <Style TargetType="{x:Type DataGridCell}">
                                                 <Style.Triggers>
@@ -355,7 +357,17 @@
                                             </Style>
                                         </DataGridTextColumn.CellStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Hmotnost disku&#x0a;m [kg]" Binding="{Binding M, UpdateSourceTrigger=LostFocus}"  Width="*">
+                                    <DataGridTextColumn Header="Hmotnost disku&#x0a;m [kg]" Width="*">
+                                        <DataGridTextColumn.EditingElementStyle>
+                                            <Style TargetType="{x:Type TextBox}">
+                                                <Setter Property="Text" Value="{Binding M, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverterX}}"/>
+                                            </Style>
+                                        </DataGridTextColumn.EditingElementStyle>
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Text" Value="{Binding M, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatMezeryConverterX}}"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
                                         <DataGridTextColumn.CellStyle>
                                             <Style TargetType="{x:Type DataGridCell}">
                                                 <Style.Triggers>
@@ -376,9 +388,17 @@
                                             </Style>
                                         </DataGridTextColumn.CellStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Moment setrvačnosti&#x0a;k ose rotoru&#x0a;Jo [kg.m&#x00B2;]" 
-                                                        Binding="{Binding Io, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatEConverterX}, ConverterParameter={něco jako isEditing}}}"
-                                                        Width="*">
+                                    <DataGridTextColumn Header="Moment setrvačnosti&#x0a;k ose rotoru&#x0a;Jo [kg.m&#x00B2;]" Width="*">
+                                        <DataGridTextColumn.EditingElementStyle>
+                                            <Style TargetType="{x:Type TextBox}">
+                                                <Setter Property="Text" Value="{Binding Io, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverterX}}"/>
+                                            </Style>
+                                        </DataGridTextColumn.EditingElementStyle>
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Text" Value="{Binding Io, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatEConverterX}}"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
                                         <DataGridTextColumn.CellStyle>
                                             <Style TargetType="{x:Type DataGridCell}">
                                                 <Style.Triggers>
@@ -399,7 +419,17 @@
                                             </Style>
                                         </DataGridTextColumn.CellStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Mom. setrv. kolmo k ose otáčení&#x0a;Jd [kg.m&#x00B2;]" Binding="{Binding Id, UpdateSourceTrigger=LostFocus}"  Width="*">
+                                    <DataGridTextColumn Header="Mom. setrv. kolmo k ose otáčení&#x0a;Jd [kg.m&#x00B2;]" Width="*">
+                                        <DataGridTextColumn.EditingElementStyle>
+                                            <Style TargetType="{x:Type TextBox}">
+                                                <Setter Property="Text" Value="{Binding Id, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverterX}}"/>
+                                            </Style>
+                                        </DataGridTextColumn.EditingElementStyle>
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Text" Value="{Binding Id, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatEConverterX}}"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
                                         <DataGridTextColumn.CellStyle>
                                             <Style TargetType="{x:Type DataGridCell}">
                                                 <Style.Triggers>
@@ -420,7 +450,17 @@
                                             </Style>
                                         </DataGridTextColumn.CellStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Radiální tuhost podpory&#x0a;k [N/m]" Binding="{Binding K, UpdateSourceTrigger=LostFocus}"  Width="*">
+                                    <DataGridTextColumn Header="Radiální tuhost podpory&#x0a;k [N/m]" Width="*">
+                                        <DataGridTextColumn.EditingElementStyle>
+                                            <Style TargetType="{x:Type TextBox}">
+                                                <Setter Property="Text" Value="{Binding K, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverterX}}"/>
+                                            </Style>
+                                        </DataGridTextColumn.EditingElementStyle>
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Text" Value="{Binding K, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatEConverterX}}"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
                                         <DataGridTextColumn.CellStyle>
                                             <Style TargetType="{x:Type DataGridCell}">
                                                 <Style.Triggers>
@@ -441,7 +481,17 @@
                                             </Style>
                                         </DataGridTextColumn.CellStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Magneticko elastická konstanta&#x0a;Cm [N/m]" Binding="{Binding Cm, UpdateSourceTrigger=LostFocus}"  Width="*">
+                                    <DataGridTextColumn Header="Magneticko elastická konstanta&#x0a;Cm [N/m]" Width="*">
+                                        <DataGridTextColumn.EditingElementStyle>
+                                            <Style TargetType="{x:Type TextBox}">
+                                                <Setter Property="Text" Value="{Binding Cm, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverterX}}"/>
+                                            </Style>
+                                        </DataGridTextColumn.EditingElementStyle>
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Text" Value="{Binding Cm, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatEConverterX}}"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
                                         <DataGridTextColumn.CellStyle>
                                             <Style TargetType="{x:Type DataGridCell}">
                                                 <Style.Triggers>
@@ -520,32 +570,66 @@
 
             </TabItem>
             <TabItem Header="Tvary kmitů" Name="tvaryKmituTabItem">
-                <Grid Margin="15">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="160"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="150"/>
-                    </Grid.RowDefinitions>
+                <Grid>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Row="0" Height="146" Margin="7" BorderThickness="1" BorderBrush="Black" CornerRadius="0" VerticalAlignment="Top">
-                        <TextBlock Text="Tady bude nakreslená hřídel" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </Border>
-                    <oxy:PlotView x:Name="hlavniPlot" DefaultTrackerTemplate="{x:Null}" Grid.Row="1"/>
-                    <Grid Grid.Row="2">
+                    <Grid Grid.Column="0">
+                        <Border Margin="15, 15, 0, 15" BorderThickness="1" BorderBrush="Gray" Padding="5" CornerRadius="3" MinHeight="541" VerticalAlignment="Top">
+                            <StackPanel Orientation="Vertical">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Číslo kritických otáček:" Margin="0, 0, 7, 0"/>
+                                    <StackPanel Orientation="Horizontal" Height="20" VerticalAlignment="Center">
+                                        <TextBox Width="20" Text="1" Focusable="False" Name="cisloKritOtZobrazitTextBox"/>
+                                        <StackPanel Orientation="Vertical">
+                                            <Button Content="▲" FontSize="7" Padding="0,-1, 0, 0" Width="15" Height="10" Click="CisloKritOtUpButton_Click"/>
+                                            <Button Content="▼" FontSize="7" Padding="0,-1, 0, 0" Width="15" Height="10" Click="CisloKritOtDownButton_Click"/>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                    <Grid Margin="15" Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="160"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="150"/>
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>                        
-                        <oxy:PlotView x:Name="plotView1" DefaultTrackerTemplate="{x:Null}" Grid.Column="0"/>
-                        <oxy:PlotView x:Name="plotView2" DefaultTrackerTemplate="{x:Null}" Grid.Column="1"/>
-                        <oxy:PlotView x:Name="plotView3" DefaultTrackerTemplate="{x:Null}" Grid.Column="2"/>
-                        <oxy:PlotView x:Name="plotView4" DefaultTrackerTemplate="{x:Null}" Grid.Column="3"/>
-                    </Grid>                                 
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Row="0" Height="146" Margin="7, 0, 7, 0" BorderThickness="1" BorderBrush="Gray" CornerRadius="3" VerticalAlignment="Top">
+                            <TextBlock Text="Tady bude nakreslená hřídel" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                        <oxy:PlotView x:Name="hlavniPlot" DefaultTrackerTemplate="{x:Null}" Grid.Row="1"/>
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Border BorderThickness="1" CornerRadius="1" Grid.Column="0" Name="plot1Border">
+                                <oxy:PlotView x:Name="plotView1" DefaultTrackerTemplate="{x:Null}" PreviewMouseLeftButtonUp="plotView1_PreviewMouseLeftButtonUp"/>
+                            </Border>
+                            <Border BorderThickness="1" CornerRadius="1" Grid.Column="1" Name="plot2Border">
+                                <oxy:PlotView x:Name="plotView2" DefaultTrackerTemplate="{x:Null}" PreviewMouseLeftButtonUp="plotView2_PreviewMouseLeftButtonUp"/>
+                            </Border>
+                            <Border BorderThickness="1" CornerRadius="1" Grid.Column="2" Name="plot3Border">
+                                <oxy:PlotView x:Name="plotView3" DefaultTrackerTemplate="{x:Null}" PreviewMouseLeftButtonUp="plotView3_PreviewMouseLeftButtonUp"/>
+                            </Border>
+                            <Border BorderThickness="1" CornerRadius="1" Grid.Column="3" Name="plot4Border">
+                                <oxy:PlotView x:Name="plotView4" DefaultTrackerTemplate="{x:Null}" PreviewMouseLeftButtonUp="plotView4_PreviewMouseLeftButtonUp"/>
+                            </Border>                            
+                        </Grid>                                 
+                    </Grid>
+                    
+                    
                 </Grid>
+                
             </TabItem>
         </TabControl>
     </Grid>
