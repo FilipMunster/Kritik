@@ -51,22 +51,23 @@ namespace Kritik
             hridel.AnyPropertyChanged = false;
             hridel.nazevSouboru = "Nový výpočet.xlsx";
             novySoubor = true;
-
-            //////////////////
-            //string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test1.xlsx";
-            //hridel.HridelNova();
-            //hridel.nazevSouboru = vstupniSoubor;
-            //hridel.NacistData(hridel.nazevSouboru);
-            //hridel.AnyPropertyChanged = false;
-            //novySoubor = false;
-            //Historie.New();
-            //backBtn.IsEnabled = Historie.BackBtnEnabled;
-            //forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
-            //hridel.VytvorPrvky();
-            //(hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
-            //hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
             VykreslitKmity();
-            //////////////////
+
+            ////////////////
+            string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test1.xlsx";
+            hridel.HridelNova();
+            hridel.nazevSouboru = vstupniSoubor;
+            hridel.NacistData(hridel.nazevSouboru);
+            hridel.AnyPropertyChanged = false;
+            novySoubor = false;
+            Historie.New();
+            backBtn.IsEnabled = Historie.BackBtnEnabled;
+            forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
+            hridel.VytvorPrvky();
+            (hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
+            hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
+            VykreslitKmity();
+            ////////////////
 
         }
         private void VykreslitHlavniGraf(string value)
