@@ -53,58 +53,62 @@ namespace Kritik
             novySoubor = true;
 
             //////////////////
-            string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test1.xlsx";
-            hridel.HridelNova();
-            hridel.nazevSouboru = vstupniSoubor;
-            hridel.NacistData(hridel.nazevSouboru);
-            hridel.AnyPropertyChanged = false;
-            novySoubor = false;
-            Historie.New();
-            backBtn.IsEnabled = Historie.BackBtnEnabled;
-            forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
-            hridel.VytvorPrvky();
-            (hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
-            hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
+            //string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test1.xlsx";
+            //hridel.HridelNova();
+            //hridel.nazevSouboru = vstupniSoubor;
+            //hridel.NacistData(hridel.nazevSouboru);
+            //hridel.AnyPropertyChanged = false;
+            //novySoubor = false;
+            //Historie.New();
+            //backBtn.IsEnabled = Historie.BackBtnEnabled;
+            //forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
+            //hridel.VytvorPrvky();
+            //(hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
+            //hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
             VykreslitKmity();
             //////////////////
 
         }
         private void VykreslitHlavniGraf(string value)
         {
-            plot1Border.BorderBrush = Brushes.Transparent;
-            plot2Border.BorderBrush = Brushes.Transparent;
-            plot3Border.BorderBrush = Brushes.Transparent;
-            plot4Border.BorderBrush = Brushes.Transparent;
-
-            int id = Convert.ToInt32(cisloKritOtZobrazitTextBox.Text) - 1;
-            PlotModel plt = Plot.NewVelky();
-            switch (value)
+            if (hridel.TvaryKmitu != null && hridel.TvaryKmitu.Length > 0)
             {
-                case "w":
-                default:                    
-                    plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].wUzly));
-                    plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].w));
-                    plot1Border.BorderBrush = Brushes.SteelBlue;
-                    break;
-                case "phi":
-                    plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].phiUzly));
-                    plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].phi));
-                    plot2Border.BorderBrush = Brushes.SteelBlue;
-                    break;
-                case "m":
-                    plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].mUzly));
-                    plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].m));
-                    plot3Border.BorderBrush = Brushes.SteelBlue;
-                    break;
-                case "t":
-                    plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].tUzly));
-                    plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].t));
-                    plot4Border.BorderBrush = Brushes.SteelBlue;
-                    break;
-            }
-            plt.Series.Add(Plot.NewOsa(hridel.TvaryKmitu[id].x));
-            hlavniPlot.Model = plt;
-            vykreslenyHlavniGraf = value;            
+                plot1Border.BorderBrush = Brushes.Transparent;
+                plot2Border.BorderBrush = Brushes.Transparent;
+                plot3Border.BorderBrush = Brushes.Transparent;
+                plot4Border.BorderBrush = Brushes.Transparent;
+
+                int id = Convert.ToInt32(cisloKritOtZobrazitTextBox.Text) - 1;
+
+                PlotModel plt = Plot.NewVelky();
+                switch (value)
+                {
+                    case "w":
+                    default:
+                        plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].wUzly));
+                        plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].w));
+                        plot1Border.BorderBrush = Brushes.SteelBlue;
+                        break;
+                    case "phi":
+                        plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].phiUzly));
+                        plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].phi));
+                        plot2Border.BorderBrush = Brushes.SteelBlue;
+                        break;
+                    case "m":
+                        plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].mUzly));
+                        plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].m));
+                        plot3Border.BorderBrush = Brushes.SteelBlue;
+                        break;
+                    case "t":
+                        plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].tUzly));
+                        plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].t));
+                        plot4Border.BorderBrush = Brushes.SteelBlue;
+                        break;
+                }
+                plt.Series.Add(Plot.NewOsa(hridel.TvaryKmitu[id].x));
+                hlavniPlot.Model = plt;
+                vykreslenyHlavniGraf = value;
+            }       
         }
         private void VykreslitKmity()
         {
@@ -130,6 +134,14 @@ namespace Kritik
                 plt4.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].t, OxyColors.Plum));
                 plt4.Series.Add(Plot.NewOsa(hridel.TvaryKmitu[id].x));
                 plotView4.Model = plt4;
+            }
+            else
+            {
+                hlavniPlot.Model = Plot.NewVelky();
+                plotView1.Model = Plot.NewMaly();
+                plotView2.Model = Plot.NewMaly();
+                plotView3.Model = Plot.NewMaly();
+                plotView4.Model = Plot.NewMaly();
             }
 
         }
