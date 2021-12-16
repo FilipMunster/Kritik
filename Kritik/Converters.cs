@@ -67,6 +67,7 @@ namespace Kritik
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             // Volá se při čtení
+            if ((double)value == 0) { return "0"; }
             string s = String.Format("{0:# ### ###.######}", value);
             s = s.TrimStart();
             return s;

@@ -27,7 +27,7 @@ namespace Kritik
         // NotifyPropertyChanged je nutné zavolat v setteru Vlastnosti, aby se hodnota updatovala v okně
         // viz https://docs.microsoft.com/cs-cz/dotnet/api/system.componentmodel.inotifypropertychanged?view=net-5.0
         public event PropertyChangedEventHandler PropertyChanged;
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             AnyPropertyChanged = true;
@@ -37,7 +37,7 @@ namespace Kritik
         private bool anyPropertyChanged;
         public string nazevSouboru;
         public string TextTitulkyOkna {
-            get { 
+            get {
                 if (nazevSouboru != null)
                 {
                     string title = "Kritik - [" + nazevSouboru;
@@ -50,7 +50,7 @@ namespace Kritik
 
 
         // klíčová slova ve vstupním souboru
-        public readonly string[] nazvySloupcu = { "Typ", "L", "De", "Di", "m", "Io", "Id", "k", "Cm", "Deleni", "Id/N", "Id/Nvalue"};
+        public readonly string[] nazvySloupcu = { "Typ", "L", "De", "Di", "m", "Io", "Id", "k", "Cm", "Deleni", "Id/N", "Id/Nvalue" };
         public const string vypocetNazevKeyword = "Nazev";
         public const string vypocetPopisKeyword = "Popis";
         public const string vypocetResilKeyword = "Resil";
@@ -78,6 +78,8 @@ namespace Kritik
         public const string magnetKeyword = "magnet";
         public const string jednotkaModuluPruznosti = "GPa";
         public const int radJednotkyModuluPruznosti = 9;
+        public const string excelListZadani = "KRITIK_input";
+        public const string excelListVysledky = "KRITIK";
         public static Dictionary<string, string> TypDict = new Dictionary<string, string>
         {
             {beamKeyword, "Hřídel" },
@@ -93,7 +95,7 @@ namespace Kritik
             {"Podpora", springKeyword},
             {"Magnet. tah", magnetKeyword}
         };
-        public readonly List<string> ListTypuPrvku = new List<string>() { 
+        public readonly List<string> ListTypuPrvku = new List<string>() {
             TypDict[beamKeyword],
             TypDict[beamPlusKeyword],
             TypDict[rigidKeyword],
@@ -101,7 +103,7 @@ namespace Kritik
             TypDict[springKeyword],
             TypDict[magnetKeyword]
         };
-        
+
         // proměnné s parametry výpočtu
         private string vypocetNazev;
         public string VypocetNazev { get { return vypocetNazev; } set { vypocetNazev = value; NotifyPropertyChanged(); } }
@@ -129,13 +131,13 @@ namespace Kritik
         public double NKritMax { get { return nKritMax; } set { nKritMax = value; NotifyPropertyChanged(); } }
         private string poznamka;
         public string Poznamka { get { return poznamka; } set { poznamka = value; NotifyPropertyChanged(); } }
-        public string HridelPlusDeleni { 
-            get { 
+        public string HridelPlusDeleni {
+            get {
                 if (OznacenyRadek != null) {
                     return OznacenyRadek.Deleni.ToString();
                 }
-                else { return string.Empty; }                
-            } 
+                else { return string.Empty; }
+            }
             set { OznacenyRadek.Deleni = Convert.ToDouble(value); Historie.Add(); } }
 
         /// <summary>
@@ -160,9 +162,9 @@ namespace Kritik
         /// <summary>
         /// Způsob výpočtu Id Hřídele+. 0 = vynásobení konstantou, 1 = vlastní hodnota
         /// </summary>
-        public int HridelPlusZpusobSelectedIndex 
-        { 
-            get { 
+        public int HridelPlusZpusobSelectedIndex
+        {
+            get {
                 if (OznacenyRadek != null && OznacenyRadek.Typ == beamPlusKeyword) return OznacenyRadek.IdN;
                 else return -1;
             }
@@ -200,7 +202,7 @@ namespace Kritik
                 if (OznacenyRadek != null) { OznacenyRadek.IdNValue = Convert.ToDouble(value); Historie.Add(); }
             }
         }
-        public bool HridelPlusOvlPrvkyEnabled 
+        public bool HridelPlusOvlPrvkyEnabled
         {
             get
             {
@@ -246,13 +248,14 @@ namespace Kritik
 
         // další vlastnosti
         public PrvekTab OznacenyRadek {
-            set { 
+            set {
                 oznacenyRadek = value;
                 NotifyPropertyChanged("HridelPlusDeleni");
                 NotifyPropertyChanged("HridelPlusZpusobSelectedIndex");
                 NotifyPropertyChanged("HridelPlusSelectedValue");
                 NotifyPropertyChanged("HridelPlusHodnota");
                 NotifyPropertyChanged("HridelPlusOvlPrvkyEnabled");
+                NotifyPropertyChanged("SchemaHridele");
 
             } get { return oznacenyRadek; } }
         private PrvekTab oznacenyRadek;
@@ -281,6 +284,7 @@ namespace Kritik
             PrubehDeterminantu = null;
             PrubehRpm = null;
             AnyPropertyChanged = true;
+            TvaryKmitu = null;
         }
 
         /// <summary>
@@ -292,8 +296,10 @@ namespace Kritik
         /// <summary>
         /// List Prvků hřídele, zobrazené v DataGridu
         /// </summary>
-        public ObservableCollection<PrvekTab> PrvkyHrideleTab { get { return prvkyHrideleTab; } set { prvkyHrideleTab = value; NotifyPropertyChanged(); } }
+        public ObservableCollection<PrvekTab> PrvkyHrideleTab { get { return prvkyHrideleTab; } set { prvkyHrideleTab = value; NotifyPropertyChanged(); NotifyPropertyChanged("SchemaHridele"); } }
         private ObservableCollection<PrvekTab> prvkyHrideleTab;
+
+        public PlotModel SchemaHridele => Plot.SchemaHridele(PrvkyHrideleTab, OznacenyRadek);
 
         //Vlastnosti s výsledky výpočtu
         /// <summary>
@@ -547,10 +553,11 @@ namespace Kritik
                 NotifyPropertyChanged("IsEditableId");
                 NotifyPropertyChanged("IsEditableK");
                 NotifyPropertyChanged("IsEditableCm");
+                //MainWindow.hridel.NotifyPropertyChanged("SchemaHridele");
             }
             public string Typ { get { return typ; } set { typ = value; NotifyPropertyChangedVsechno(); } }
             private string typ;
-            public double L { get { return l; } set { l = value; } }
+            public double L { get { return typ == diskKeyword || typ == springKeyword || typ == magnetKeyword ? 0 : l; } set { l = value; } }
             private double l;
             public double De { get { return de; } set { de = value; } }
             private double de;
@@ -571,10 +578,8 @@ namespace Kritik
             /// <summary>
             /// Způsob dělení Hřídele+: IdN=0 -> Idi=Id/n*IdNValue, IdN=0 -> Idi=IdNValue
             /// </summary>
-            public int IdN { get { return idN; } set { idN = value; } }
-            private int idN;
-            public double IdNValue { get { return idNValue; } set { idNValue = value; } }
-            private double idNValue;
+            public int IdN { get; set; }
+            public double IdNValue { get; set; }
 
             /// <summary>
             /// Text typu prvku tak, jak je zobrazen v tabulce
@@ -589,14 +594,14 @@ namespace Kritik
             /// <summary>
             /// Zda je editovatelná buňka na základě typu prvku
             /// </summary>
-            public bool IsEditableL { get { return (Typ == beamKeyword) || (Typ == beamPlusKeyword) || (Typ == rigidKeyword); } }
-            public bool IsEditableDe { get { return (Typ == beamKeyword) || (Typ == beamPlusKeyword); } }
-            public bool IsEditableDi { get { return (Typ == beamKeyword) || (Typ == beamPlusKeyword); } }
-            public bool IsEditableM { get { return (Typ == diskKeyword) || (Typ == beamPlusKeyword); } }
-            public bool IsEditableIo { get { return (Typ == diskKeyword) || (Typ == beamPlusKeyword); } }
-            public bool IsEditableId { get { return (Typ == diskKeyword) || (Typ == beamPlusKeyword); } }
-            public bool IsEditableK { get { return Typ == springKeyword || (Typ == beamPlusKeyword); } }
-            public bool IsEditableCm { get { return (Typ == magnetKeyword) || (Typ == beamPlusKeyword); } }
+            public bool IsEditableL => Typ is beamKeyword or beamPlusKeyword or rigidKeyword;
+            public bool IsEditableDe => Typ is beamKeyword or beamPlusKeyword;
+            public bool IsEditableDi => Typ is beamKeyword or beamPlusKeyword;
+            public bool IsEditableM => Typ is diskKeyword or beamPlusKeyword;
+            public bool IsEditableIo => Typ is diskKeyword or beamPlusKeyword;
+            public bool IsEditableId => Typ is diskKeyword or beamPlusKeyword;
+            public bool IsEditableK => Typ is springKeyword or beamPlusKeyword;
+            public bool IsEditableCm => Typ is magnetKeyword or beamPlusKeyword;
             /// <summary>
             /// Pole IsEditable v pořadí, jako jsou sloupce v tabulce
             /// </summary>
@@ -617,8 +622,10 @@ namespace Kritik
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             using (ExcelPackage package = new ExcelPackage(fileInfo))
             {
-                ExcelWorksheet excel = package.Workbook.Worksheets.FirstOrDefault();
-
+                ExcelWorksheet excel;
+                excel = package.Workbook.Worksheets[excelListZadani];
+                if (excel == null) { excel = package.Workbook.Worksheets.FirstOrDefault(); }
+                
                 int xRows;
 
                 if ((excel != null) && (excel.Dimension != null))
@@ -747,13 +754,13 @@ namespace Kritik
             FileInfo fileInfo = new FileInfo(fileName);
             using (ExcelPackage p = new ExcelPackage(fileInfo))
             {
-                if (p.Workbook.Worksheets["KRITIK"] != null)
+                if (p.Workbook.Worksheets[excelListZadani] != null)
                 {
-                    p.Workbook.Worksheets.Delete("KRITIK");
+                    p.Workbook.Worksheets.Delete(excelListZadani);
                 }
-                ExcelWorksheet ws = p.Workbook.Worksheets.Add("KRITIK");
+                ExcelWorksheet ws = p.Workbook.Worksheets.Add(excelListZadani);
 
-                ws.Cells[1, 1].Value = "KRITICKÉ OTÁČKY - DATA";
+                ws.Cells[1, 1].Value = "KRITICKÉ OTÁČKY - VSTUPNÍ DATA";
                 ws.Cells[3, 1].Value = vypocetNazevKeyword;
                 ws.Cells[3, 2].Value = VypocetNazev;
                 ws.Cells[4, 1].Value = vypocetPopisKeyword;

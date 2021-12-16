@@ -156,6 +156,8 @@ namespace Kritik
             Historie.New();
             backBtn.IsEnabled = Historie.BackBtnEnabled;
             forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
+            hridel.NotifyPropertyChanged("SchemaHridele");
+            VykreslitKmity();
             return;
         }
 
@@ -173,6 +175,8 @@ namespace Kritik
                 Historie.New();
                 backBtn.IsEnabled = Historie.BackBtnEnabled;
                 forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
+                hridel.NotifyPropertyChanged("SchemaHridele");
+                VykreslitKmity();
             }
             return;
         }
@@ -498,12 +502,12 @@ namespace Kritik
         private void CisloKritOtUpButton_Click(object sender, RoutedEventArgs e)
         {
             int c = Convert.ToInt32(cisloKritOtZobrazitTextBox.Text);
-            if (c < hridel.TvaryKmitu.Length) { cisloKritOtZobrazitTextBox.Text = (c + 1).ToString(); VykreslitKmity(); }
+            if (hridel.TvaryKmitu != null && c < hridel.TvaryKmitu.Length) { cisloKritOtZobrazitTextBox.Text = (c + 1).ToString(); VykreslitKmity(); }
         }
         private void CisloKritOtDownButton_Click(object sender, RoutedEventArgs e)
         {
             int c = Convert.ToInt32(cisloKritOtZobrazitTextBox.Text);
-            if (c > 1) { cisloKritOtZobrazitTextBox.Text = (c - 1).ToString(); VykreslitKmity(); }
+            if (hridel.TvaryKmitu != null && c > 1) { cisloKritOtZobrazitTextBox.Text = (c - 1).ToString(); VykreslitKmity(); }
         }
     }
 }
