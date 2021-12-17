@@ -535,5 +535,20 @@ namespace Kritik
             schemaHridele2.Model = Plot.SchemaHridele(hridel.PrvkyHrideleTab, null);
             VykreslitKmity();
         }
+
+        private void schemaHridele_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            OxyPlot.ElementCollection<OxyPlot.Axes.Axis> axisList = schemaHridele.Model.Axes;
+
+            OxyPlot.Axes.Axis xAxis = axisList.FirstOrDefault(ax => ax.Position == OxyPlot.Axes.AxisPosition.Bottom);
+            OxyPlot.Axes.Axis yAxis = axisList.FirstOrDefault(ax => ax.Position == OxyPlot.Axes.AxisPosition.Left);
+
+            var pos = e.GetPosition(schemaHridele);
+            OxyPlot.ScreenPoint screenPoint = new ScreenPoint(pos.X, pos.Y);
+
+            DataPoint dataPointp = OxyPlot.Axes.Axis.InverseTransform(screenPoint, xAxis, yAxis);
+
+            return;
+        }
     }
 }
