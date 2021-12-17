@@ -26,7 +26,10 @@ namespace Kritik
         public static PlotModel NewVelky()
         {
             PlotModel model = new();
-            model.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Bottom, MajorGridlineStyle = LineStyle.Dot });
+            model.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Bottom, 
+                MajorGridlineStyle = LineStyle.Dot, 
+                IsZoomEnabled = false,
+                IsPanEnabled = false});
             model.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Left, IsAxisVisible = false });
             model.Padding = new OxyThickness(4);
             model.PlotAreaBorderThickness = new OxyThickness(0, 0, 0, 1);
@@ -87,19 +90,20 @@ namespace Kritik
             return line;
         }
 
+        public static double dTuhy;
         public static PlotModel SchemaHridele(ObservableCollection<Hridel.PrvekTab> prvky, Hridel.PrvekTab oznacenyRadek)
         {
             PlotModel model = new();
             if (prvky != null && prvky.Count > 0)
             {                
-                model.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Bottom, IsAxisVisible = false });
-                model.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Left, IsAxisVisible = false });
+                model.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Bottom, IsAxisVisible = false, IsPanEnabled = false });
+                model.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Left, IsAxisVisible = false, IsPanEnabled = false });
                 model.Padding = new OxyThickness(0);
                 model.PlotAreaBorderThickness = new OxyThickness(0);
 
                 double maxD = prvky.Max(x => x.De);
                 double maxM = prvky.Max(x => x.M);
-                double dTuhy = maxD > 0 ? maxD * 0.25 : 500;
+                dTuhy = maxD > 0 ? maxD * 0.25 : 500;
                 LineSeries oznacenyPrvek = new();
                 List<double> xovePozice = new List<double> { 0 };
                 foreach (Hridel.PrvekTab p in prvky) { xovePozice.Add(xovePozice.Last() + p.L); }
@@ -126,9 +130,13 @@ namespace Kritik
                             break;
                         case Hridel.diskKeyword:
                             line = KreslitDisk(x, p.M, maxM, maxD);
+                            line.Tag = i;
+                            line.MouseDown += (s, e) => { MainWindow.DiskPruzinaMouseDown(s, e); };
                             break;
                         case Hridel.springKeyword:
-                            line = KreslitPodporu(x, prvky, i, dTuhy);             
+                            line = KreslitPodporu(x, prvky, i, dTuhy);
+                            line.Tag = i;
+                            line.MouseDown += (s, e) => { MainWindow.DiskPruzinaMouseDown(s, e); };
                             break;
                         case Hridel.magnetKeyword:
                             line = KreslitMagnet(x, prvky, i, dTuhy);
@@ -155,6 +163,11 @@ namespace Kritik
                 model.Series.Add(oznacenyPrvek);
             }
             return model;
+        }
+
+        private static void Line_MouseDown(object sender, OxyMouseDownEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private static LineSeries KreslitHridel(double x, double L, double D, double vrtani)

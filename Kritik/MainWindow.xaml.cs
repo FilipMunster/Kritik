@@ -539,16 +539,35 @@ namespace Kritik
         private void schemaHridele_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             OxyPlot.ElementCollection<OxyPlot.Axes.Axis> axisList = schemaHridele.Model.Axes;
-
             OxyPlot.Axes.Axis xAxis = axisList.FirstOrDefault(ax => ax.Position == OxyPlot.Axes.AxisPosition.Bottom);
             OxyPlot.Axes.Axis yAxis = axisList.FirstOrDefault(ax => ax.Position == OxyPlot.Axes.AxisPosition.Left);
-
             var pos = e.GetPosition(schemaHridele);
             OxyPlot.ScreenPoint screenPoint = new ScreenPoint(pos.X, pos.Y);
+            DataPoint pozice = OxyPlot.Axes.Axis.InverseTransform(screenPoint, xAxis, yAxis);
 
-            DataPoint dataPointp = OxyPlot.Axes.Axis.InverseTransform(screenPoint, xAxis, yAxis);
-
-            return;
+            List<double> xovePozice = new List<double> { 0 };
+            foreach (Hridel.PrvekTab p in hridel.PrvkyHrideleTab) { xovePozice.Add(xovePozice.Last() + p.L); }
+            int i = -1;
+            for (int j = 0; j < (xovePozice.Count - 1); j++)
+            {
+                if (pozice.X > xovePozice[j] && pozice.X < xovePozice[j+1]) { i = j; break; }
+            }
+            if (i >= 0 && (Math.Abs(pozice.Y) < Math.Abs(hridel.PrvkyHrideleTab[i].De / 2) 
+                || (hridel.PrvkyHrideleTab[i].Typ == Hridel.rigidKeyword && Math.Abs(pozice.Y) < Math.Abs(Plot.dTuhy / 2))))
+            {
+                hridel.OznacenyRadek = hridel.PrvkyHrideleTab[i];
+                TabulkaDataGrid.Focus();
+                hridel.NotifyPropertyChanged("OznacenyRadek");
+            }            
         }
+
+        public static void DiskPruzinaMouseDown(object s, OxyPlot.OxyMouseDownEventArgs e)
+        {
+            OxyPlot.Series.LineSeries line = (OxyPlot.Series.LineSeries)s;
+            int i = (int)line.Tag;
+            hridel.OznacenyRadek = hridel.PrvkyHrideleTab[i];
+            hridel.NotifyPropertyChanged("OznacenyRadek");
+        }
+
     }
 }
