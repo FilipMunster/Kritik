@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:Kritik"
         xmlns:Data="clr-namespace:System.Data;assembly=System.Data.Common" x:Class="Kritik.MainWindow"
         mc:Ignorable="d"
-        Title="{Binding Path=TextTitulkyOkna}" Height="790" Width="1200" MinHeight="630" MinWidth="1000"
+        Title="{Binding Path=TextTitulkyOkna}" Height="800" Width="1200" MinHeight="640" MinWidth="1000"
         WindowStartupLocation="CenterScreen" WindowStyle="ThreeDBorderWindow">
     <Window.Resources>
         <local:NastaveniVyskyTextBoxuPoznamky x:Key="NastavovacVyskyPoznamky"/>
@@ -257,6 +257,8 @@
                                       LoadingRow="DataGrid_LoadingRow"
                                       AddingNewItem="TabulkaDataGrid_AddingNewItem"
                                       RowEditEnding="TabulkaDataGrid_RowEditEnding"
+                                      CellEditEnding="TabulkaDataGrid_CellEditEnding"
+                                      SelectionChanged="TabulkaDataGrid_SelectionChanged"
                                       Grid.Row="1"
                                       Name="TabulkaDataGrid" Margin="0,-2,0,2" CanUserResizeColumns="False" SelectionUnit="FullRow">
                                 <DataGrid.ColumnHeaderStyle>
@@ -283,6 +285,7 @@
                                         <DataGridComboBoxColumn.CellStyle>
                                             <Style TargetType="{x:Type DataGridCell}">
                                                 <EventSetter Event="MouseUp" Handler="DataGridCell_PreviewMouseLeftButtonDown" />
+                                                <EventSetter Event="LostMouseCapture" Handler="DataGridCell_LostMouseCapture"/>
                                                 <Style.Triggers>
                                                     <Trigger Property="IsFocused" Value="True">
                                                         <Setter Property="BorderBrush" Value="GhostWhite"/>
@@ -569,7 +572,10 @@
                 </Grid>
 
             </TabItem>
-            <TabItem Header="Tvary kmitů" Name="tvaryKmituTabItem">
+            <TabItem Name="tvaryKmituTabItem">
+                <TabItem.Header>
+                    <Label Content="Tvary kmitů" MouseLeftButtonDown="TabItem1_MouseLeftButtonDown"/>
+                </TabItem.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="200"/>
@@ -606,7 +612,7 @@
                                     <RowDefinition Height="160"/>
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
-                                <oxy:PlotView x:Name="schemaHridele2" DefaultTrackerTemplate="{x:Null}" Model="{Binding SchemaHridele}" Grid.Row="0" Margin="7, 2, 7, 0"/>
+                                <oxy:PlotView x:Name="schemaHridele2" DefaultTrackerTemplate="{x:Null}" Grid.Row="0" Margin="7, 2, 7, 0"/>
                                 <oxy:PlotView x:Name="hlavniPlot" DefaultTrackerTemplate="{x:Null}" Grid.Row="1"/>
                             </Grid>
                         </Border>

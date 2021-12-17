@@ -271,6 +271,7 @@ namespace Kritik
                         var direction = isNext ? FocusNavigationDirection.Next : FocusNavigationDirection.Previous;
                         newCell.MoveFocus(new TraversalRequest(direction));
                         e.Handled = true;
+                        hridel.OznacenyRadek = prvek;
                     }
                 }
                 catch { }
@@ -306,7 +307,7 @@ namespace Kritik
 
         private void HridelPlus_MenuChanged()
         {
-            var r = hridel.OznacenyRadek;
+            Hridel.PrvekTab r = hridel.OznacenyRadek;
             if (r != null && r.Typ == Hridel.beamPlusKeyword)
             {
                 double val;
@@ -454,7 +455,8 @@ namespace Kritik
             Historie.Back();
             backBtn.IsEnabled = Historie.BackBtnEnabled;
             forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
-            TabulkaDataGrid.Focus();
+            hridel.NotifyPropertyChanged("SchemaHridele");
+            TabulkaDataGrid.Focus();            
         }
         private void forwardBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -462,6 +464,7 @@ namespace Kritik
             backBtn.IsEnabled = Historie.BackBtnEnabled;
             forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
             TabulkaDataGrid.Items.Refresh();
+            hridel.NotifyPropertyChanged("SchemaHridele");
             TabulkaDataGrid.Focus();
         }
 
@@ -469,7 +472,6 @@ namespace Kritik
         {
             hridel.PrvkyHrideleTab.Clear();
             HistorieAdd();
-            TabulkaDataGrid.Focus();
         }
 
         private void HistorieAdd()
@@ -477,6 +479,8 @@ namespace Kritik
             Historie.Add();
             backBtn.IsEnabled = Historie.BackBtnEnabled;
             forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
+            hridel.NotifyPropertyChanged("SchemaHridele");
+            TabulkaDataGrid.Focus();
         }
 
         private void plotView1_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -508,6 +512,28 @@ namespace Kritik
         {
             int c = Convert.ToInt32(cisloKritOtZobrazitTextBox.Text);
             if (hridel.TvaryKmitu != null && c > 1) { cisloKritOtZobrazitTextBox.Text = (c - 1).ToString(); VykreslitKmity(); }
+        }
+
+        private void TabulkaDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            hridel.NotifyPropertyChanged("SchemaHridele");
+        }
+
+        private void DataGridCell_LostMouseCapture(object sender, MouseEventArgs e)
+        {
+            hridel.NotifyPropertyChanged("SchemaHridele");
+        }
+
+        private void TabulkaDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void TabItem1_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            vypocetKritOtButton_Click(null, null);
+            schemaHridele2.Model = Plot.SchemaHridele(hridel.PrvkyHrideleTab, null);
+            VykreslitKmity();
         }
     }
 }

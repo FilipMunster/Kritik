@@ -296,7 +296,7 @@ namespace Kritik
         /// <summary>
         /// List Prvků hřídele, zobrazené v DataGridu
         /// </summary>
-        public ObservableCollection<PrvekTab> PrvkyHrideleTab { get { return prvkyHrideleTab; } set { prvkyHrideleTab = value; NotifyPropertyChanged(); NotifyPropertyChanged("SchemaHridele"); } }
+        public ObservableCollection<PrvekTab> PrvkyHrideleTab { get { return prvkyHrideleTab; } set { prvkyHrideleTab = value; NotifyPropertyChanged(); } }
         private ObservableCollection<PrvekTab> prvkyHrideleTab;
 
         public PlotModel SchemaHridele => Plot.SchemaHridele(PrvkyHrideleTab, OznacenyRadek);
@@ -553,7 +553,6 @@ namespace Kritik
                 NotifyPropertyChanged("IsEditableId");
                 NotifyPropertyChanged("IsEditableK");
                 NotifyPropertyChanged("IsEditableCm");
-                //MainWindow.hridel.NotifyPropertyChanged("SchemaHridele");
             }
             public string Typ { get { return typ; } set { typ = value; NotifyPropertyChangedVsechno(); } }
             private string typ;
