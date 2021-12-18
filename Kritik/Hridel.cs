@@ -299,7 +299,7 @@ namespace Kritik
         public ObservableCollection<PrvekTab> PrvkyHrideleTab { get { return prvkyHrideleTab; } set { prvkyHrideleTab = value; NotifyPropertyChanged(); } }
         private ObservableCollection<PrvekTab> prvkyHrideleTab;
 
-        public PlotModel SchemaHridele => Plot.SchemaHridele(PrvkyHrideleTab, OznacenyRadek);
+        public PlotModel SchemaHridele => Plot.SchemaHridele(PrvkyHrideleTab, OznacenyRadek, MainWindow.AppWindow.schemaHridele.ActualWidth);
 
         //Vlastnosti s výsledky výpočtu
         /// <summary>

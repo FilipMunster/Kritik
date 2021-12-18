@@ -91,7 +91,7 @@ namespace Kritik
         }
 
         public static double dTuhy;
-        public static PlotModel SchemaHridele(ObservableCollection<Hridel.PrvekTab> prvky, Hridel.PrvekTab oznacenyRadek)
+        public static PlotModel SchemaHridele(ObservableCollection<Hridel.PrvekTab> prvky, Hridel.PrvekTab oznacenyRadek, double sirkaModelu)
         {
             PlotModel model = new();
             if (prvky != null && prvky.Count > 0)
@@ -131,12 +131,12 @@ namespace Kritik
                         case Hridel.diskKeyword:
                             line = KreslitDisk(x, p.M, maxM, maxD);
                             line.Tag = i;
-                            line.MouseDown += (s, e) => { MainWindow.DiskPruzinaMouseDown(s, e); };
+                            line.MouseDown += (s, e) => { MainWindow.AppWindow.DiskPruzinaMouseDown(s, e); };
                             break;
                         case Hridel.springKeyword:
                             line = KreslitPodporu(x, prvky, i, dTuhy);
                             line.Tag = i;
-                            line.MouseDown += (s, e) => { MainWindow.DiskPruzinaMouseDown(s, e); };
+                            line.MouseDown += (s, e) => { MainWindow.AppWindow.DiskPruzinaMouseDown(s, e); };
                             break;
                         case Hridel.magnetKeyword:
                             line = KreslitMagnet(x, prvky, i, dTuhy);
@@ -157,7 +157,7 @@ namespace Kritik
                     // Vykreslit prvky na hřídeli+
                     if (p.Typ == Hridel.beamPlusKeyword) 
                     {
-                        foreach (LineSeries l in KreslitHridelPlus(x, p, xMax, maxM, maxD, dTuhy)) { model.Series.Add(l); }
+                        foreach (LineSeries l in KreslitHridelPlus(x, p, xMax, maxM, maxD, dTuhy, sirkaModelu)) { model.Series.Add(l); }
                     }
                 }
                 model.Series.Add(oznacenyPrvek);
@@ -185,19 +185,25 @@ namespace Kritik
             }
             return line;
         }
-        private static List<LineSeries> KreslitHridelPlus(double x, Hridel.PrvekTab p, double xMax, double maxM, double maxD, double dTuhy)
+        private static List<LineSeries> KreslitHridelPlus(double x, Hridel.PrvekTab p, double xMax, double maxM, double maxD, double dTuhy, double sirkaModelu)
         {
             List<LineSeries> lines = new();
             ObservableCollection<Hridel.PrvekTab> prvky = new(); prvky.Add(p); prvky.Add(p);
-            
+
             // Vykouzlení počtu vykreslených prvků tak, aby to vypadlo dobře:
-            double deleni; double c = 0.7;
-            if ((p.Deleni / (xMax / 1000)) > c)
-            {
-                if (p.L / xMax < 0.25) { c = 0.4; }
-                if (p.L / xMax < 0.11) { c = 0.2; }
-                deleni = Math.Floor(c * xMax / 1000);
-            } else { deleni = p.Deleni; }
+            //double deleni; double c = 0.7;
+            //if ((p.Deleni / (xMax / 1000)) > c)
+            //{
+            //    if (p.L / xMax < 0.25) { c = 0.4; }
+            //    if (p.L / xMax < 0.11) { c = 0.2; }
+            //    deleni = Math.Floor(c * xMax / 1000);
+            //} else { deleni = p.Deleni; }
+            double Ltx = 0.0369; // šířka trojúhelníku ku šířce modelu
+            double Lt = Ltx * sirkaModelu + 5; // šířka trojúhelníku v [px] + mezera [px]
+            Lt = Lt * xMax / (sirkaModelu - 100); // šířka trojúhelníku v [mm] -(minus) zhruba okraj konec hřídele k okraji Modelu
+            double deleni = Math.Floor(p.L / Lt);
+            deleni = p.Deleni < deleni ? p.Deleni : deleni;
+
             double dx = p.L / (deleni + 1);
 
             for (int i = 0; i < deleni; i++)
@@ -303,7 +309,7 @@ namespace Kritik
             line.Points.Add(new DataPoint(xMinus, -D / 2));
 
             if (p.Any(x => x.Typ == Hridel.diskKeyword)) { line.Points.Add(new DataPoint(xPlus, -D / 2 - maxD * 0.28)); }
-            else { line.Points.Add(new DataPoint(xPlus, -D / 2 - maxD * 0.16)); }
+            else { line.Points.Add(new DataPoint(xPlus, -D / 2 - maxD * 0.18)); }
             line.Color = OxyColors.Transparent;
             if (xMinus < xMin) { xMin = xMinus; }
             if (xPlus > xMax) { xMax = xPlus; }

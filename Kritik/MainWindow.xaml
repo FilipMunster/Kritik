@@ -575,7 +575,7 @@
             </TabItem>
             <TabItem Name="tvaryKmituTabItem">
                 <TabItem.Header>
-                    <Label Content="Tvary kmitů" MouseLeftButtonDown="TabItem1_MouseLeftButtonDown"/>
+                    <Label Content="Tvary kmitů" MouseLeftButtonUp="TabItem1_MouseLeftButtonUp"/>
                 </TabItem.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>

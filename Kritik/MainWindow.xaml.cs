@@ -31,7 +31,7 @@ namespace Kritik
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        //public static MainWindow AppWindow; - díky tomuto můžu z ostatních tříd přistupovat do MainWindow (vlastnosti, metody, prvky okna)
+        public static MainWindow AppWindow; // - díky tomuto můžu z ostatních tříd přistupovat do MainWindow (vlastnosti, metody, prvky okna)
 
         /// <summary>
         /// Globální instance třídy Hridel
@@ -44,6 +44,7 @@ namespace Kritik
         public MainWindow()
         {
             InitializeComponent();
+            AppWindow = this;
 
             DataContext = hridel;
             SloupecTyp.ItemsSource = hridel.ListTypuPrvku;
@@ -529,10 +530,10 @@ namespace Kritik
 
         }
 
-        private void TabItem1_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void TabItem1_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             vypocetKritOtButton_Click(null, null);
-            schemaHridele2.Model = Plot.SchemaHridele(hridel.PrvkyHrideleTab, null);
+            schemaHridele2.Model = Plot.SchemaHridele(hridel.PrvkyHrideleTab, null, schemaHridele2.ActualWidth);
             VykreslitKmity();
         }
 
@@ -555,18 +556,17 @@ namespace Kritik
             if (i >= 0 && (Math.Abs(pozice.Y) < Math.Abs(hridel.PrvkyHrideleTab[i].De / 2) 
                 || (hridel.PrvkyHrideleTab[i].Typ == Hridel.rigidKeyword && Math.Abs(pozice.Y) < Math.Abs(Plot.dTuhy / 2))))
             {
-                hridel.OznacenyRadek = hridel.PrvkyHrideleTab[i];
-                TabulkaDataGrid.Focus();
-                hridel.NotifyPropertyChanged("OznacenyRadek");
-            }            
+                TabulkaDataGrid.SelectedItem = hridel.PrvkyHrideleTab[i];
+                TabulkaDataGrid.ScrollIntoView(TabulkaDataGrid.SelectedItem);
+            }
         }
 
-        public static void DiskPruzinaMouseDown(object s, OxyPlot.OxyMouseDownEventArgs e)
+        public void DiskPruzinaMouseDown(object s, OxyPlot.OxyMouseDownEventArgs e)
         {
             OxyPlot.Series.LineSeries line = (OxyPlot.Series.LineSeries)s;
             int i = (int)line.Tag;
-            hridel.OznacenyRadek = hridel.PrvkyHrideleTab[i];
-            hridel.NotifyPropertyChanged("OznacenyRadek");
+            TabulkaDataGrid.SelectedItem = hridel.PrvkyHrideleTab[i];
+            TabulkaDataGrid.ScrollIntoView(TabulkaDataGrid.SelectedItem);
         }
 
     }
