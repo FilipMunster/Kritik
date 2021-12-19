@@ -61,7 +61,6 @@ namespace Kritik
                 line.Points.Add(new DataPoint(x[i], y[i]));
             }
             line.Color = color == default ? OxyColors.Black : color;
-            //line.MouseDown += Line_MouseDown; // + použítí tagu
             return line;
         }
 
@@ -191,16 +190,9 @@ namespace Kritik
             ObservableCollection<Hridel.PrvekTab> prvky = new(); prvky.Add(p); prvky.Add(p);
 
             // Vykouzlení počtu vykreslených prvků tak, aby to vypadlo dobře:
-            //double deleni; double c = 0.7;
-            //if ((p.Deleni / (xMax / 1000)) > c)
-            //{
-            //    if (p.L / xMax < 0.25) { c = 0.4; }
-            //    if (p.L / xMax < 0.11) { c = 0.2; }
-            //    deleni = Math.Floor(c * xMax / 1000);
-            //} else { deleni = p.Deleni; }
             double Ltx = 0.0369; // šířka trojúhelníku ku šířce modelu
             double Lt = Ltx * sirkaModelu + 5; // šířka trojúhelníku v [px] + mezera [px]
-            Lt = Lt * xMax / (sirkaModelu - 100); // šířka trojúhelníku v [mm] -(minus) zhruba okraj konec hřídele k okraji Modelu
+            Lt = Lt * xMax / (sirkaModelu - sirkaModelu * 0.1); // šířka trojúhelníku v [mm] -(minus) zhruba okraj konec hřídele k okraji Modelu
             double deleni = Math.Floor(p.L / Lt);
             deleni = p.Deleni < deleni ? p.Deleni : deleni;
 
