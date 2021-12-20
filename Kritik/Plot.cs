@@ -31,8 +31,9 @@ namespace Kritik
                 IsZoomEnabled = false,
                 IsPanEnabled = false});
             model.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Left, IsAxisVisible = false });
-            model.Padding = new OxyThickness(4);
+            model.Padding = new OxyThickness(0);
             model.PlotAreaBorderThickness = new OxyThickness(0, 0, 0, 1);
+            model.Background = OxyColors.White;
 
             // Přidám neviditelnou čáru dlouho stejně jako je schéma hřídele, aby lícovaly oba modely vykreslené pod sebou
             LineSeries line = new LineSeries();
@@ -49,6 +50,7 @@ namespace Kritik
             model.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Bottom, IsAxisVisible = false });
             model.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Left, IsAxisVisible = false });
             model.Padding = new OxyThickness(4);
+            model.Background = OxyColors.White;
             return model;
         }
 
@@ -99,6 +101,7 @@ namespace Kritik
                 model.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Left, IsAxisVisible = false, IsPanEnabled = false });
                 model.Padding = new OxyThickness(0);
                 model.PlotAreaBorderThickness = new OxyThickness(0);
+                model.Background = OxyColors.White;
 
                 double maxD = prvky.Max(x => x.De);
                 double maxM = prvky.Max(x => x.M);

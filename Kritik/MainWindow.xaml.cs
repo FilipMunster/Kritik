@@ -23,6 +23,8 @@ using System.Diagnostics;
 using System.Collections.ObjectModel;
 using OxyPlot;
 using OxyPlot.Series;
+using OxyPlot.Wpf;
+using System.Drawing;
 
 namespace Kritik
 {
@@ -71,6 +73,7 @@ namespace Kritik
             ////////////////
 
         }
+
         private void VykreslitHlavniGraf(string value)
         {
             if (hridel.TvaryKmitu != null && hridel.TvaryKmitu.Length > 0)
@@ -220,6 +223,7 @@ namespace Kritik
             });
             cisloKritOtZobrazitTextBox.Text = "1";
             VykreslitKmity();
+            VytvorPopisekVypoctu();
         }
 
         private void DataGridCell_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -329,10 +333,10 @@ namespace Kritik
                         val = 0;
                         break;
                 }
-                idNHodnotaTextBlock.Text = "(Idᵢ = " + val.ToString("0.###") + " kg.m²)";
+                idNHodnotaTextBlock.Text = "(Jdᵢ = " + val.ToString("0.###") + " kg.m²)";
                 hridel.AnyPropertyChanged = true;
             }
-            else { idNHodnotaTextBlock.Text = "(Idᵢ =  . . .  kg.m²)"; }
+            else { idNHodnotaTextBlock.Text = "(Jdᵢ =  . . .  kg.m²)"; }
         }
 
         private void deleniHridelPlusTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -487,32 +491,36 @@ namespace Kritik
         private void plotView1_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             VykreslitHlavniGraf("w");
+            VytvorPopisekVypoctu();
         }
 
         private void plotView2_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             VykreslitHlavniGraf("phi");
+            VytvorPopisekVypoctu();
         }
 
         private void plotView3_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             VykreslitHlavniGraf("m");
+            VytvorPopisekVypoctu();
         }
 
         private void plotView4_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             VykreslitHlavniGraf("t");
+            VytvorPopisekVypoctu();
         }
 
         private void CisloKritOtUpButton_Click(object sender, RoutedEventArgs e)
         {
             int c = Convert.ToInt32(cisloKritOtZobrazitTextBox.Text);
-            if (hridel.TvaryKmitu != null && c < hridel.TvaryKmitu.Length) { cisloKritOtZobrazitTextBox.Text = (c + 1).ToString(); VykreslitKmity(); }
+            if (hridel.TvaryKmitu != null && c < hridel.TvaryKmitu.Length) { cisloKritOtZobrazitTextBox.Text = (c + 1).ToString(); VykreslitKmity(); VytvorPopisekVypoctu(); }
         }
         private void CisloKritOtDownButton_Click(object sender, RoutedEventArgs e)
         {
             int c = Convert.ToInt32(cisloKritOtZobrazitTextBox.Text);
-            if (hridel.TvaryKmitu != null && c > 1) { cisloKritOtZobrazitTextBox.Text = (c - 1).ToString(); VykreslitKmity(); }
+            if (hridel.TvaryKmitu != null && c > 1) { cisloKritOtZobrazitTextBox.Text = (c - 1).ToString(); VykreslitKmity(); VytvorPopisekVypoctu(); }
         }
 
         private void TabulkaDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
@@ -533,8 +541,8 @@ namespace Kritik
         private void TabItem1_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             vypocetKritOtButton_Click(null, null);
-            schemaHridele2.Model = Plot.SchemaHridele(hridel.PrvkyHrideleTab, null, schemaHridele2.ActualWidth);
             VykreslitKmity();
+            schemaHridele2.Model = Plot.SchemaHridele(hridel.PrvkyHrideleTab, null, schemaHridele2.ActualWidth);
         }
 
         private void schemaHridele_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -569,5 +577,104 @@ namespace Kritik
             TabulkaDataGrid.ScrollIntoView(TabulkaDataGrid.SelectedItem);
         }
 
+        public void VytvorPopisekVypoctu()
+        {
+            if (hridel.TvaryKmitu != null)
+            {
+                string popisek = "";
+                int cisloKritOt = int.Parse(cisloKritOtZobrazitTextBox.Text);
+                string kritOt = String.Format("{0:0.000}", hridel.KritOt[cisloKritOt-1]);
+                string gyros;
+                switch (hridel.Gyros)
+                {
+                    case Hridel.gyrosZanedbaniKeyword:
+                        gyros = "Vliv gyroskopických účinků není uvažován.";
+                        break;
+                    case Hridel.gyrosSoubeznaKeyword:
+                        gyros = "Souběžná precese";
+                        break;
+                    case Hridel.gyrosProtibeznaKeyword:
+                        gyros = "Protiběžná precese";
+                        break;
+                    default:
+                        gyros = "";
+                        break;
+                }
+                string vykresleno;
+                switch (vykreslenyHlavniGraf)
+                {
+                    case "w":
+                    default:
+                        vykresleno = "Průhyb hřídele w";
+                        break;
+                    case "phi":
+                        vykresleno = "Natočení hřídele φ";
+                        break;
+                    case "m":
+                        vykresleno = "Ohybový moment M";
+                        break;
+                    case "t":
+                        vykresleno = "Posouvající síla T";
+                        break;
+                }
+                popisek += cisloKritOt + ". kritické otáčky = " + kritOt + " 1/min\n";
+                popisek += vykresleno + "\n";
+                popisek += gyros + "\n";
+                popisek += nazevTextBox.Text + "\n";
+                popisek += popisTextBox.Text;
+                popisVypoctuTextBlock.Text = popisek;
+            }            
+        }
+
+        private void ulozitTvarKmituButton_Click(object sender, RoutedEventArgs e)
+        {
+            int sirka = 3000;
+            int vyskaSchematu = Convert.ToInt32(Math.Round(0.23 * sirka));
+            int vyskaGrafu = Convert.ToInt32(Math.Round(0.354 * sirka));
+            int resolution = Convert.ToInt32(Math.Round(sirka / 884.0 * 96));
+            
+
+            var grafPngExporter = new PngExporter { Width = sirka, Height = vyskaGrafu, Resolution = resolution };
+            grafPngExporter.ExportToFile(hlavniPlot.Model, @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\graf.png");
+
+            var schemaPngExporter = new PngExporter { Width = sirka, Height = vyskaSchematu, Resolution = resolution };
+            schemaPngExporter.ExportToFile(schemaHridele2.Model, @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\schema.png");
+
+            PlotModel popisModel = new PlotModel();
+            popisModel.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Bottom, IsAxisVisible = false });
+            popisModel.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Left, IsAxisVisible = false });
+            popisModel.Background = OxyColors.White;
+            popisModel.PlotAreaBorderThickness = new OxyThickness(0);
+            OxyPlot.Annotations.TextAnnotation popis = new();
+            popis.Text = popisVypoctuTextBlock.Text;
+            popis.TextPosition = new DataPoint(15, 5);
+            popis.StrokeThickness = 0;
+            popisModel.Annotations.Add(popis);
+            var popisPngExporter = new PngExporter { Width = sirka, Height = vyskaSchematu, Resolution = resolution };
+            popisPngExporter.ExportToFile(popisModel, @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\popis.png");
+
+            var grafStream = new MemoryStream();
+            grafPngExporter.Export(hlavniPlot.Model, grafStream);
+            var schemaStream = new MemoryStream();
+            grafPngExporter.Export(schemaHridele2.Model, schemaStream);
+            var popisStream = new MemoryStream();
+            grafPngExporter.Export(popisModel, popisStream);
+
+            var vsechnoStream = schemaStream;
+            vsechnoStream.Position = vsechnoStream.Length;
+            //grafStream.CopyTo(vsechnoStream);
+            //schemaStream.CopyTo(vsechnoStream);
+            //popisStream.CopyTo(vsechnoStream);
+
+            BitmapSource schemaBitmap = schemaPngExporter.ExportToBitmap(schemaHridele2.Model);
+            BitmapSource grafBitmap = grafPngExporter.ExportToBitmap(hlavniPlot.Model);
+            var target = new Bitmap(schemaBitmap.Width, schemaBitmap.Height, PixelFormat.Format32bppArgb);
+
+
+
+
+
+
+        }
     }
 }

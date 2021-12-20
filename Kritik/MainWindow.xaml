@@ -8,7 +8,8 @@
         xmlns:Data="clr-namespace:System.Data;assembly=System.Data.Common" x:Class="Kritik.MainWindow"
         mc:Ignorable="d"
         Title="{Binding Path=TextTitulkyOkna}" Height="800" Width="1200" MinHeight="640" MinWidth="1000"
-        WindowStartupLocation="CenterScreen" WindowStyle="ThreeDBorderWindow">
+        WindowStartupLocation="CenterScreen" WindowStyle="ThreeDBorderWindow"
+        Icon="/icons/kritik.ico">
     <Window.Resources>
         <local:NastaveniVyskyTextBoxuPoznamky x:Key="NastavovacVyskyPoznamky"/>
         <local:FormatEConverter x:Key="FormatEConverterX"/>
@@ -18,7 +19,7 @@
         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="SlateGray"/>
     </Window.Resources>
     <Grid Name="MainGrid">
-        <TabControl SelectedIndex="0">
+        <TabControl SelectedIndex="1">
             <TabItem Header="Výpočet" Name="vypocetTabItem">
                 <TabItem.Background>
                     <LinearGradientBrush EndPoint="0,1">
@@ -175,12 +176,12 @@
                                         <TextBlock Text="částí."/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
-                                        <TextBlock Text="Výpočet Id&#x1D62;" ToolTip="Způsob výpočtu momentu setrvačnosti kolmého k ose rotoru" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Výpočet Jd&#x1D62;" ToolTip="Způsob výpočtu momentu setrvačnosti kolmého k ose rotoru" VerticalAlignment="Center"/>
                                         <ComboBox Name="IdNZpusobComboBox" Width="65" Margin="5, 0, 5, 0" 
                                                   SelectedIndex="{Binding Path=HridelPlusZpusobSelectedIndex}" 
                                                   SelectionChanged="IdNZpusobComboBox_SelectionChanged"
                                                   IsEnabled="{Binding Path=HridelPlusOvlPrvkyEnabled}">
-                                            <ComboBoxItem Content="=Id/n*"/>
+                                            <ComboBoxItem Content="=Jd/n*"/>
                                             <ComboBoxItem Content="vlastní hodnota"/>
                                         </ComboBox>
                                         <TextBox Name="idNTextBox" 
@@ -190,7 +191,7 @@
                                                  Width="50"
                                                  VerticalAlignment="Center" />
                                     </StackPanel>
-                                    <TextBlock Text="(Id&#x1D62; =  . . .  kg.m&#x00B2;)" Name="idNHodnotaTextBlock" 
+                                    <TextBlock Text="(Jd&#x1D62; =  . . .  kg.m&#x00B2;)" Name="idNHodnotaTextBlock" 
                                                IsEnabled="{Binding Path=HridelPlusOvlPrvkyEnabled}"
                                                VerticalAlignment="Center" Margin="65, 0, 0, 0">
                                         <TextBlock.Style>
@@ -581,7 +582,7 @@
                 </TabItem.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="250"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Grid Grid.Column="0">
@@ -596,8 +597,26 @@
                                             <Button Content="▼" FontSize="7" Padding="0,-1, 0, 0" Width="15" Height="10" Click="CisloKritOtDownButton_Click"/>
                                         </StackPanel>
                                     </StackPanel>
-
                                 </StackPanel>
+                                <Separator Margin="0, 5, 0, 5"/>
+                                <TextBlock x:Name="popisVypoctuTextBlock"/>
+                                <Separator Margin="0, 5, 0, 5"/>
+                                <TextBlock Text="Uložení tvar kmitu:"/>
+                                <Grid Margin="15, 2, 0, 0">
+                                    <StackPanel Orientation="Vertical">
+                                    <CheckBox Content="schéma hřídele" IsChecked="True"/>
+                                    <CheckBox Content="tvar kmitu" IsChecked="True"/>
+                                    <CheckBox Content="textový popisek" IsChecked="True"/>
+                                    </StackPanel>
+                                </Grid>
+                                <Button Height="25" Width="150" Margin="0, 5, 0, 5" Name="ulozitTvarKmituButton" Padding="3" Click="ulozitTvarKmituButton_Click">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="/icons/Save_16x.png"/>
+                                        <TextBlock Text="Uložit tvar kmitu" VerticalAlignment="Center" Margin="5, 0, 0, 0"/>
+                                    </StackPanel>
+                                </Button>
+
+
                             </StackPanel>
                         </Border>
                     </Grid>
@@ -615,8 +634,8 @@
                                     <RowDefinition Height="160"/>
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
-                                <oxy:PlotView x:Name="schemaHridele2" DefaultTrackerTemplate="{x:Null}" Grid.Row="0" Margin="5, 2, 5, 0"/>
-                                <oxy:PlotView x:Name="hlavniPlot" DefaultTrackerTemplate="{x:Null}" Grid.Row="1"/>
+                                <oxy:PlotView x:Name="schemaHridele2" DefaultTrackerTemplate="{x:Null}" Grid.Row="0" Margin="4, 2, 4, 2"/>
+                                <oxy:PlotView x:Name="hlavniPlot" DefaultTrackerTemplate="{x:Null}" Grid.Row="1" Margin="4, 2, 4, 4"/>
                             </Grid>
                         </Border>
                         <Grid Grid.Row="1">

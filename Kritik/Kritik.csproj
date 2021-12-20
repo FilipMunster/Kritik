@@ -15,6 +15,7 @@
     <None Remove="icons\Add_16x.png" />
     <None Remove="icons\DeleteAllRows_16x.png" />
     <None Remove="icons\Download_16x.png" />
+    <None Remove="icons\kritik.ico" />
     <None Remove="icons\Mirror.png" />
     <None Remove="icons\NewFile_16x.png" />
     <None Remove="icons\OpenFolder_16x.png" />
@@ -37,6 +38,7 @@
     <PackageReference Include="MathNet.Numerics.Data.Text" Version="4.1.0" />
     <PackageReference Include="OxyPlot.Pdf" Version="2.1.0" />
     <PackageReference Include="OxyPlot.Wpf" Version="2.1.0" />
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -50,6 +52,7 @@
     <Resource Include="icons\Add_16x.png" />
     <Resource Include="icons\DeleteAllRows_16x.png" />
     <Resource Include="icons\Download_16x.png" />
+    <Resource Include="icons\kritik.ico" />
     <Resource Include="icons\Mirror.png" />
     <Resource Include="icons\NewFile_16x.png" />
     <Resource Include="icons\OpenFolder_16x.png" />
