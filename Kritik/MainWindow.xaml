@@ -19,7 +19,7 @@
         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="SlateGray"/>
     </Window.Resources>
     <Grid Name="MainGrid">
-        <TabControl SelectedIndex="1">
+        <TabControl SelectedIndex="0">
             <TabItem Header="Výpočet" Name="vypocetTabItem">
                 <TabItem.Background>
                     <LinearGradientBrush EndPoint="0,1">
@@ -604,9 +604,9 @@
                                 <TextBlock Text="Uložení tvar kmitu:"/>
                                 <Grid Margin="15, 2, 0, 0">
                                     <StackPanel Orientation="Vertical">
-                                    <CheckBox Content="schéma hřídele" IsChecked="True"/>
-                                    <CheckBox Content="tvar kmitu" IsChecked="True"/>
-                                    <CheckBox Content="textový popisek" IsChecked="True"/>
+                                        <CheckBox Content="schéma hřídele" IsChecked="True" Name="vykreslitSchemaCheckBox"/>
+                                        <CheckBox Content="tvar kmitu" IsChecked="True" Name="vykreslitGrafCheckBox"/>
+                                        <CheckBox Content="textový popisek" IsChecked="True" Name="vykreslitPopisekCheckBox"/>
                                     </StackPanel>
                                 </Grid>
                                 <Button Height="25" Width="150" Margin="0, 5, 0, 5" Name="ulozitTvarKmituButton" Padding="3" Click="ulozitTvarKmituButton_Click">

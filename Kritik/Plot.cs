@@ -54,6 +54,22 @@ namespace Kritik
             return model;
         }
 
+        public static PlotModel ModelFromString(string text, int x, int y, int fontSize)
+        {
+            PlotModel model = new PlotModel();
+            model.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Bottom, IsAxisVisible = false });
+            model.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Left, IsAxisVisible = false });
+            model.Background = OxyColors.White;
+            model.PlotAreaBorderThickness = new OxyThickness(0);
+            OxyPlot.Annotations.TextAnnotation popis = new();
+            popis.Text = text;
+            popis.TextPosition = new DataPoint(x, y);
+            popis.StrokeThickness = 0;
+            popis.FontSize = fontSize;
+            model.Annotations.Add(popis);
+            return model;
+        }
+
         public static LineSeries NewLine(double[] x, double[] y, OxyColor color = default)
         {
             if (x.Length != y.Length) { return null; }

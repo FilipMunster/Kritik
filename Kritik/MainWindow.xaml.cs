@@ -25,6 +25,7 @@ using OxyPlot;
 using OxyPlot.Series;
 using OxyPlot.Wpf;
 using System.Drawing;
+using Brushes = System.Windows.Media.Brushes;
 
 namespace Kritik
 {
@@ -42,7 +43,7 @@ namespace Kritik
 
         private bool novySoubor; // slouží k rozpoznávání, jestli tlačítko uložit má soubor uložit, nebo uložit jako. true -> uložit jako
 
-        private string vykreslenyHlavniGraf;
+        private string vykreslenyHlavniGraf = "w";
         public MainWindow()
         {
             InitializeComponent();
@@ -56,21 +57,21 @@ namespace Kritik
             novySoubor = true;
             VykreslitKmity();
 
-            ////////////////
-            string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test1.xlsx";
-            hridel.HridelNova();
-            hridel.nazevSouboru = vstupniSoubor;
-            hridel.NacistData(hridel.nazevSouboru);
-            hridel.AnyPropertyChanged = false;
-            novySoubor = false;
-            Historie.New();
-            backBtn.IsEnabled = Historie.BackBtnEnabled;
-            forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
-            hridel.VytvorPrvky();
-            (hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
-            hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
-            VykreslitKmity();
-            ////////////////
+            //////////////////
+            //string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test1.xlsx";
+            //hridel.HridelNova();
+            //hridel.nazevSouboru = vstupniSoubor;
+            //hridel.NacistData(hridel.nazevSouboru);
+            //hridel.AnyPropertyChanged = false;
+            //novySoubor = false;
+            //Historie.New();
+            //backBtn.IsEnabled = Historie.BackBtnEnabled;
+            //forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
+            //hridel.VytvorPrvky();
+            //(hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
+            //hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
+            //VykreslitKmity();
+            //////////////////
 
         }
 
@@ -579,7 +580,7 @@ namespace Kritik
 
         public void VytvorPopisekVypoctu()
         {
-            if (hridel.TvaryKmitu != null)
+            if (hridel.TvaryKmitu != null && hridel.TvaryKmitu.Count() > 0)
             {
                 string popisek = "";
                 int cisloKritOt = int.Parse(cisloKritOtZobrazitTextBox.Text);
@@ -617,7 +618,7 @@ namespace Kritik
                         vykresleno = "Posouvající síla T";
                         break;
                 }
-                popisek += cisloKritOt + ". kritické otáčky = " + kritOt + " 1/min\n";
+                popisek += cisloKritOt + ". kritické otáčky = " + kritOt + " min⁻¹\n";
                 popisek += vykresleno + "\n";
                 popisek += gyros + "\n";
                 popisek += nazevTextBox.Text + "\n";
@@ -628,53 +629,46 @@ namespace Kritik
 
         private void ulozitTvarKmituButton_Click(object sender, RoutedEventArgs e)
         {
-            int sirka = 3000;
-            int vyskaSchematu = Convert.ToInt32(Math.Round(0.23 * sirka));
-            int vyskaGrafu = Convert.ToInt32(Math.Round(0.354 * sirka));
-            int resolution = Convert.ToInt32(Math.Round(sirka / 884.0 * 96));
-            
+            hridel.AnyPropertyChanged = true;
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Obrázek PNG (*.png)|*.png";
+            string path = System.IO.Path.GetDirectoryName(hridel.nazevSouboru);
+            string fname = System.IO.Path.GetFileNameWithoutExtension(hridel.nazevSouboru);
+            string tvar;
+            switch (vykreslenyHlavniGraf)
+            {
+                case "w":
+                case "phi":
+                    tvar = vykreslenyHlavniGraf;
+                    break;
+                case "m":
+                case "t":
+                    tvar = vykreslenyHlavniGraf.ToUpper();
+                    break;
+                default:
+                    tvar = "";
+                    break;
+            }
 
-            var grafPngExporter = new PngExporter { Width = sirka, Height = vyskaGrafu, Resolution = resolution };
-            grafPngExporter.ExportToFile(hlavniPlot.Model, @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\graf.png");
+            saveFileDialog.FileName = System.IO.Path.GetFileName(path + "\\" + fname + "_" + tvar + ".png");
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                ModelyDoPNG obrazek = new ModelyDoPNG();
+                int vyskaSchematu = Convert.ToInt32(Math.Round(0.23 * obrazek.Sirka));
+                int vyskaGrafu = Convert.ToInt32(Math.Round(0.354 * obrazek.Sirka));
+                int vyskaPopisu = 270;
 
-            var schemaPngExporter = new PngExporter { Width = sirka, Height = vyskaSchematu, Resolution = resolution };
-            schemaPngExporter.ExportToFile(schemaHridele2.Model, @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\schema.png");
-
-            PlotModel popisModel = new PlotModel();
-            popisModel.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Bottom, IsAxisVisible = false });
-            popisModel.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Left, IsAxisVisible = false });
-            popisModel.Background = OxyColors.White;
-            popisModel.PlotAreaBorderThickness = new OxyThickness(0);
-            OxyPlot.Annotations.TextAnnotation popis = new();
-            popis.Text = popisVypoctuTextBlock.Text;
-            popis.TextPosition = new DataPoint(15, 5);
-            popis.StrokeThickness = 0;
-            popisModel.Annotations.Add(popis);
-            var popisPngExporter = new PngExporter { Width = sirka, Height = vyskaSchematu, Resolution = resolution };
-            popisPngExporter.ExportToFile(popisModel, @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\popis.png");
-
-            var grafStream = new MemoryStream();
-            grafPngExporter.Export(hlavniPlot.Model, grafStream);
-            var schemaStream = new MemoryStream();
-            grafPngExporter.Export(schemaHridele2.Model, schemaStream);
-            var popisStream = new MemoryStream();
-            grafPngExporter.Export(popisModel, popisStream);
-
-            var vsechnoStream = schemaStream;
-            vsechnoStream.Position = vsechnoStream.Length;
-            //grafStream.CopyTo(vsechnoStream);
-            //schemaStream.CopyTo(vsechnoStream);
-            //popisStream.CopyTo(vsechnoStream);
-
-            BitmapSource schemaBitmap = schemaPngExporter.ExportToBitmap(schemaHridele2.Model);
-            BitmapSource grafBitmap = grafPngExporter.ExportToBitmap(hlavniPlot.Model);
-            var target = new Bitmap(schemaBitmap.Width, schemaBitmap.Height, PixelFormat.Format32bppArgb);
-
-
-
-
-
-
+                if (vykreslitSchemaCheckBox.IsChecked == true) { obrazek.Pridat(schemaHridele2.Model, vyskaSchematu); }
+                if (vykreslitGrafCheckBox.IsChecked == true) { obrazek.Pridat(hlavniPlot.Model, vyskaGrafu); }
+                if (vykreslitPopisekCheckBox.IsChecked == true) 
+                {
+                    PlotModel popisekModel = Plot.ModelFromString(popisVypoctuTextBlock.Text, 18, 0, 15);
+                    obrazek.Pridat(popisekModel, vyskaPopisu); 
+                }
+                obrazek.Ulozit(saveFileDialog.FileName);
+                hridel.AnyPropertyChanged = false;
+                return;
+            }
         }
     }
 }
