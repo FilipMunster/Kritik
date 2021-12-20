@@ -84,7 +84,9 @@ namespace Kritik
                 plot3Border.BorderBrush = Brushes.Transparent;
                 plot4Border.BorderBrush = Brushes.Transparent;
 
-                int id = Convert.ToInt32(cisloKritOtZobrazitTextBox.Text) - 1;
+                int id = Convert.ToInt32(cisloKritOtZobrazitTextBox.Text);
+                while (id > hridel.TvaryKmitu.Length) { id--; cisloKritOtZobrazitTextBox.Text = id.ToString(); }
+                id += - 1;
 
                 PlotModel plt = Plot.NewVelky();
                 switch (value)
@@ -118,10 +120,12 @@ namespace Kritik
         }
         private void VykreslitKmity()
         {
-            int id = Convert.ToInt32(cisloKritOtZobrazitTextBox.Text) - 1;
-
             if (hridel.TvaryKmitu != null && hridel.TvaryKmitu.Length > 0)
             {
+                int id = Convert.ToInt32(cisloKritOtZobrazitTextBox.Text);
+                while (id > hridel.TvaryKmitu.Length) { id--; cisloKritOtZobrazitTextBox.Text = id.ToString(); }
+                id += -1;
+
                 VykreslitHlavniGraf(vykreslenyHlavniGraf);
 
                 PlotModel plt1 = Plot.NewMaly();
@@ -149,7 +153,6 @@ namespace Kritik
                 plotView3.Model = Plot.NewMaly();
                 plotView4.Model = Plot.NewMaly();
             }
-
         }
 
         private void newFileButton_Click(object sender, RoutedEventArgs e)
@@ -222,7 +225,7 @@ namespace Kritik
                 (hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
                 hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
             });
-            cisloKritOtZobrazitTextBox.Text = "1";
+            //cisloKritOtZobrazitTextBox.Text = "1";
             VykreslitKmity();
             VytvorPopisekVypoctu();
         }
@@ -584,6 +587,7 @@ namespace Kritik
             {
                 string popisek = "";
                 int cisloKritOt = int.Parse(cisloKritOtZobrazitTextBox.Text);
+                while (cisloKritOt > hridel.TvaryKmitu.Length) { cisloKritOt--; }
                 string kritOt = String.Format("{0:0.000}", hridel.KritOt[cisloKritOt-1]);
                 string gyros;
                 switch (hridel.Gyros)
