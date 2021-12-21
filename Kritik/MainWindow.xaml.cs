@@ -40,6 +40,7 @@ namespace Kritik
         /// Globální instance třídy Hridel
         /// </summary>
         public static readonly Hridel hridel = new();
+        private Hridel hridelPouzitaKVypoctu;
 
         private bool novySoubor; // slouží k rozpoznávání, jestli tlačítko uložit má soubor uložit, nebo uložit jako. true -> uložit jako
 
@@ -193,24 +194,7 @@ namespace Kritik
         {
             if (novySoubor == false)
             {
-                if (!hridel.VysledkyPlatne)
-                {
-                    MessageBoxResult odpoved = MessageBox.Show("Zadání hřídele bylo změněno. Chcete před uložením provést výpočet?", "Zadání bylo změněno", MessageBoxButton.YesNoCancel, MessageBoxImage.Asterisk);
-                    switch (odpoved)
-                    {
-                        case MessageBoxResult.Yes:
-                            vypocetKritOtButton_Click(null, null); // opravit tak, aby počkal na dokončení výpočtu
-                            break;
-                        case MessageBoxResult.No:
-                            break; // nezapíše výsledky, pouze smaže list výsledků
-                        case MessageBoxResult.Cancel:
-                            return;
-                            
-                    }
-                }
-
-
-                bool ok = hridel.UlozitData(hridel.nazevSouboru);
+                bool ok = hridel.UlozitData(hridel.nazevSouboru, hridelPouzitaKVypoctu);
                 if (!ok) { MessageBox.Show("Soubor \"" + hridel.nazevSouboru + "\" se nepodařilo uložit!", "Chyba ukládání souboru", MessageBoxButton.OK, MessageBoxImage.Error); }
                 else
                 {
@@ -230,7 +214,7 @@ namespace Kritik
             if (saveFileDialog.ShowDialog() == true)
             {
                 hridel.nazevSouboru = saveFileDialog.FileName;
-                bool ok = hridel.UlozitData(hridel.nazevSouboru);
+                bool ok = hridel.UlozitData(hridel.nazevSouboru, hridelPouzitaKVypoctu);
                 if (!ok) { MessageBox.Show("Soubor " + hridel.nazevSouboru + " se nepodařilo uložit!", "Chyba ukládání souboru", MessageBoxButton.OK, MessageBoxImage.Error); }
                 else
                 {
@@ -246,6 +230,7 @@ namespace Kritik
             hridel.KritOt = new double[] { -1 };
 
             await Task.Run(() => {
+                ZkopirovatHridelPouzitouKVypoctu();
                 hridel.VytvorPrvky();
                 (hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
                 hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
@@ -253,7 +238,6 @@ namespace Kritik
             //cisloKritOtZobrazitTextBox.Text = "1";
             VykreslitKmity();
             VytvorPopisekVypoctu();
-            hridel.VysledkyPlatne = true;
         }
 
         private void DataGridCell_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -698,6 +682,45 @@ namespace Kritik
                 obrazek.Ulozit(saveFileDialog.FileName);
                 hridel.AnyPropertyChanged = false;
                 return;
+            }
+        }
+
+        private void ZkopirovatHridelPouzitouKVypoctu()
+        {
+            hridelPouzitaKVypoctu = new Hridel()
+            {
+                VypocetNazev = hridel.VypocetNazev,
+                VypocetPopis = hridel.VypocetPopis,
+                VypocetResil = hridel.VypocetResil,
+                VypocetDatum = hridel.VypocetDatum,
+                OpLeva = hridel.OpLeva,
+                OpPrava = hridel.OpPrava,
+                ModulPruznosti = hridel.ModulPruznosti,
+                Rho = hridel.Rho,
+                Gyros = hridel.Gyros,
+                OtackyProvozni = hridel.OtackyProvozni,
+                OtackyPrubezne = hridel.OtackyPrubezne,
+                Poznamka = hridel.Poznamka,
+                KritOt = hridel.KritOt
+            };
+            hridelPouzitaKVypoctu.PrvkyHrideleTab = new ObservableCollection<Hridel.PrvekTab>();
+            foreach (Hridel.PrvekTab p in hridel.PrvkyHrideleTab)
+            {
+                hridelPouzitaKVypoctu.PrvkyHrideleTab.Add(new Hridel.PrvekTab()
+                {
+                    Typ = p.Typ,
+                    L = p.L,
+                    De = p.De,
+                    Di = p.Di,
+                    M = p.M,
+                    Io = p.Io,
+                    Id = p.Id,
+                    K = p.K,
+                    Cm = p.Cm,
+                    Deleni = p.Deleni,
+                    IdN = p.IdN,
+                    IdNValue = p.IdNValue
+                });
             }
         }
     }

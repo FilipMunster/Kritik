@@ -36,10 +36,8 @@ namespace Kritik
         public bool AnyPropertyChanged { get { return anyPropertyChanged; } set { 
                 anyPropertyChanged = value; 
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TextTitulkyOkna"));
-                VysledkyPlatne = false;
             } }
         private bool anyPropertyChanged;
-        public bool VysledkyPlatne { get; set; }
         public string nazevSouboru;
         public string TextTitulkyOkna {
             get {
@@ -290,7 +288,6 @@ namespace Kritik
             PrubehRpm = null;
             AnyPropertyChanged = true;
             TvaryKmitu = null;
-            VysledkyPlatne = true;
         }
 
         /// <summary>
@@ -753,9 +750,9 @@ namespace Kritik
         /// </summary>
         /// <param name="fileName">Úplná cesta k souboru</param>
         /// <returns>Vrací true, pokud se soubor podařilo uložit</returns>
-        public bool UlozitData(string fileName)
+        public bool UlozitData(string fileName, Hridel hridelPouzitaKVypoctu = default)
         {
-            if ((KritOt != null) && (KritOt.Length > 0)) { bool ok = UlozitVysledky(fileName); if (!ok) { return false; } }
+            if ((KritOt != null) && (KritOt.Length > 0)) { bool ok = UlozitVysledky(fileName, hridelPouzitaKVypoctu); if (!ok) { return false; } }
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             FileInfo fileInfo = new FileInfo(fileName);
@@ -846,7 +843,7 @@ namespace Kritik
             Debug.WriteLine("Soubor {0} byl uložen.", fileName);
             return true;
         }
-        public bool UlozitVysledky(string fileName)
+        public bool UlozitVysledky(string fileName, Hridel hridelPouzitaKVypoctu)
         {
 
             Dictionary<string, string> opVypsatDict = new()
@@ -998,7 +995,7 @@ namespace Kritik
                                 ws.Cells[row, 8].Value = a.Di;
                                 ws.Cells[row, 8].Style.HorizontalAlignment = alignLeft;
                                 ws.Cells[row, 8].Style.Numberformat.Format = formatNum;
-                                ws.Cells[++row, 2].Value = "Hřídel je rozdělena na " + (a.Deleni + 1) + " částí o délce " + string.Format("{0:#.###}", a.L / (a.Deleni + 1)) + " mm, mezi kterými jsou umístěny tyto prvky:";
+                                ws.Cells[++row, 2].Value = "Hřídel je rozdělena na " + (a.Deleni + 1) + " částí o délce " + string.Format("{0:#.###}", a.L / (a.Deleni + 1)) + " mm, mezi kterými jsou umístěny prvky:";
                                 if (a.M > 0)
                                 {
                                     ws.Cells[++row, 2].Value = TypDict[diskKeyword];
