@@ -193,8 +193,29 @@ namespace Kritik
         {
             if (novySoubor == false)
             {
-                hridel.UlozitData(hridel.nazevSouboru);
-                hridel.AnyPropertyChanged = false;
+                if (!hridel.VysledkyPlatne)
+                {
+                    MessageBoxResult odpoved = MessageBox.Show("Zadání hřídele bylo změněno. Chcete před uložením provést výpočet?", "Zadání bylo změněno", MessageBoxButton.YesNoCancel, MessageBoxImage.Asterisk);
+                    switch (odpoved)
+                    {
+                        case MessageBoxResult.Yes:
+                            vypocetKritOtButton_Click(null, null); // opravit tak, aby počkal na dokončení výpočtu
+                            break;
+                        case MessageBoxResult.No:
+                            break; // nezapíše výsledky, pouze smaže list výsledků
+                        case MessageBoxResult.Cancel:
+                            return;
+                            
+                    }
+                }
+
+
+                bool ok = hridel.UlozitData(hridel.nazevSouboru);
+                if (!ok) { MessageBox.Show("Soubor \"" + hridel.nazevSouboru + "\" se nepodařilo uložit!", "Chyba ukládání souboru", MessageBoxButton.OK, MessageBoxImage.Error); }
+                else
+                {
+                    hridel.AnyPropertyChanged = false;
+                }                
                 return;
             }
             else { saveAsFileButton_Click(sender, e); }
@@ -209,9 +230,13 @@ namespace Kritik
             if (saveFileDialog.ShowDialog() == true)
             {
                 hridel.nazevSouboru = saveFileDialog.FileName;
-                hridel.UlozitData(hridel.nazevSouboru);
-                hridel.AnyPropertyChanged = false;
-                novySoubor = false;
+                bool ok = hridel.UlozitData(hridel.nazevSouboru);
+                if (!ok) { MessageBox.Show("Soubor " + hridel.nazevSouboru + " se nepodařilo uložit!", "Chyba ukládání souboru", MessageBoxButton.OK, MessageBoxImage.Error); }
+                else
+                {
+                    hridel.AnyPropertyChanged = false;
+                    novySoubor = false;
+                }
                 return;
             }
         }
@@ -228,6 +253,7 @@ namespace Kritik
             //cisloKritOtZobrazitTextBox.Text = "1";
             VykreslitKmity();
             VytvorPopisekVypoctu();
+            hridel.VysledkyPlatne = true;
         }
 
         private void DataGridCell_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)

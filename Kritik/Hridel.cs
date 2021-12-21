@@ -33,8 +33,13 @@ namespace Kritik
             AnyPropertyChanged = true;
         }
 
-        public bool AnyPropertyChanged { get { return anyPropertyChanged; } set { anyPropertyChanged = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TextTitulkyOkna")); } }
+        public bool AnyPropertyChanged { get { return anyPropertyChanged; } set { 
+                anyPropertyChanged = value; 
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TextTitulkyOkna"));
+                VysledkyPlatne = false;
+            } }
         private bool anyPropertyChanged;
+        public bool VysledkyPlatne { get; set; }
         public string nazevSouboru;
         public string TextTitulkyOkna {
             get {
@@ -78,8 +83,8 @@ namespace Kritik
         public const string magnetKeyword = "magnet";
         public const string jednotkaModuluPruznosti = "GPa";
         public const int radJednotkyModuluPruznosti = 9;
-        public const string excelListZadani = "KRITIK_input";
-        public const string excelListVysledky = "KRITIK";
+        public const string excelListZadani = "KRITIK_zadani";
+        public const string excelListVysledky = "KRITIK_vypocet";
         public static Dictionary<string, string> TypDict = new Dictionary<string, string>
         {
             {beamKeyword, "Hřídel" },
@@ -285,6 +290,7 @@ namespace Kritik
             PrubehRpm = null;
             AnyPropertyChanged = true;
             TvaryKmitu = null;
+            VysledkyPlatne = true;
         }
 
         /// <summary>
@@ -376,11 +382,11 @@ namespace Kritik
                     string kOText = "";
                     if (OtackyProvozni > 0)
                     {
-                        kOText += String.Format("{0:0.000}", (KritOt[0] / OtackyProvozni) * 100) + " % provozních otáček\n";
+                        kOText += String.Format("{0:0.000}", KritOt[0] / OtackyProvozni * 100) + " % provozních otáček\n";
                     }
                     if (OtackyPrubezne > 0)
                     {
-                        kOText += String.Format("{0:0.000}", (KritOt[0] / OtackyPrubezne) * 100) + " % průběžných otáček";
+                        kOText += String.Format("{0:0.000}", KritOt[0] / OtackyPrubezne * 100) + " % průběžných otáček";
                     }
                     return kOText;
                 }
@@ -749,6 +755,8 @@ namespace Kritik
         /// <returns>Vrací true, pokud se soubor podařilo uložit</returns>
         public bool UlozitData(string fileName)
         {
+            if ((KritOt != null) && (KritOt.Length > 0)) { bool ok = UlozitVysledky(fileName); if (!ok) { return false; } }
+
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             FileInfo fileInfo = new FileInfo(fileName);
             using (ExcelPackage p = new ExcelPackage(fileInfo))
@@ -825,8 +833,6 @@ namespace Kritik
                         row++;
                     }
                 }
-
-
                 try
                 {
                     p.Save();
@@ -836,11 +842,254 @@ namespace Kritik
                     Debug.WriteLine("Chyba při ukládání dat hřídele do souboru: {0}", fileName);
                     return false;
                 }
+            }
+            Debug.WriteLine("Soubor {0} byl uložen.", fileName);
+            return true;
+        }
+        public bool UlozitVysledky(string fileName)
+        {
+
+            Dictionary<string, string> opVypsatDict = new()
+            {
+                {opVolnyKeyword, "VOLNÝ"},
+                {opKloubKeyword, "KLOUB"},
+                {opVetknutiKeyword, "VETKNUTÍ"}
+            };
+            Dictionary<string, string> gyrosVypsatDict = new()
+            {
+                {gyrosZanedbaniKeyword, "VLIV GYROSKOPICKÝCH ÚČINKŮ NENÍ UVAŽOVÁN"},
+                {gyrosSoubeznaKeyword, "SOUBĚŽNÁ PRECESE"},
+                {gyrosProtibeznaKeyword,"PROTIBĚŽNÁ PRECESE"}
+            };
+
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            FileInfo fileInfo = new FileInfo(fileName);
+            using (ExcelPackage p = new ExcelPackage(fileInfo))
+            {
+                if (p.Workbook.Worksheets[excelListVysledky] != null)
+                {
+                    p.Workbook.Worksheets.Delete(excelListVysledky);
+                }
+                ExcelWorksheet ws = p.Workbook.Worksheets.Add(excelListVysledky);
+
+                ws.Cells[1, 1].Value = "KRITICKÉ OTÁČKY KROUŽIVÉHO KMITÁNÍ";
+                ws.Cells[1, 1].Style.Font.Bold = true;
+                ws.Cells[3, 1].Value = "Název:";
+                ws.Cells[3, 2].Value = VypocetNazev;
+                ws.Cells[4, 1].Value = "Popis:";
+                ws.Cells[4, 2].Value = VypocetPopis;
+                ws.Cells[5, 1].Value = "Řešil:";
+                ws.Cells[5, 2].Value = VypocetResil;
+                ws.Cells[6, 1].Value = "Datum:";
+                ws.Cells[6, 2].Value = VypocetDatum;
+                ws.Cells[8, 1].Value = "Okrajové podmínky:";
+                ws.Cells[9, 2].Value = "LEVÝ konec rotoru:";
+                ws.Cells[9, 4].Value = opVypsatDict[OpLeva];
+                ws.Cells[9, 4].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                ws.Cells[10, 2].Value = "PRAVÝ konec rotoru:";
+                ws.Cells[10, 4].Value = opVypsatDict[OpPrava];
+                ws.Cells[10, 4].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                ws.Cells[11, 1].Value = "Modul pružnosti v tahu hřídele:";
+                ws.Cells[11, 4].Value = ModulPruznosti;
+                ws.Cells[11, 5].Value = jednotkaModuluPruznosti;
+                ws.Cells[12, 1].Value = "Hustota materiálu hřídele:";
+                ws.Cells[12, 4].Value = Rho;
+                ws.Cells[12, 5].Value = "kg.m⁻³";
+                ws.Cells[14, 1].Value = gyrosVypsatDict[Gyros];
+                int row = 15;
+                if (OtackyProvozni > 0)
+                {
+                    ws.Cells[++row, 1].Value = "Provozní otáčky hřídele:";
+                    ws.Cells[row, 4].Value = OtackyProvozni;
+                    ws.Cells[row, 5].Value = "min⁻¹";
+                }
+                if (OtackyPrubezne > 0)
+                {
+                    ws.Cells[++row, 1].Value = "Průběžné otáčky hřídele:";
+                    ws.Cells[row, 4].Value = OtackyPrubezne;
+                    ws.Cells[row, 5].Value = "min⁻¹";
+                }
+                if (Poznamka != "")
+                {
+                    row = OtackyProvozni > 0 || OtackyPrubezne > 0 ? row + 2 : row + 1;
+                    ws.Cells[row, 1].Value = "Poznámky k výpočtu:";
+                    ws.Cells[++row, 1].Value = Poznamka;                   
+                }
+                row = OtackyProvozni > 0 || OtackyPrubezne > 0 || Poznamka != "" ? row + 1 : row;
+                ws.Cells[++row, 1].Value = "Vypočtené hodnoty:";
+                ws.Cells[row, 1].Style.Font.Bold = true;
+                for (int i = 0; i < KritOt.Length; i++)
+                {
+                    ws.Cells[++row, 2].Value = (i + 1) + ". kritické otáčky:";
+                    ws.Cells[row, 4].Value = KritOt[i];
+                    ws.Cells[row, 5].Value = "min⁻¹";
+                    ws.Cells[row, 6].Value = KritOt[i] / 60.0;
+                    ws.Cells[row, 6].Style.Numberformat.Format = "(0.0##)";
+                    ws.Cells[row, 7].Value = "Hz";
+                }
+                if (OtackyProvozni > 0 || OtackyPrubezne > 0)
+                {
+                    row += 2;
+                    ws.Cells[row, 2].Value = "1. kritické otáčky odpovídají:";
+                }
+                if (OtackyProvozni > 0)
+                {
+                    ws.Cells[++row, 2].Value = KritOt[0] / OtackyProvozni * 100;
+                    ws.Cells[row, 2].Style.Numberformat.Format = "0.0##";
+                    ws.Cells[row, 3].Value = "% provozních otáček";
+                }
+                if (OtackyPrubezne > 0)
+                {
+                    ws.Cells[++row, 2].Value = KritOt[0] / OtackyPrubezne * 100;
+                    ws.Cells[row, 2].Style.Numberformat.Format = "0.0##";
+                    ws.Cells[row, 3].Value = "% průběžných otáček";
+                }
+
+                row += 2;
+                ws.Cells[row, 1].Value = "Geometrie hřídele:";
+                ws.Cells[row, 1].Style.Font.Bold = true;
+                ws.Cells[row, 3].Value = "(L, De, Di - [mm]; m - [kg]; Jo, Jd - [kg.m2]; k, Cm - [N/m])";
+
+                if (PrvkyHrideleTab != null)
+                {
+                    var alignLeft = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+                    var alignRight = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                    string formatNum = "0.0#####";
+
+                    int i = 0;
+                    foreach (PrvekTab a in PrvkyHrideleTab)
+                    {
+                        i++; row++;
+                        ws.Cells[row, 1].Value = i;
+                        ws.Cells[row, 1].Style.Numberformat.Format = "0.";
+                        ws.Cells[row, 2].Value = TypDict[a.Typ];
+                        switch (a.Typ)
+                        {
+                            case beamKeyword:
+                                ws.Cells[row, 3].Value = "L = ";
+                                ws.Cells[row, 3].Style.HorizontalAlignment = alignRight;
+                                ws.Cells[row, 4].Value = a.L;
+                                ws.Cells[row, 4].Style.HorizontalAlignment = alignLeft;
+                                ws.Cells[row, 4].Style.Numberformat.Format = formatNum;
+                                ws.Cells[row, 5].Value = "De = ";
+                                ws.Cells[row, 5].Style.HorizontalAlignment = alignRight;
+                                ws.Cells[row, 6].Value = a.De;
+                                ws.Cells[row, 6].Style.HorizontalAlignment = alignLeft;
+                                ws.Cells[row, 6].Style.Numberformat.Format = formatNum;
+                                ws.Cells[row, 7].Value = "Di = ";
+                                ws.Cells[row, 7].Style.HorizontalAlignment = alignRight;
+                                ws.Cells[row, 8].Value = a.Di;
+                                ws.Cells[row, 8].Style.HorizontalAlignment = alignLeft;
+                                ws.Cells[row, 8].Style.Numberformat.Format = formatNum;
+                                break;
+                            case beamPlusKeyword:
+                                ws.Cells[row, 3].Value = "L = ";
+                                ws.Cells[row, 3].Style.HorizontalAlignment = alignRight;
+                                ws.Cells[row, 4].Value = a.L;
+                                ws.Cells[row, 4].Style.HorizontalAlignment = alignLeft;
+                                ws.Cells[row, 4].Style.Numberformat.Format = formatNum;
+                                ws.Cells[row, 5].Value = "De = ";
+                                ws.Cells[row, 5].Style.HorizontalAlignment = alignRight;
+                                ws.Cells[row, 6].Value = a.De;
+                                ws.Cells[row, 6].Style.HorizontalAlignment = alignLeft;
+                                ws.Cells[row, 6].Style.Numberformat.Format = formatNum;
+                                ws.Cells[row, 7].Value = "Di = ";
+                                ws.Cells[row, 7].Style.HorizontalAlignment = alignRight;
+                                ws.Cells[row, 8].Value = a.Di;
+                                ws.Cells[row, 8].Style.HorizontalAlignment = alignLeft;
+                                ws.Cells[row, 8].Style.Numberformat.Format = formatNum;
+                                ws.Cells[++row, 2].Value = "Hřídel je rozdělena na " + (a.Deleni + 1) + " částí o délce " + string.Format("{0:#.###}", a.L / (a.Deleni + 1)) + " mm, mezi kterými jsou umístěny tyto prvky:";
+                                if (a.M > 0)
+                                {
+                                    ws.Cells[++row, 2].Value = TypDict[diskKeyword];
+                                    ws.Cells[row, 3].Value = "m = ";
+                                    ws.Cells[row, 3].Style.HorizontalAlignment = alignRight;
+                                    ws.Cells[row, 4].Value = a.M / a.Deleni;
+                                    ws.Cells[row, 4].Style.HorizontalAlignment = alignLeft;                                    
+                                    if (Gyros != gyrosZanedbaniKeyword)
+                                    {
+                                        ws.Cells[row, 5].Value = "Jo = ";
+                                        ws.Cells[row, 5].Style.HorizontalAlignment = alignRight;
+                                        ws.Cells[row, 6].Value = a.Io / a.Deleni;
+                                        ws.Cells[row, 6].Style.HorizontalAlignment = alignLeft;
+                                        ws.Cells[row, 7].Value = "Jd = ";
+                                        ws.Cells[row, 7].Style.HorizontalAlignment = alignRight;
+                                        ws.Cells[row, 8].Value = a.IdN == 0 ? a.Id / a.Deleni * a.IdNValue : a.IdNValue;
+                                        ws.Cells[row, 8].Style.HorizontalAlignment = alignLeft;
+                                    }
+                                }
+                                if (a.K > 0)
+                                {
+                                    ws.Cells[++row, 2].Value = TypDict[springKeyword];
+                                    ws.Cells[row, 3].Value = "k = ";
+                                    ws.Cells[row, 3].Style.HorizontalAlignment = alignRight;
+                                    ws.Cells[row, 4].Value = a.K / a.Deleni;
+                                    ws.Cells[row, 4].Style.HorizontalAlignment = alignLeft;                                    
+                                }
+                                if (a.Cm > 0)
+                                {
+                                    ws.Cells[++row, 2].Value = TypDict[magnetKeyword];
+                                    ws.Cells[row, 3].Value = "Cm = ";
+                                    ws.Cells[row, 3].Style.HorizontalAlignment = alignRight;
+                                    ws.Cells[row, 4].Value = a.Cm / a.Deleni;
+                                    ws.Cells[row, 4].Style.HorizontalAlignment = alignLeft;                                    
+                                }
+                                break;
+                            case rigidKeyword:
+                                ws.Cells[row, 3].Value = "L = ";
+                                ws.Cells[row, 3].Style.HorizontalAlignment = alignRight;
+                                ws.Cells[row, 4].Value = a.L;
+                                ws.Cells[row, 4].Style.HorizontalAlignment = alignLeft;
+                                ws.Cells[row, 4].Style.Numberformat.Format = formatNum;
+                                break;
+                            case diskKeyword:
+                                ws.Cells[row, 3].Value = "m = ";
+                                ws.Cells[row, 3].Style.HorizontalAlignment = alignRight;
+                                ws.Cells[row, 4].Value = a.M;
+                                ws.Cells[row, 4].Style.HorizontalAlignment = alignLeft;
+                                if (Gyros != gyrosZanedbaniKeyword)
+                                {
+                                    ws.Cells[row, 5].Value = "Jo = ";
+                                    ws.Cells[row, 5].Style.HorizontalAlignment = alignRight;
+                                    ws.Cells[row, 6].Value = a.Io;
+                                    ws.Cells[row, 6].Style.HorizontalAlignment = alignLeft;
+                                    ws.Cells[row, 7].Value = "Jd = ";
+                                    ws.Cells[row, 7].Style.HorizontalAlignment = alignRight;
+                                    ws.Cells[row, 8].Value = a.Id;
+                                    ws.Cells[row, 8].Style.HorizontalAlignment = alignLeft;
+                                }
+                                break;
+                            case springKeyword:
+                                ws.Cells[row, 3].Value = "k = ";
+                                ws.Cells[row, 3].Style.HorizontalAlignment = alignRight;
+                                ws.Cells[row, 4].Value = a.K;
+                                ws.Cells[row, 4].Style.HorizontalAlignment = alignLeft;
+                                break;
+                            case magnetKeyword:
+                                ws.Cells[row, 3].Value = "Cm = ";
+                                ws.Cells[row, 3].Style.HorizontalAlignment = alignRight;
+                                ws.Cells[row, 4].Value = a.Cm;
+                                ws.Cells[row, 4].Style.HorizontalAlignment = alignLeft;
+                                break;
+                        }
+                    }
+                }
+
+                try
+                {
+                    p.Save();
+                }
+                catch
+                {
+                    Debug.WriteLine("Chyba při ukládání výsledků do souboru: {0}", fileName);
+                    return false;
+                }
 
             }
             Debug.WriteLine("Soubor {0} byl uložen.", fileName);
             return true;
         }
+
         /// <summary>
         /// Vytvoří List prvků hřídele z kolekce PrvkyHrideleTab a uloží je do vlastnosti PrvkyHridele
         /// </summary>

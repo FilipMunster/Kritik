@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "KritikSetup", "KritikSetup\KritikSetup.vdproj", "{FCD01522-EF1A-427C-B9ED-CD0F9BCDB9D4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,9 @@ Global
 		{6ABA3189-EEAF-44BD-A9E4-4A4417FEF20E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6ABA3189-EEAF-44BD-A9E4-4A4417FEF20E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6ABA3189-EEAF-44BD-A9E4-4A4417FEF20E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCD01522-EF1A-427C-B9ED-CD0F9BCDB9D4}.Debug|Any CPU.ActiveCfg = Release
+		{FCD01522-EF1A-427C-B9ED-CD0F9BCDB9D4}.Debug|Any CPU.Build.0 = Release
+		{FCD01522-EF1A-427C-B9ED-CD0F9BCDB9D4}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

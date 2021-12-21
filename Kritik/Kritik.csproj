@@ -4,11 +4,16 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon />
-    <StartupObject />
-    <Version>0.0.0</Version>
+    <ApplicationIcon>icons\kritik.ico</ApplicationIcon>
+    <StartupObject></StartupObject>
+    <Version>0.1.0</Version>
     <FileVersion>0.0.0.0</FileVersion>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
+    <Authors>Ing. Filip Münster</Authors>
+    <Company>Litostroj Engineering</Company>
+    <Description>Výpočet kritických otáček krouživého kmitání</Description>
+    <PackageIcon>kritik.ico</PackageIcon>
+    <PackageIconUrl />
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,6 +32,10 @@
     <None Remove="icons\StepForwards_16x.png" />
     <None Remove="icons\StepForward_16x.png" />
     <None Remove="icons\Upload_16x.png" />
+    <None Include="icons\kritik.ico">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
