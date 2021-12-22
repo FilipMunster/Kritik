@@ -160,6 +160,7 @@ namespace Kritik
         {
             hridel.HridelNova();
             hridel.nazevSouboru = "Nový výpočet.xlsx";
+            hridelPouzitaKVypoctu = null;
             hridel.AnyPropertyChanged = false;
             novySoubor = true;
             Historie.New();
@@ -178,7 +179,9 @@ namespace Kritik
             {
                 hridel.HridelNova();
                 hridel.nazevSouboru = openFileDialog.FileName;
-                hridel.NacistData(hridel.nazevSouboru);
+                hridelPouzitaKVypoctu = null;
+                bool ok = DataLoadSave.NacistData(hridel.nazevSouboru, hridel);
+                if (!ok) { MessageBox.Show("Soubor \"" + hridel.nazevSouboru + "\" se nepodařilo načíst.", "Chyba načítání souboru", MessageBoxButton.OK, MessageBoxImage.Error); }
                 hridel.AnyPropertyChanged = false;
                 novySoubor = false;
                 Historie.New();
@@ -194,8 +197,9 @@ namespace Kritik
         {
             if (novySoubor == false)
             {
-                bool ok = hridel.UlozitData(hridel.nazevSouboru, hridelPouzitaKVypoctu);
-                if (!ok) { MessageBox.Show("Soubor \"" + hridel.nazevSouboru + "\" se nepodařilo uložit!", "Chyba ukládání souboru", MessageBoxButton.OK, MessageBoxImage.Error); }
+                bool ok1 = DataLoadSave.UlozitVysledky(hridel.nazevSouboru, hridelPouzitaKVypoctu);
+                bool ok2 = DataLoadSave.UlozitData(hridel.nazevSouboru, hridel);                
+                if (!(ok1 && ok2)) { MessageBox.Show("Soubor \"" + hridel.nazevSouboru + "\" se nepodařilo uložit.", "Chyba ukládání souboru", MessageBoxButton.OK, MessageBoxImage.Error); }
                 else
                 {
                     hridel.AnyPropertyChanged = false;
@@ -214,8 +218,9 @@ namespace Kritik
             if (saveFileDialog.ShowDialog() == true)
             {
                 hridel.nazevSouboru = saveFileDialog.FileName;
-                bool ok = hridel.UlozitData(hridel.nazevSouboru, hridelPouzitaKVypoctu);
-                if (!ok) { MessageBox.Show("Soubor " + hridel.nazevSouboru + " se nepodařilo uložit!", "Chyba ukládání souboru", MessageBoxButton.OK, MessageBoxImage.Error); }
+                bool ok1 = DataLoadSave.UlozitVysledky(hridel.nazevSouboru, hridelPouzitaKVypoctu);
+                bool ok2 = DataLoadSave.UlozitData(hridel.nazevSouboru, hridel);                
+                if (!(ok1 && ok2)) { MessageBox.Show("Soubor \"" + hridel.nazevSouboru + "\" se nepodařilo uložit.", "Chyba ukládání souboru", MessageBoxButton.OK, MessageBoxImage.Error); }
                 else
                 {
                     hridel.AnyPropertyChanged = false;
@@ -228,14 +233,12 @@ namespace Kritik
         private async void vypocetKritOtButton_Click(object sender, RoutedEventArgs e)
         {
             hridel.KritOt = new double[] { -1 };
-
             await Task.Run(() => {
-                ZkopirovatHridelPouzitouKVypoctu();
                 hridel.VytvorPrvky();
                 (hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
                 hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
             });
-            //cisloKritOtZobrazitTextBox.Text = "1";
+            ZkopirovatHridelPouzitouKVypoctu();
             VykreslitKmity();
             VytvorPopisekVypoctu();
         }
@@ -701,8 +704,11 @@ namespace Kritik
                 OtackyProvozni = hridel.OtackyProvozni,
                 OtackyPrubezne = hridel.OtackyPrubezne,
                 Poznamka = hridel.Poznamka,
-                KritOt = hridel.KritOt
             };
+
+            hridelPouzitaKVypoctu.KritOt = new double[hridel.KritOt.Length];
+            hridel.KritOt.CopyTo(hridelPouzitaKVypoctu.KritOt, 0);
+
             hridelPouzitaKVypoctu.PrvkyHrideleTab = new ObservableCollection<Hridel.PrvekTab>();
             foreach (Hridel.PrvekTab p in hridel.PrvkyHrideleTab)
             {

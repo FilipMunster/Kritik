@@ -23,7 +23,7 @@ namespace Kritik
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            double v = (double)value - 368;
+            double v = (double)value - 376;
             if (v < 0)
             {
                 return 0;
