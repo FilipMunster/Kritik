@@ -729,5 +729,47 @@ namespace Kritik
                 });
             }
         }
+
+        private void TextBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            TextBox s = (TextBox)sender;
+            s.SelectAll();
+        }
+
+        private void kritOtTextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            TextBox s = (TextBox)sender;
+            s.SelectAll();
+        }
+
+        private void vypocetKritOtButton_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (resilTextBox.Text == "Dave Lister")
+            {
+                Uri uri = new Uri("pack://application:,,,/icons/rd.dat");
+                BitmapImage image = new BitmapImage(uri);
+                ImageBrush ib = new ImageBrush();
+                ib.ImageSource = image;
+                TabulkaDataGrid.Background = ib;
+            }
+        }
+
+        private int funCounter;
+        private void HorniTlacitkaRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (++funCounter == 7) {
+                funCounter = 0;
+                Random rnd = new();
+                string[] msg = { "Nejdelší zaznamenaný let kuřete trval 30 sekund.",
+                    "Krtek může vykopat tunel o délce asi 100 metrů jen za jedinou noc.",
+                    "Lidský mozek má stejnou konzistenci jako tofu.",
+                    "Nejdelší slovo na světě je Taumatawhakatangihangakoauauotamateapokaiwhenuakitanatahu. Označuje kopec na Novém Zélandu.",
+                    "Jazyk Plejtváka obrovského váží více než dospělý slon. Jeho srdce je stejně velké jako malý automobil a bije rychlostí 2 tepy za minutu. Novorozené mládě váží tři tuny a přibírá 4 kg za hodinu, protože vypije 250 litrů mléka denně.",
+                    "V Singaporu je nelegální prodávat nebo dokonce vlastnit žvýkačku.",
+                    "Jeden malý kousek brokolice obsahuje více vitaminu C než 200 jablek"};
+                MessageBox.Show(msg[rnd.Next(msg.Length)],"Věděli jste, že...");
+            }
+
+        }
     }
 }

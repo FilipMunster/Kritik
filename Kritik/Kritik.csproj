@@ -25,6 +25,8 @@
     <None Remove="icons\NewFile_16x.png" />
     <None Remove="icons\OpenFolder_16x.png" />
     <None Remove="icons\ProjectFolderOpen_16x.png" />
+    <None Remove="icons\rd.dat" />
+    <None Remove="icons\rd.jpg" />
     <None Remove="icons\Remove_16x.png" />
     <None Remove="icons\SaveAs_16x.png" />
     <None Remove="icons\Save_16x.png" />
@@ -65,6 +67,7 @@
     <Resource Include="icons\Mirror.png" />
     <Resource Include="icons\NewFile_16x.png" />
     <Resource Include="icons\OpenFolder_16x.png" />
+    <Resource Include="icons\rd.dat" />
     <Resource Include="icons\Remove_16x.png" />
     <Resource Include="icons\SaveAs_16x.png" />
     <Resource Include="icons\Save_16x.png" />
