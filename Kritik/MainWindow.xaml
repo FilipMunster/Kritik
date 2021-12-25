@@ -9,6 +9,7 @@
         mc:Ignorable="d"
         Title="{Binding Path=TextTitulkyOkna}" Height="800" Width="1200" MinHeight="640" MinWidth="1000"
         WindowStartupLocation="CenterScreen" WindowStyle="ThreeDBorderWindow"
+        Name="HlavniOkno"
         Icon="/icons/kritik.ico">
     <Window.Resources>
         <local:NastaveniVyskyTextBoxuPoznamky x:Key="NastavovacVyskyPoznamky"/>
@@ -39,7 +40,7 @@
                     </Grid.ColumnDefinitions>
 
                     <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="0">
-                        <Border Margin="10" BorderThickness="1" BorderBrush="Gray" Padding="5" CornerRadius="3" MinHeight="541" VerticalAlignment="Top">
+                        <Border Margin="10" BorderThickness="1" BorderBrush="Gray" Padding="5" CornerRadius="3" MinHeight="541" VerticalAlignment="Top" Grid.Row="0">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="30"/>

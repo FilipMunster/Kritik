@@ -41,14 +41,17 @@ namespace Kritik
         public string nazevSouboru;
         public string TextTitulkyOkna {
             get {
+                string verze = System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString();
+                verze = verze.Substring(0, verze.Length - 2);
+                string kritVer = "Kritik " + verze;
                 if (nazevSouboru != null)
                 {
-                    string title = "Kritik - [" + nazevSouboru;
+                    string title = kritVer + " - [" + nazevSouboru;
                     if (anyPropertyChanged) { title += " *"; }
                     title += "]";
                     return title;
                 }
-                else { return "Kritik"; }
+                else { return kritVer; }
             } }
 
         // klíčová slova ve vstupním souboru
