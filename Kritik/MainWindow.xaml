@@ -222,31 +222,32 @@
                             </Grid.RowDefinitions>
 
                             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
-                                <Button Name="addRowBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Přidat prvek" Click="addRowBtn_Click" PreviewMouseRightButtonDown="HorniTlacitkaRightButtonDown">
+                                <Button Name="addRowBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Přidat prvek" Click="addRowBtn_Click">
                                     <Image Source="/icons/Add_16x.png" />
                                 </Button>
-                                <Button Name="deleteRowBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Smazat prvek" Click="deleteRowBtn_Click" PreviewMouseRightButtonDown="HorniTlacitkaRightButtonDown">
+                                <Button Name="deleteRowBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Smazat prvek" Click="deleteRowBtn_Click"
+                                        >
                                     <Image Source="/icons/Remove_16x.png" />
                                 </Button>
                                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0, 0, 5, 0" Stroke="Black" />
-                                <Button Name="moveUpBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Posun prvku nahoru" Click="moveUpBtn_Click" PreviewMouseRightButtonDown="HorniTlacitkaRightButtonDown">
+                                <Button Name="moveUpBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Posun prvku nahoru" Click="moveUpBtn_Click">
                                     <Image Source="/icons/Upload_16x.png" />
                                 </Button>
-                                <Button Name="moveDownBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Posun prvku dolů" Click="moveDownBtn_Click" PreviewMouseRightButtonDown="HorniTlacitkaRightButtonDown">
+                                <Button Name="moveDownBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Posun prvku dolů" Click="moveDownBtn_Click">
                                     <Image Source="/icons/Download_16x.png" />
                                 </Button>
                                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0, 0, 5, 0" Stroke="Black" />
-                                <Button Name="mirrorBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Zrcadlit hřídel" Click="mirrorBtn_Click" PreviewMouseRightButtonDown="HorniTlacitkaRightButtonDown">
+                                <Button Name="mirrorBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Zrcadlit hřídel" Click="mirrorBtn_Click">
                                     <Image Source="/icons/Mirror.png" />
                                 </Button>
-                                <Button Name="deleteAllBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Smazat vše" Click="deleteAllBtn_Click" PreviewMouseRightButtonDown="HorniTlacitkaRightButtonDown">
+                                <Button Name="deleteAllBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Smazat vše" Click="deleteAllBtn_Click">
                                     <Image Source="/icons/DeleteAllRows_16x.png" />
                                 </Button>
-                                <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0, 0, 5, 0" Stroke="Black"  PreviewMouseRightButtonDown="HorniTlacitkaRightButtonDown"/>
+                                <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0, 0, 5, 0" Stroke="Black" />
                                 <Button Name="backBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Zpět" Click="backBtn_Click" IsEnabled="False">
                                     <Image Source="/icons/StepBackwards_16x.png" />
                                 </Button>
-                                <Button Name="forwardBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Vpřed" Click="forwardBtn_Click" IsEnabled="False" PreviewMouseRightButtonDown="HorniTlacitkaRightButtonDown">
+                                <Button Name="forwardBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Vpřed" Click="forwardBtn_Click" IsEnabled="False">
                                     <Image Source="/icons/StepForward_16x.png" />
                                 </Button>
                             </StackPanel>
@@ -560,7 +561,7 @@
                                         <TextBox Text="{Binding Path=NKritMax, Converter={StaticResource FormatZadnyConverterX}}" Name="kritOtMaxTextBox" Width="35" GotKeyboardFocus="TextBox_GotKeyboardFocus"/>
                                         <TextBlock Margin="5, 0, 5, 0" Text="min&#x207B;&#x00B9;" VerticalAlignment="Center"/>
                                     </StackPanel>
-                                    <Button Name="vypocetKritOtButton" Height="30" Margin="0, 10, 0, 0" Click="vypocetKritOtButton_Click" PreviewMouseRightButtonDown="vypocetKritOtButton_PreviewMouseRightButtonDown">
+                                    <Button Name="vypocetKritOtButton" Height="30" Margin="0, 10, 0, 0" Click="vypocetKritOtButton_Click">
                                         Výpočet kritických otáček
                                     </Button>
 
