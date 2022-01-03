@@ -401,7 +401,7 @@ namespace Kritik
                     {
                         i++; row++;
                         ws.Cells[row, 1].Value = i;
-                        ws.Cells[row, 1].Style.Numberformat.Format = "0.";
+                        ws.Cells[row, 1].Style.Numberformat.Format = "0\".\"";
                         ws.Cells[row, 2].Value = Hridel.TypDict[a.Typ];
                         switch (a.Typ)
                         {
@@ -551,7 +551,9 @@ namespace Kritik
             graphics.Dispose();
 
             //72 DPI and 96 points per inch.  Excel height in points with max of 409 per Excel requirements.
-            return Math.Min(Convert.ToDouble(size.Height) * 72 / 96, 409);
+            double vysledek = Math.Min(Convert.ToDouble(size.Height) * 72 / 96, 409);
+            vysledek = vysledek < 15 ? 15 : vysledek;
+            return vysledek;
         }
     }
 }
