@@ -203,7 +203,7 @@ namespace Kritik
                 foreach (var prvek in prvky)
                 {
                     prvek.Rpm = tvary[i].Rpm;
-                    uc.Multiply(prvek.Matice, uc);
+                    prvek.Matice.Multiply(uc, uc);
                 }
                 uc = VytvorMatici2x2(uc, hridel.OpLeva, hridel.OpPrava); // celková přenosová matice pro dané kritické otáčky
 

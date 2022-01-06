@@ -59,10 +59,10 @@ namespace Kritik
             VykreslitKmity();
 
             //////////////////
-            //string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test1.xlsx";
+            //string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test1_pulka.xlsx";
             //hridel.HridelNova();
             //hridel.nazevSouboru = vstupniSoubor;
-            //hridel.NacistData(hridel.nazevSouboru);
+            //DataLoadSave.NacistData(hridel.nazevSouboru,hridel);
             //hridel.AnyPropertyChanged = false;
             //novySoubor = false;
             //Historie.New();
@@ -181,7 +181,10 @@ namespace Kritik
                 hridel.nazevSouboru = openFileDialog.FileName;
                 hridelPouzitaKVypoctu = null;
                 bool ok = DataLoadSave.NacistData(hridel.nazevSouboru, hridel);
-                if (!ok) { MessageBox.Show("Soubor \"" + hridel.nazevSouboru + "\" se nepodařilo načíst.", "Chyba načítání souboru", MessageBoxButton.OK, MessageBoxImage.Error); }
+                if (!ok) { 
+                    MessageBox.Show("Soubor \"" + hridel.nazevSouboru + "\" se nepodařilo načíst.", "Chyba načítání souboru", MessageBoxButton.OK, MessageBoxImage.Error);
+                    hridel.nazevSouboru = "Nový výpočet.xlsx";
+                }
                 hridel.AnyPropertyChanged = false;
                 novySoubor = false;
                 Historie.New();
