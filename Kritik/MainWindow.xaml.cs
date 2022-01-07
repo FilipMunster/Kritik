@@ -89,27 +89,28 @@ namespace Kritik
                 while (id > hridel.TvaryKmitu.Length) { id--; cisloKritOtZobrazitTextBox.Text = id.ToString(); }
                 id += - 1;
 
+                bool kreslitUzly = (bool)vykreslitUzlyCheckBox.IsChecked;
                 PlotModel plt = Plot.NewVelky();
                 switch (value)
                 {
                     case "w":
                     default:
-                        plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].wUzly));
+                        if (kreslitUzly) { plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].wUzly)); }
                         plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].w));
                         plot1Border.BorderBrush = Brushes.SteelBlue;
                         break;
                     case "phi":
-                        plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].phiUzly));
+                        if (kreslitUzly) { plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].phiUzly)); }
                         plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].phi));
                         plot2Border.BorderBrush = Brushes.SteelBlue;
                         break;
                     case "m":
-                        plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].mUzly));
+                        if (kreslitUzly) { plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].mUzly)); }
                         plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].m));
                         plot3Border.BorderBrush = Brushes.SteelBlue;
                         break;
                     case "t":
-                        plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].tUzly));
+                        if (kreslitUzly) { plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].tUzly)); }
                         plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].t));
                         plot4Border.BorderBrush = Brushes.SteelBlue;
                         break;
@@ -675,9 +676,9 @@ namespace Kritik
             if (saveFileDialog.ShowDialog() == true)
             {
                 ModelyDoPNG obrazek = new ModelyDoPNG();
-                int vyskaSchematu = Convert.ToInt32(Math.Round(0.23 * obrazek.Sirka));
-                int vyskaGrafu = Convert.ToInt32(Math.Round(0.354 * obrazek.Sirka));
-                int vyskaPopisu = 270;
+                int vyskaSchematu = Convert.ToInt32(Math.Round(0.22 * obrazek.Sirka));
+                int vyskaGrafu = Convert.ToInt32(Math.Round(0.4 * obrazek.Sirka));
+                int vyskaPopisu = 240;
 
                 if (vykreslitSchemaCheckBox.IsChecked == true) { obrazek.Pridat(schemaHridele2.Model, vyskaSchematu); }
                 if (vykreslitGrafCheckBox.IsChecked == true) { obrazek.Pridat(hlavniPlot.Model, vyskaGrafu); }
@@ -760,5 +761,9 @@ namespace Kritik
             }
         }
 
+        private void vykreslitUzlyCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            VykreslitHlavniGraf(vykreslenyHlavniGraf);
+        }
     }
 }

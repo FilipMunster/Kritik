@@ -29,7 +29,9 @@ namespace Kritik
             model.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Bottom, 
                 MajorGridlineStyle = LineStyle.Dot, 
                 IsZoomEnabled = false,
-                IsPanEnabled = false});
+                IsPanEnabled = false,
+                Title = "x [m]"
+            });
             model.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Left, IsAxisVisible = false });
             model.Padding = new OxyThickness(0);
             model.PlotAreaBorderThickness = new OxyThickness(0, 0, 0, 1);
