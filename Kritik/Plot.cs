@@ -64,6 +64,7 @@ namespace Kritik
             model.Background = OxyColors.White;
             model.PlotAreaBorderThickness = new OxyThickness(0);
             OxyPlot.Annotations.TextAnnotation popis = new();
+            popis.TextHorizontalAlignment = OxyPlot.HorizontalAlignment.Left;
             popis.Text = text;
             popis.TextPosition = new DataPoint(x, y);
             popis.StrokeThickness = 0;

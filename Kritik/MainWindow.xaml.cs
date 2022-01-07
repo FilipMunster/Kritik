@@ -57,6 +57,8 @@ namespace Kritik
             hridel.nazevSouboru = "Nový výpočet.xlsx";
             novySoubor = true;
             VykreslitKmity();
+            VyplnJazyky();
+            Texty.Jazyk = Texty.Jazyky.cs;
 
             //////////////////
             //string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test1_pulka.xlsx";
@@ -611,13 +613,13 @@ namespace Kritik
                 switch (hridel.Gyros)
                 {
                     case Hridel.gyrosZanedbaniKeyword:
-                        gyros = "Vliv gyroskopických účinků není uvažován.";
+                        gyros = Texty.VlivGyrosNeniUvazovan;
                         break;
                     case Hridel.gyrosSoubeznaKeyword:
-                        gyros = "Souběžná precese";
+                        gyros = Texty.SoubeznaPrecese;
                         break;
                     case Hridel.gyrosProtibeznaKeyword:
-                        gyros = "Protiběžná precese";
+                        gyros = Texty.ProtibeznaPrecese;
                         break;
                     default:
                         gyros = "";
@@ -628,19 +630,19 @@ namespace Kritik
                 {
                     case "w":
                     default:
-                        vykresleno = "Průhyb hřídele w";
+                        vykresleno = Texty.PruhybHridele + " w";
                         break;
                     case "phi":
-                        vykresleno = "Natočení hřídele φ";
+                        vykresleno = Texty.NatoceniHridele + " φ";
                         break;
                     case "m":
-                        vykresleno = "Ohybový moment M";
+                        vykresleno = Texty.OhybovyMoment + " M";
                         break;
                     case "t":
-                        vykresleno = "Posouvající síla T";
+                        vykresleno = Texty.PosouvajiciSila + " T";
                         break;
                 }
-                popisek += cisloKritOt + ". kritické otáčky = " + kritOt + " min⁻¹\n";
+                popisek += Texty.RadovaCislovka(cisloKritOt) + " "+ Texty.kritickeOtacky +" = " + kritOt + " min⁻¹\n";
                 popisek += vykresleno + "\n";
                 popisek += gyros + "\n";
                 popisek += nazevTextBox.Text + "\n";
@@ -684,7 +686,7 @@ namespace Kritik
                 if (vykreslitGrafCheckBox.IsChecked == true) { obrazek.Pridat(hlavniPlot.Model, vyskaGrafu); }
                 if (vykreslitPopisekCheckBox.IsChecked == true) 
                 {
-                    PlotModel popisekModel = Plot.ModelFromString(popisVypoctuTextBlock.Text, 18, 0, 15);
+                    PlotModel popisekModel = Plot.ModelFromString(popisVypoctuTextBlock.Text, 4, 0, 15);
                     obrazek.Pridat(popisekModel, vyskaPopisu); 
                 }
                 obrazek.Ulozit(saveFileDialog.FileName);
@@ -764,6 +766,24 @@ namespace Kritik
         private void vykreslitUzlyCheckBox_Click(object sender, RoutedEventArgs e)
         {
             VykreslitHlavniGraf(vykreslenyHlavniGraf);
+        }
+        /// <summary>
+        /// Naplní combobox výběru jazyků hodnotami
+        /// </summary>
+        private void VyplnJazyky()
+        {
+            foreach (var j in Enum.GetNames(typeof(Texty.Jazyky)))
+            {
+                jazykCombobox.Items.Add(Texty.jazykNazev[j]);
+            }
+            jazykCombobox.SelectedIndex = 0;
+        }
+
+        private void jazykCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox s = (ComboBox)sender;
+            Texty.Jazyk = (Texty.Jazyky)s.SelectedIndex;
+            VytvorPopisekVypoctu();
         }
     }
 }
