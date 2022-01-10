@@ -22,5 +22,77 @@ namespace Kritik.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int jazyk {
+            get {
+                return ((int)(this["jazyk"]));
+            }
+            set {
+                this["jazyk"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool vykreslitUzly {
+            get {
+                return ((bool)(this["vykreslitUzly"]));
+            }
+            set {
+                this["vykreslitUzly"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool vykreslitSchema {
+            get {
+                return ((bool)(this["vykreslitSchema"]));
+            }
+            set {
+                this["vykreslitSchema"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool vykreslitTvar {
+            get {
+                return ((bool)(this["vykreslitTvar"]));
+            }
+            set {
+                this["vykreslitTvar"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool vykreslitPopisek {
+            get {
+                return ((bool)(this["vykreslitPopisek"]));
+            }
+            set {
+                this["vykreslitPopisek"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string resil {
+            get {
+                return ((string)(this["resil"]));
+            }
+            set {
+                this["resil"] = value;
+            }
+        }
     }
 }

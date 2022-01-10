@@ -16,6 +16,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using OxyPlot;
 using OxyPlot.Series;
+using System.Windows;
 
 namespace Kritik
 {
@@ -115,7 +116,8 @@ namespace Kritik
         private string vypocetPopis;
         public string VypocetPopis { get { return vypocetPopis; } set { vypocetPopis = value; NotifyPropertyChanged(); } }
         private string vypocetResil;
-        public string VypocetResil { get { return vypocetResil; } set { vypocetResil = value; NotifyPropertyChanged(); } }
+        public string VypocetResil { get { return vypocetResil; } set { vypocetResil = value; NotifyPropertyChanged();
+                if (MainWindow.novySoubor) { Properties.Settings.Default.resil = value; } } }
         private string vypocetDatum;
         public string VypocetDatum { get { return vypocetDatum; } set { vypocetDatum = value; NotifyPropertyChanged(); } }
         private string opLeva;
@@ -143,7 +145,19 @@ namespace Kritik
                 }
                 else { return string.Empty; }
             }
-            set { OznacenyRadek.Deleni = Convert.ToDouble(value); Historie.Add(); } }
+            set {
+                try { OznacenyRadek.Deleni = Convert.ToDouble(value); }
+                catch { MessageBox.Show("Hodnota dělení nesmí být prázdná.", "Špatně zadaná hodnota", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MainWindow.AppWindow.deleniHridelPlusTextBox.Focus();
+                    return;
+                }
+                if (OznacenyRadek.Deleni < 1)
+                {
+                    MessageBox.Show("Hodnota dělení nesmí být menší než 1.", "Špatně zadaná hodnota", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MainWindow.AppWindow.deleniHridelPlusTextBox.Focus();
+                }
+                Historie.Add(); NotifyPropertyChanged("SchemaHridele"); } 
+        }
 
         /// <summary>
         /// Seznam indexů prvků typu Hřídel+
@@ -272,7 +286,7 @@ namespace Kritik
         {
             VypocetNazev = string.Empty;
             VypocetPopis = string.Empty;
-            VypocetResil = Environment.UserName;
+            VypocetResil = Properties.Settings.Default.resil == "" ? Environment.UserName : Properties.Settings.Default.resil;
             VypocetDatum = DateTime.Today.ToShortDateString();
             OpLeva = opVolnyKeyword;
             OpPrava = opVolnyKeyword;

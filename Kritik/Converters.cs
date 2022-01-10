@@ -87,7 +87,8 @@ namespace Kritik
             v = v.Replace(",", ".");
             v = v.TrimStart('-');
             v = VratCisla.VC(v);
-            v = Math.Round(System.Convert.ToDouble(v)).ToString();            
+            try { v = Math.Round(System.Convert.ToDouble(v)).ToString(); }
+            catch { return ""; }
             return v;
         }
     }

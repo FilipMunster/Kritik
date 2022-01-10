@@ -42,7 +42,7 @@ namespace Kritik
         public static readonly Hridel hridel = new();
         private Hridel hridelPouzitaKVypoctu;
 
-        private bool novySoubor; // slouží k rozpoznávání, jestli tlačítko uložit má soubor uložit, nebo uložit jako. true -> uložit jako
+        public static bool novySoubor; // slouží k rozpoznávání, jestli tlačítko uložit má soubor uložit, nebo uložit jako. true -> uložit jako
 
         private string vykreslenyHlavniGraf = "w";
         public MainWindow()
@@ -58,7 +58,8 @@ namespace Kritik
             novySoubor = true;
             VykreslitKmity();
             VyplnJazyky();
-            Texty.Jazyk = Texty.Jazyky.cs;
+            Texty.Jazyk = (Texty.Jazyky)jazykCombobox.SelectedIndex;
+            NacistNastaveni();
 
             //////////////////
             //string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test1_pulka.xlsx";
@@ -183,13 +184,13 @@ namespace Kritik
                 hridel.HridelNova();
                 hridel.nazevSouboru = openFileDialog.FileName;
                 hridelPouzitaKVypoctu = null;
+                novySoubor = false;
                 bool ok = DataLoadSave.NacistData(hridel.nazevSouboru, hridel);
                 if (!ok) { 
                     MessageBox.Show("Soubor \"" + hridel.nazevSouboru + "\" se nepodařilo načíst.", "Chyba načítání souboru", MessageBoxButton.OK, MessageBoxImage.Error);
                     hridel.nazevSouboru = "Nový výpočet.xlsx";
                 }
                 hridel.AnyPropertyChanged = false;
-                novySoubor = false;
                 Historie.New();
                 backBtn.IsEnabled = Historie.BackBtnEnabled;
                 forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
@@ -238,6 +239,16 @@ namespace Kritik
 
         private async void vypocetKritOtButton_Click(object sender, RoutedEventArgs e)
         {
+            foreach (Hridel.PrvekTab p in hridel.PrvkyHrideleTab)
+            {
+                if (p.Typ == Hridel.beamPlusKeyword && p.Deleni < 1)
+                {
+                    int i = hridel.PrvkyHrideleTab.IndexOf(p);
+                    MessageBox.Show("Není zadán počet dělení prvku " + (i + 1) + ".", "Špatně zadaná hodnota", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
+
             hridel.KritOt = new double[] { -1 };
             await Task.Run(() => {
                 hridel.VytvorPrvky();
@@ -571,6 +582,7 @@ namespace Kritik
 
         private void schemaHridele_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
+            if (deleniHridelPlusTextBox.IsEnabled) { hridel.HridelPlusDeleni = deleniHridelPlusTextBox.Text; }
             OxyPlot.ElementCollection<OxyPlot.Axes.Axis> axisList = schemaHridele.Model.Axes;
             OxyPlot.Axes.Axis xAxis = axisList.FirstOrDefault(ax => ax.Position == OxyPlot.Axes.AxisPosition.Bottom);
             OxyPlot.Axes.Axis yAxis = axisList.FirstOrDefault(ax => ax.Position == OxyPlot.Axes.AxisPosition.Left);
@@ -766,6 +778,7 @@ namespace Kritik
         private void vykreslitUzlyCheckBox_Click(object sender, RoutedEventArgs e)
         {
             VykreslitHlavniGraf(vykreslenyHlavniGraf);
+            Properties.Settings.Default.vykreslitUzly = (bool)((CheckBox)sender).IsChecked;
         }
         /// <summary>
         /// Naplní combobox výběru jazyků hodnotami
@@ -776,14 +789,50 @@ namespace Kritik
             {
                 jazykCombobox.Items.Add(Texty.jazykNazev[j]);
             }
-            jazykCombobox.SelectedIndex = 0;
+            try { jazykCombobox.SelectedIndex = Properties.Settings.Default.jazyk; }
+            catch { jazykCombobox.SelectedIndex = 0; }
         }
 
         private void jazykCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox s = (ComboBox)sender;
             Texty.Jazyk = (Texty.Jazyky)s.SelectedIndex;
+            try { Properties.Settings.Default.jazyk = s.SelectedIndex; }
+            catch { Properties.Settings.Default.jazyk = 0; }
             VytvorPopisekVypoctu();
+        }
+
+        private void HlavniOkno_Closing(object sender, CancelEventArgs e)
+        {
+            Properties.Settings.Default.Save();
+        }
+
+        private void vykreslitSchemaCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.vykreslitSchema = (bool)((CheckBox)sender).IsChecked;
+        }
+
+        private void vykreslitGrafCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.vykreslitTvar = (bool)((CheckBox)sender).IsChecked;
+        }
+
+        private void vykreslitPopisekCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.vykreslitPopisek = (bool)((CheckBox)sender).IsChecked;
+        }
+        private void NacistNastaveni()
+        {
+            if (Properties.Settings.Default.resil != "") { resilTextBox.Text = Properties.Settings.Default.resil; }
+            vykreslitUzlyCheckBox.IsChecked = Properties.Settings.Default.vykreslitUzly;
+            vykreslitSchemaCheckBox.IsChecked = Properties.Settings.Default.vykreslitSchema;
+            vykreslitGrafCheckBox.IsChecked = Properties.Settings.Default.vykreslitTvar;
+            vykreslitPopisekCheckBox.IsChecked = Properties.Settings.Default.vykreslitPopisek;
+        }
+
+        private void deleniHridelPlusTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            hridel.NotifyPropertyChanged("SchemaHridele");
         }
     }
 }

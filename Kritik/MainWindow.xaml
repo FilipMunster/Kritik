@@ -10,7 +10,8 @@
         Title="{Binding Path=TextTitulkyOkna}" Height="800" Width="1200" MinHeight="640" MinWidth="1000"
         WindowStartupLocation="CenterScreen" WindowStyle="ThreeDBorderWindow"
         Name="HlavniOkno"
-        Icon="/icons/kritik.ico">
+        Icon="/icons/kritik.ico"
+        Closing="HlavniOkno_Closing">
     <Window.Resources>
         <local:NastaveniVyskyTextBoxuPoznamky x:Key="NastavovacVyskyPoznamky"/>
         <local:FormatEConverter x:Key="FormatEConverterX"/>
@@ -95,7 +96,7 @@
                                 <TextBlock Text="Popis:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
                                 <TextBox Text="{Binding Path=VypocetPopis}" Name="popisTextBox" GotKeyboardFocus="TextBox_GotKeyboardFocus" Grid.Row="5" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5" />
                                 <TextBlock Text="Řešil:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
-                                <TextBox Text="{Binding Path=VypocetResil}" Name="resilTextBox" GotKeyboardFocus="TextBox_GotKeyboardFocus" Grid.Row="6" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5" />
+                                <TextBox Text="{Binding Path=VypocetResil, UpdateSourceTrigger=LostFocus}" Name="resilTextBox" GotKeyboardFocus="TextBox_GotKeyboardFocus" Grid.Row="6" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5" />
                                 <TextBlock Text="Datum:" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
                                 <TextBox Text="{Binding Path=VypocetDatum}" Name="datumTextBox" GotKeyboardFocus="TextBox_GotKeyboardFocus" Grid.Row="7" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5" />
                                 <Separator Grid.Row="8" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
@@ -170,7 +171,7 @@
                                     <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
                                         <TextBlock Text="Rozdělit na"/>
                                         <TextBox Name="deleniHridelPlusTextBox"
-                                                 Text="{Binding Path=HridelPlusDeleni, Converter={StaticResource FormatToIntConverterX}}"
+                                                 Text="{Binding Path=HridelPlusDeleni, Converter={StaticResource FormatToIntConverterX}, UpdateSourceTrigger=LostFocus}"
                                                  TextChanged="deleniHridelPlusTextBox_TextChanged"
                                                  IsEnabled="{Binding Path=HridelPlusOvlPrvkyEnabled}"
                                                  GotKeyboardFocus="TextBox_GotKeyboardFocus"
@@ -615,9 +616,9 @@
                                 <TextBlock Text="Uložení tvar kmitu:"/>
                                 <Grid Margin="15, 2, 0, 0">
                                     <StackPanel Orientation="Vertical">
-                                        <CheckBox Content="schéma hřídele" IsChecked="True" Name="vykreslitSchemaCheckBox"/>
-                                        <CheckBox Content="tvar kmitu" IsChecked="True" Name="vykreslitGrafCheckBox"/>
-                                        <CheckBox Content="textový popisek" IsChecked="True" Name="vykreslitPopisekCheckBox"/>
+                                        <CheckBox Content="schéma hřídele" IsChecked="True" Name="vykreslitSchemaCheckBox" Click="vykreslitSchemaCheckBox_Click"/>
+                                        <CheckBox Content="tvar kmitu" IsChecked="True" Name="vykreslitGrafCheckBox" Click="vykreslitGrafCheckBox_Click"/>
+                                        <CheckBox Content="textový popisek" IsChecked="True" Name="vykreslitPopisekCheckBox" Click="vykreslitPopisekCheckBox_Click"/>
                                     </StackPanel>
                                 </Grid>
                                 <Button Height="25" Width="150" Margin="0, 5, 0, 5" Name="ulozitTvarKmituButton" Padding="3" Click="ulozitTvarKmituButton_Click">
