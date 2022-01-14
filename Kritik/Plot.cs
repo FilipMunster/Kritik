@@ -152,12 +152,12 @@ namespace Kritik
                         case Hridel.diskKeyword:
                             line = KreslitDisk(x, p.M, maxM, maxD);
                             line.Tag = i;
-                            line.MouseDown += (s, e) => { MainWindow.AppWindow.DiskPruzinaMouseDown(s, e); };
+                            line.MouseDown += (s, e) => { MainWindow.GetMainWindow().DiskPruzinaMouseDown(s, e); };
                             break;
                         case Hridel.springKeyword:
                             line = KreslitPodporu(x, prvky, i, dTuhy);
                             line.Tag = i;
-                            line.MouseDown += (s, e) => { MainWindow.AppWindow.DiskPruzinaMouseDown(s, e); };
+                            line.MouseDown += (s, e) => { MainWindow.GetMainWindow().DiskPruzinaMouseDown(s, e); };
                             break;
                         case Hridel.magnetKeyword:
                             line = KreslitMagnet(x, prvky, i, dTuhy);

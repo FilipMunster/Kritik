@@ -34,28 +34,37 @@ namespace Kritik
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        public static MainWindow AppWindow; // - díky tomuto můžu z ostatních tříd přistupovat do MainWindow (vlastnosti, metody, prvky okna)
+        public static MainWindow GetMainWindow() { return mainWindow; }
+        public static void SetMainWindow(MainWindow value) { mainWindow = value; }
+        private static MainWindow mainWindow;
 
         /// <summary>
         /// Globální instance třídy Hridel
         /// </summary>
-        public static readonly Hridel hridel = new();
-        private Hridel hridelPouzitaKVypoctu;
+        public static Hridel hridel { get; set; }
+        /// <summary>
+        /// Obsahuje kopii hřídele vytvořenou po výpočtu. Při ukládání se použijí data z této vlastnosti, aby nedošlo k rozporu mezi výsledky a zadáním.
+        /// </summary>
+        private Hridel HridelPouzitaKVypoctu { get; set; }
+        /// <summary>
+        /// Označuje, zda pracuji s novým souborem, nebo s načteným z disku.
+        /// </summary>
+        public static bool NovySoubor { get; set; } // slouží k rozpoznávání, jestli tlačítko uložit má soubor uložit, nebo uložit jako. true -> uložit jako
 
-        public static bool novySoubor; // slouží k rozpoznávání, jestli tlačítko uložit má soubor uložit, nebo uložit jako. true -> uložit jako
-
-        private string vykreslenyHlavniGraf = "w";
+        private string VykreslenyHlavniGraf { get; set; }
         public MainWindow()
         {
             InitializeComponent();
-            AppWindow = this;
+            SetMainWindow(this);
 
+            hridel = new Hridel();
             DataContext = hridel;
             SloupecTyp.ItemsSource = hridel.ListTypuPrvku;
             hridel.HridelNova();
             hridel.AnyPropertyChanged = false;
-            hridel.nazevSouboru = "Nový výpočet.xlsx";
-            novySoubor = true;
+            hridel.NazevSouboru = "Nový výpočet.xlsx";
+            NovySoubor = true;
+            VykreslenyHlavniGraf = "w";
             VykreslitKmity();
             VyplnJazyky();
             Texty.Jazyk = (Texty.Jazyky)jazykCombobox.SelectedIndex;
@@ -120,7 +129,7 @@ namespace Kritik
                 }
                 plt.Series.Add(Plot.NewOsa(hridel.TvaryKmitu[id].x));
                 hlavniPlot.Model = plt;
-                vykreslenyHlavniGraf = value;
+                VykreslenyHlavniGraf = value;
             }       
         }
         private void VykreslitKmity()
@@ -131,7 +140,7 @@ namespace Kritik
                 while (id > hridel.TvaryKmitu.Length) { id--; cisloKritOtZobrazitTextBox.Text = id.ToString(); }
                 id += -1;
 
-                VykreslitHlavniGraf(vykreslenyHlavniGraf);
+                VykreslitHlavniGraf(VykreslenyHlavniGraf);
 
                 PlotModel plt1 = Plot.NewMaly();
                 plt1.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].w, OxyColors.Blue));
@@ -163,10 +172,10 @@ namespace Kritik
         private void newFileButton_Click(object sender, RoutedEventArgs e)
         {
             hridel.HridelNova();
-            hridel.nazevSouboru = "Nový výpočet.xlsx";
-            hridelPouzitaKVypoctu = null;
+            hridel.NazevSouboru = "Nový výpočet.xlsx";
+            HridelPouzitaKVypoctu = null;
             hridel.AnyPropertyChanged = false;
-            novySoubor = true;
+            NovySoubor = true;
             Historie.New();
             backBtn.IsEnabled = Historie.BackBtnEnabled;
             forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
@@ -182,13 +191,13 @@ namespace Kritik
             if (openFileDialog.ShowDialog() == true)
             {
                 hridel.HridelNova();
-                hridel.nazevSouboru = openFileDialog.FileName;
-                hridelPouzitaKVypoctu = null;
-                novySoubor = false;
-                bool ok = DataLoadSave.NacistData(hridel.nazevSouboru, hridel);
+                hridel.NazevSouboru = openFileDialog.FileName;
+                HridelPouzitaKVypoctu = null;
+                NovySoubor = false;
+                bool ok = DataLoadSave.NacistData(hridel.NazevSouboru, hridel);
                 if (!ok) { 
-                    MessageBox.Show("Soubor \"" + hridel.nazevSouboru + "\" se nepodařilo načíst.", "Chyba načítání souboru", MessageBoxButton.OK, MessageBoxImage.Error);
-                    hridel.nazevSouboru = "Nový výpočet.xlsx";
+                    MessageBox.Show("Soubor \"" + hridel.NazevSouboru + "\" se nepodařilo načíst.", "Chyba načítání souboru", MessageBoxButton.OK, MessageBoxImage.Error);
+                    hridel.NazevSouboru = "Nový výpočet.xlsx";
                 }
                 hridel.AnyPropertyChanged = false;
                 Historie.New();
@@ -202,11 +211,11 @@ namespace Kritik
 
         private void saveFileButton_Click(object sender, RoutedEventArgs e)
         {
-            if (novySoubor == false)
+            if (!NovySoubor)
             {
-                bool ok1 = DataLoadSave.UlozitVysledky(hridel.nazevSouboru, hridelPouzitaKVypoctu);
-                bool ok2 = DataLoadSave.UlozitData(hridel.nazevSouboru, hridel);                
-                if (!(ok1 && ok2)) { MessageBox.Show("Soubor \"" + hridel.nazevSouboru + "\" se nepodařilo uložit.", "Chyba ukládání souboru", MessageBoxButton.OK, MessageBoxImage.Error); }
+                bool ok1 = DataLoadSave.UlozitVysledky(hridel.NazevSouboru, HridelPouzitaKVypoctu);
+                bool ok2 = DataLoadSave.UlozitData(hridel.NazevSouboru, hridel);                
+                if (!(ok1 && ok2)) { MessageBox.Show("Soubor \"" + hridel.NazevSouboru + "\" se nepodařilo uložit.", "Chyba ukládání souboru", MessageBoxButton.OK, MessageBoxImage.Error); }
                 else
                 {
                     hridel.AnyPropertyChanged = false;
@@ -221,17 +230,17 @@ namespace Kritik
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "Zadání hřídele (*.xlsx)|*.xlsx";
-            saveFileDialog.FileName = System.IO.Path.GetFileName(hridel.nazevSouboru);
+            saveFileDialog.FileName = System.IO.Path.GetFileName(hridel.NazevSouboru);
             if (saveFileDialog.ShowDialog() == true)
             {
-                hridel.nazevSouboru = saveFileDialog.FileName;
-                bool ok1 = DataLoadSave.UlozitVysledky(hridel.nazevSouboru, hridelPouzitaKVypoctu);
-                bool ok2 = DataLoadSave.UlozitData(hridel.nazevSouboru, hridel);                
-                if (!(ok1 && ok2)) { MessageBox.Show("Soubor \"" + hridel.nazevSouboru + "\" se nepodařilo uložit.", "Chyba ukládání souboru", MessageBoxButton.OK, MessageBoxImage.Error); }
+                hridel.NazevSouboru = saveFileDialog.FileName;
+                bool ok1 = DataLoadSave.UlozitVysledky(hridel.NazevSouboru, HridelPouzitaKVypoctu);
+                bool ok2 = DataLoadSave.UlozitData(hridel.NazevSouboru, hridel);                
+                if (!(ok1 && ok2)) { MessageBox.Show("Soubor \"" + hridel.NazevSouboru + "\" se nepodařilo uložit.", "Chyba ukládání souboru", MessageBoxButton.OK, MessageBoxImage.Error); }
                 else
                 {
                     hridel.AnyPropertyChanged = false;
-                    novySoubor = false;
+                    NovySoubor = false;
                 }
                 return;
             }
@@ -638,7 +647,7 @@ namespace Kritik
                         break;
                 }
                 string vykresleno;
-                switch (vykreslenyHlavniGraf)
+                switch (VykreslenyHlavniGraf)
                 {
                     case "w":
                     default:
@@ -668,18 +677,18 @@ namespace Kritik
             hridel.AnyPropertyChanged = true;
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "Obrázek PNG (*.png)|*.png";
-            string path = System.IO.Path.GetDirectoryName(hridel.nazevSouboru);
-            string fname = System.IO.Path.GetFileNameWithoutExtension(hridel.nazevSouboru);
+            string path = System.IO.Path.GetDirectoryName(hridel.NazevSouboru);
+            string fname = System.IO.Path.GetFileNameWithoutExtension(hridel.NazevSouboru);
             string tvar;
-            switch (vykreslenyHlavniGraf)
+            switch (VykreslenyHlavniGraf)
             {
                 case "w":
                 case "phi":
-                    tvar = vykreslenyHlavniGraf;
+                    tvar = VykreslenyHlavniGraf;
                     break;
                 case "m":
                 case "t":
-                    tvar = vykreslenyHlavniGraf.ToUpper();
+                    tvar = VykreslenyHlavniGraf.ToUpper();
                     break;
                 default:
                     tvar = "";
@@ -709,7 +718,7 @@ namespace Kritik
 
         private void ZkopirovatHridelPouzitouKVypoctu()
         {
-            hridelPouzitaKVypoctu = new Hridel()
+            HridelPouzitaKVypoctu = new Hridel()
             {
                 VypocetNazev = hridel.VypocetNazev,
                 VypocetPopis = hridel.VypocetPopis,
@@ -725,13 +734,13 @@ namespace Kritik
                 Poznamka = hridel.Poznamka,
             };
 
-            hridelPouzitaKVypoctu.KritOt = new double[hridel.KritOt.Length];
-            hridel.KritOt.CopyTo(hridelPouzitaKVypoctu.KritOt, 0);
+            HridelPouzitaKVypoctu.KritOt = new double[hridel.KritOt.Length];
+            hridel.KritOt.CopyTo(HridelPouzitaKVypoctu.KritOt, 0);
 
-            hridelPouzitaKVypoctu.PrvkyHrideleTab = new ObservableCollection<Hridel.PrvekTab>();
+            HridelPouzitaKVypoctu.PrvkyHrideleTab = new ObservableCollection<Hridel.PrvekTab>();
             foreach (Hridel.PrvekTab p in hridel.PrvkyHrideleTab)
             {
-                hridelPouzitaKVypoctu.PrvkyHrideleTab.Add(new Hridel.PrvekTab()
+                HridelPouzitaKVypoctu.PrvkyHrideleTab.Add(new Hridel.PrvekTab()
                 {
                     Typ = p.Typ,
                     L = p.L,
@@ -777,7 +786,7 @@ namespace Kritik
 
         private void vykreslitUzlyCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            VykreslitHlavniGraf(vykreslenyHlavniGraf);
+            VykreslitHlavniGraf(VykreslenyHlavniGraf);
             Properties.Settings.Default.vykreslitUzly = (bool)((CheckBox)sender).IsChecked;
         }
         /// <summary>
@@ -833,6 +842,11 @@ namespace Kritik
         private void deleniHridelPlusTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
             hridel.NotifyPropertyChanged("SchemaHridele");
+        }
+
+        private void dnesTextBlock_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            hridel.VypocetDatum = DateTime.Today.ToShortDateString();
         }
     }
 }

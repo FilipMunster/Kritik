@@ -39,15 +39,15 @@ namespace Kritik
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TextTitulkyOkna"));
             } }
         private bool anyPropertyChanged;
-        public string nazevSouboru;
+        public string NazevSouboru { get; set; }
         public string TextTitulkyOkna {
             get {
                 string verze = System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString();
                 verze = verze.Substring(0, verze.Length - 2);
                 string kritVer = "Kritik " + verze;
-                if (nazevSouboru != null)
+                if (NazevSouboru != null)
                 {
-                    string title = kritVer + " - [" + nazevSouboru;
+                    string title = kritVer + " - [" + NazevSouboru;
                     if (anyPropertyChanged) { title += " *"; }
                     title += "]";
                     return title;
@@ -117,7 +117,7 @@ namespace Kritik
         public string VypocetPopis { get { return vypocetPopis; } set { vypocetPopis = value; NotifyPropertyChanged(); } }
         private string vypocetResil;
         public string VypocetResil { get { return vypocetResil; } set { vypocetResil = value; NotifyPropertyChanged();
-                if (MainWindow.novySoubor) { Properties.Settings.Default.resil = value; } } }
+                if (MainWindow.NovySoubor) { Properties.Settings.Default.resil = value; } } }
         private string vypocetDatum;
         public string VypocetDatum { get { return vypocetDatum; } set { vypocetDatum = value; NotifyPropertyChanged(); } }
         private string opLeva;
@@ -148,13 +148,13 @@ namespace Kritik
             set {
                 try { OznacenyRadek.Deleni = Convert.ToDouble(value); }
                 catch { MessageBox.Show("Hodnota dělení nesmí být prázdná.", "Špatně zadaná hodnota", MessageBoxButton.OK, MessageBoxImage.Error);
-                    MainWindow.AppWindow.deleniHridelPlusTextBox.Focus();
+                    MainWindow.GetMainWindow().deleniHridelPlusTextBox.Focus();
                     return;
                 }
                 if (OznacenyRadek.Deleni < 1)
                 {
                     MessageBox.Show("Hodnota dělení nesmí být menší než 1.", "Špatně zadaná hodnota", MessageBoxButton.OK, MessageBoxImage.Error);
-                    MainWindow.AppWindow.deleniHridelPlusTextBox.Focus();
+                    MainWindow.GetMainWindow().deleniHridelPlusTextBox.Focus();
                 }
                 Historie.Add(); NotifyPropertyChanged("SchemaHridele"); } 
         }
@@ -318,7 +318,7 @@ namespace Kritik
         public ObservableCollection<PrvekTab> PrvkyHrideleTab { get { return prvkyHrideleTab; } set { prvkyHrideleTab = value; NotifyPropertyChanged(); } }
         private ObservableCollection<PrvekTab> prvkyHrideleTab;
 
-        public PlotModel SchemaHridele => Plot.SchemaHridele(PrvkyHrideleTab, OznacenyRadek, MainWindow.AppWindow.schemaHridele.ActualWidth);
+        public PlotModel SchemaHridele => Plot.SchemaHridele(PrvkyHrideleTab, OznacenyRadek, MainWindow.GetMainWindow().schemaHridele.ActualWidth);
 
         //Vlastnosti s výsledky výpočtu
         /// <summary>
