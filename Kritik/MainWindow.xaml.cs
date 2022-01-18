@@ -260,20 +260,22 @@ namespace Kritik
             }
 
             hridel.KritOt = new double[] { -1 };
-            await Task.Run(() => { ProvestVypocetKritickychOtacek(); });
+            await Task.Run(() => { VypocetKritickychOtacek(); });
             ZkopirovatHridelPouzitouKVypoctu();
             VykreslitKmity();
             VytvorPopisekVypoctu();
             EasterEgg();
         }
 
-        private void ProvestVypocetKritickychOtacek()
+        private void VypocetKritickychOtacek()
         {
             hridel.VytvorPrvky();
+            hridel.KritOt = null;
+            hridel.KritOt2 = null;
 
             if (!hridel.VlivOtacekRotoruIsChecked)
             {
-                (hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
+                hridel.KritOt = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
                 hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
             }
             else
@@ -284,8 +286,29 @@ namespace Kritik
                     {
                         prvek.RpmHridele = hridel.VlivOtacekRotoruVlastni;
                     }
-                    (hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
+                    hridel.KritOt = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
                     hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
+                }
+                else
+                {
+                    if (hridel.OtackyProvozni > 0)
+                    {
+                        foreach (Hridel.Prvek prvek in hridel.PrvkyHridele)
+                        {
+                            prvek.RpmHridele = hridel.OtackyProvozni;
+                        }
+                        hridel.KritOt = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
+                        hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
+                    }
+                    if (hridel.OtackyPrubezne > 0)
+                    {
+                        foreach (Hridel.Prvek prvek in hridel.PrvkyHridele)
+                        {
+                            prvek.RpmHridele = hridel.OtackyPrubezne;
+                        }
+                        hridel.KritOt2 = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
+                        hridel.TvaryKmitu2 = Vypocet.TvaryKmitu(hridel);
+                    }
                 }
             }
             
@@ -758,8 +781,11 @@ namespace Kritik
                 Poznamka = hridel.Poznamka,
             };
 
-            HridelPouzitaKVypoctu.KritOt = new double[hridel.KritOt.Length];
-            hridel.KritOt.CopyTo(HridelPouzitaKVypoctu.KritOt, 0);
+            if (hridel.KritOt != null)
+            {
+                HridelPouzitaKVypoctu.KritOt = new double[hridel.KritOt.Length];
+                hridel.KritOt.CopyTo(HridelPouzitaKVypoctu.KritOt, 0);
+            }
 
             if (hridel.KritOt2 != null)
             {

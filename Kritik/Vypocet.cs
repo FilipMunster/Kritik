@@ -18,7 +18,7 @@ namespace Kritik
         /// <param name="hridel">Instance hřídele třídy Hridel</param>
         /// <param name="rpmMax">Maximální hodnota otáček</param>
         /// <returns>Vrátí pole vypočtených kritických otáček</returns>
-        public static (double[] kritOt, double[] rpmi, double[] detUc) KritickeOtacky(Hridel hridel, double rpmMax)
+        public static double[] KritickeOtacky(Hridel hridel, double rpmMax)
         {            
             List<Hridel.Prvek> prvky = hridel.PrvkyHridele;
             
@@ -52,7 +52,7 @@ namespace Kritik
             }
 
             double[] kritOt = kritOtList.ToArray();
-            return (kritOt, rpmi, detUc);
+            return kritOt;
         }
         /// <summary>
         /// Z celkové přenosové matice 4x4 vytvoří matici 2x2 s vybranými prvky na základě okrajových podmínek.

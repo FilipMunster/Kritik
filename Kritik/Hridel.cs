@@ -366,7 +366,12 @@ namespace Kritik
         /// <summary>
         /// Pole hodnot kritických otáček při výpočtu s vlivem průběžných otáček.
         /// </summary>
-        public double[] KritOt2 { get; set; }
+        public double[] KritOt2
+        {
+            get { return kritOt2; }
+            set { kritOt2 = value; NotifyPropertyChanged("KritOtText"); NotifyPropertyChanged("KritOtOdpovidajiText"); }
+        }
+        private double[] kritOt2;
         /// <summary>
         /// Obsahuje průběh determinantu - pole detUc=f(rpmi)
         /// </summary>
@@ -401,6 +406,10 @@ namespace Kritik
             set { tvaryKmitu = value; NotifyPropertyChanged(); }
         }
         private TvarKmitu[] tvaryKmitu;
+        /// <summary>
+        /// Pole s tvary kmitů při výpočtu s vlivem průběžných otáček.
+        /// </summary>
+        public TvarKmitu[] TvaryKmitu2 { get; set; }
 
         /// <summary>
         /// Text kritických otáček do TextBoxu
@@ -413,15 +422,51 @@ namespace Kritik
                 {
                     return "Probíhá výpočet...";
                 }
-                else if ((KritOt != null) && (KritOt.Length>0))
+                else if (((KritOt != null) && (KritOt.Length>0)) || ((KritOt2 != null) && (KritOt2.Length > 0)))
                 {
                     string kOText = "";
                     int i = 1;
-                    foreach (double otacky in KritOt)
+
+                    if (VlivOtacekRotoruIsChecked) //Pokud je výpočet s vlivem otáček rotoru:
                     {
-                        kOText += i + ". kritické otáčky: " + String.Format("{0:0.000}", otacky) + " rpm\n";
-                        i++;
+                        if (VlivOtacekVlastniIsChecked)
+                        {
+                            kOText += "Otáčky hřídele = " + VlivOtacekRotoruVlastni + " rpm:\n";
+                            foreach (double otacky in KritOt)
+                            {
+                                kOText += i + ". kritické otáčky: " + String.Format("{0:0.000}", otacky) + " rpm\n";
+                                i++;
+                            }
+                        }
+                        else if ((KritOt != null) && (KritOt.Length > 0))
+                        {
+                            kOText += "Otáčky hřídele = " + OtackyProvozni + " rpm:\n";
+                            foreach (double otacky in KritOt)
+                            {
+                                kOText += i + ". kritické otáčky: " + String.Format("{0:0.000}", otacky) + " rpm\n";
+                                i++;
+                            }
+                        }
+                        if ((KritOt2 != null) && (KritOt2.Length > 0))
+                        {
+                            kOText += "Otáčky hřídele = " + OtackyPrubezne + " rpm:\n";
+                            i = 1;
+                            foreach (double otacky in KritOt2)
+                            {
+                                kOText += i + ". kritické otáčky: " + String.Format("{0:0.000}", otacky) + " rpm\n";
+                                i++;
+                            }
+                        }                        
                     }
+                    else
+                    {
+                        foreach (double otacky in KritOt)
+                        {
+                            kOText += i + ". kritické otáčky: " + String.Format("{0:0.000}", otacky) + " rpm\n";
+                            i++;
+                        }
+                    }
+
                     return kOText;
                 }
                 else { return String.Empty; }

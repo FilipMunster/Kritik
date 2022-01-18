@@ -569,7 +569,7 @@
                         <Border Margin="10" BorderThickness="1" BorderBrush="Gray" Padding="5" CornerRadius="3" MinHeight="541" VerticalAlignment="Top">
                             <Grid>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="130"/>
+                                    <RowDefinition Height="163"/>
                                     <RowDefinition Height="80"/>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="65"/>
@@ -580,14 +580,14 @@
 
                                 <StackPanel Grid.Row="0" Orientation="Vertical" Margin="0, 3, 0, 0">
                                     <TextBlock Text="Vypočtené kritické otáčky:" Margin="0, 0, 0, 5"/>
-                                    <TextBox Text="{Binding Path=KritOtText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Name="kritOtTextBox" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Height="100" IsReadOnly="True" MouseDoubleClick="kritOtTextBox_MouseDoubleClick"/>
+                                    <TextBox Text="{Binding Path=KritOtText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Name="kritOtTextBox" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Height="139" IsReadOnly="True" MouseDoubleClick="kritOtTextBox_MouseDoubleClick"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="1" Orientation="Vertical" Margin="0, 10, 0, 0">
                                     <TextBlock Text="1. kritické otáčky odpovídají:" Margin="0, 0, 0, 5"/>
                                     <TextBox Text="{Binding Path=KritOtOdpovidajiText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Name="kritOtPorovnaniTextBox" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Hidden" Height="38" IsReadOnly="True" MouseDoubleClick="kritOtTextBox_MouseDoubleClick"/>
                                 </StackPanel>
 
-                                <StackPanel Grid.Row="2" Orientation="Vertical" Name="pravyStackPanel" Margin="0, 0, 0, 10">
+                                <StackPanel Grid.Row="2" Orientation="Vertical" Name="pravyStackPanel" Margin="0, 0, 0, 10" VerticalAlignment="Bottom">
                                     <TextBlock Text="Poznámky k výpočtu:" Margin="0, 0, 0, 5"/>
                                     <TextBox AcceptsReturn="True" MinHeight="190" Width="182" Name="poznamkaVypocetTextBox"
                                                      ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"
