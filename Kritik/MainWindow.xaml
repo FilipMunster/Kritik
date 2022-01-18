@@ -11,7 +11,8 @@
         WindowStartupLocation="CenterScreen" WindowStyle="ThreeDBorderWindow"
         Name="HlavniOkno"
         Icon="/icons/kritik.ico"
-        Closing="HlavniOkno_Closing">
+        Closing="HlavniOkno_Closing"
+        AllowDrop="True" Drop="HlavniOkno_Drop">
     <Window.Resources>
         <local:NastaveniVyskyTextBoxuPoznamky x:Key="NastavovacVyskyPoznamky"/>
         <local:FormatEConverter x:Key="FormatEConverterX"/>
@@ -41,192 +42,212 @@
                     </Grid.ColumnDefinitions>
 
                     <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="0">
-                        <Border Margin="10" BorderThickness="1" BorderBrush="Gray" Padding="5" CornerRadius="3" MinHeight="541" VerticalAlignment="Top" Grid.Row="0">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="30"/>
-                                    <RowDefinition Height="5" />
-                                    <RowDefinition Height="23" />
-                                    <RowDefinition Height="11" />
-                                    <RowDefinition Height="23" />
-                                    <RowDefinition Height="23" />
-                                    <RowDefinition Height="23" />
-                                    <RowDefinition Height="23" />
-                                    <RowDefinition Height="6" />
-                                    <RowDefinition Height="21" />
-                                    <RowDefinition Height="27" />
-                                    <RowDefinition Height="27" />
-                                    <RowDefinition Height="6" />
-                                    <RowDefinition Height="27" />
-                                    <RowDefinition Height="6" />
-                                    <RowDefinition Height="21" />
-                                    <RowDefinition Height="23" />
-                                    <RowDefinition Height="23" />
-                                    <RowDefinition Height="6" />
-                                    <RowDefinition Height="23" />
-                                    <RowDefinition Height="23" />
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="6" />
-                                    <RowDefinition Height="119" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
+                        <ScrollViewer  ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <Border Margin="10" BorderThickness="1" BorderBrush="Gray" Padding="5" CornerRadius="3" MinHeight="541" VerticalAlignment="Top" Grid.Row="0">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="30"/>
+                                        <RowDefinition Height="5" />
+                                        <RowDefinition Height="23" />
+                                        <RowDefinition Height="11" />
+                                        <RowDefinition Height="23" />
+                                        <RowDefinition Height="23" />
+                                        <RowDefinition Height="23" />
+                                        <RowDefinition Height="23" />
+                                        <RowDefinition Height="6" />
+                                        <RowDefinition Height="21" />
+                                        <RowDefinition Height="27" />
+                                        <RowDefinition Height="27" />
+                                        <RowDefinition Height="6" />
+                                        <RowDefinition Height="27"/>
+                                        <RowDefinition Height="0" x:Name="vlivOtacekGridRow" MaxHeight="60"/>
+                                        <RowDefinition Height="6" />
+                                        <RowDefinition Height="21" />
+                                        <RowDefinition Height="23" />
+                                        <RowDefinition Height="23" />
+                                        <RowDefinition Height="6" />
+                                        <RowDefinition Height="23" />
+                                        <RowDefinition Height="23" />
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="6" />
+                                        <RowDefinition Height="119" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
 
-                                <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Text="KRITICKÉ OTÁČKY" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" FontSize="16"/>
-                                <Separator Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
-                                <StackPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0, 3, 0, 0">
-                                    <Button Name="newFileButton" Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Nový výpočet" Click="newFileButton_Click">
-                                        <Image Source="/icons/NewFile_16x.png" />
-                                    </Button>
-                                    <Button Name="openFileButton"  Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Otevřít výpočet" Click="openFileButton_Click">
-                                        <Image Source="/icons/OpenFolder_16x.png" />
-                                    </Button>
-                                    <Button Name="saveFileButton"  Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Uložit výpočet" Click="saveFileButton_Click">
-                                        <Image Source="/icons/Save_16x.png" />
-                                    </Button>
-                                    <Button Name="saveAsFileButton"  Height="20" Width="20" Margin="0, 0, 0, 0" ToolTip="Uložit výpočet jako..." Click="saveAsFileButton_Click">
-                                        <Image Source="/icons/SaveAs_16x.png" />
-                                    </Button>
-                                </StackPanel>
-                                <Separator Grid.Row="3" Grid.ColumnSpan="2" Margin="0, 5, 0, 5"/>
-                                <TextBlock Text="Název:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
-                                <TextBox Text="{Binding Path=VypocetNazev}" Name="nazevTextBox" GotKeyboardFocus="TextBox_GotKeyboardFocus" Grid.Row="4" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5"/>
-                                <TextBlock Text="Popis:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
-                                <TextBox Text="{Binding Path=VypocetPopis}" Name="popisTextBox" GotKeyboardFocus="TextBox_GotKeyboardFocus" Grid.Row="5" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5" />
-                                <TextBlock Text="Řešil:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
-                                <TextBox Text="{Binding Path=VypocetResil, UpdateSourceTrigger=LostFocus}" Name="resilTextBox" GotKeyboardFocus="TextBox_GotKeyboardFocus" Grid.Row="6" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5" />
-                                <TextBlock Text="Datum:" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
-                                <TextBox Text="{Binding Path=VypocetDatum}" Name="datumTextBox" GotKeyboardFocus="TextBox_GotKeyboardFocus" Grid.Row="7" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5" />
-                                <TextBlock Text="Dnes" Grid.Row="7" Grid.Column="1" HorizontalAlignment="Right" Margin="0, 0, 7, 0" Foreground="Gray" MouseDown="dnesTextBlock_MouseDown">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Style.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="TextDecorations" Value="Underline"/>
-                                                    <Setter Property="Cursor" Value="Hand"/>
-                                                </Trigger>
-                                                <Trigger Property="IsMouseOver" Value="False">
-                                                    <Setter Property="TextDecorations" Value="None"/>
-                                                    <Setter Property="Cursor" Value="Arrow"/>
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-                                <Separator Grid.Row="8" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
-                                <TextBlock Text="Okrajové podmínky:" Grid.Row="9" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
-                                <StackPanel Grid.Row="10" Grid.ColumnSpan="2" Orientation="Horizontal">
-                                    <TextBlock Text="Levý konec:" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
-                                    <ComboBox SelectedIndex="{Binding Path=OpLevaIndex}" Name="opLevaComboBox" Width="95" Margin="10, 0, 0, 5" VerticalAlignment="Center">
-                                        <ComboBoxItem Content="volný"/>
-                                        <ComboBoxItem Content="kloub"/>
-                                        <ComboBoxItem Content="vetknutí"/>
-                                    </ComboBox>
-                                </StackPanel>
-                                <StackPanel Grid.Row="11" Grid.ColumnSpan="2" Orientation="Horizontal">
-                                    <TextBlock Text="Pravý konec:" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
-                                    <ComboBox SelectedIndex="{Binding Path=OpPravaIndex}" Name="opPravaComboBox" Width="95" Margin="5, 0, 0, 5" VerticalAlignment="Center">
-                                        <ComboBoxItem Content="volný"/>
-                                        <ComboBoxItem Content="kloub"/>
-                                        <ComboBoxItem Content="vetknutí"/>
-                                    </ComboBox>
-                                </StackPanel>
-                                <Separator Grid.Row="12" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
-                                <StackPanel Grid.Row="13" Grid.ColumnSpan="2" Orientation="Horizontal">
-                                    <TextBlock Margin="0, 0, 0, 5" VerticalAlignment="Center"><Run Text="Gyrosk"/><Run Language="cs-cz" Text="o"/><Run Text="pické účinky:"/></TextBlock>
-                                    <ComboBox SelectedIndex="{Binding Path=GyrosIndex}" Name="gyrosComboBox" Width="84" Margin="5, 0, 0, 5" VerticalAlignment="Center">
-                                        <ComboBoxItem Content="zanedbání" />
-                                        <ComboBoxItem Content="souběžná precese" />
-                                        <ComboBoxItem Content="protiběžná precese" />
-                                    </ComboBox>
-                                </StackPanel>
-                                <Separator Grid.Row="14" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
-                                <TextBlock Text="Materiál hřídele:" Grid.Row="15" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
-                                <StackPanel Grid.Row="16" Grid.ColumnSpan="2" Orientation="Horizontal">
-                                    <TextBlock Text="E =" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
-                                    <TextBox Text="{Binding Path=ModulPruznosti, Converter={StaticResource FormatZadnyConverterX}}" Name="modulPruznostiTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBox_GotKeyboardFocus"/>
-                                    <TextBlock Text="GPa" Margin="5, 0, 0, 5" VerticalAlignment="Center"/>
-                                </StackPanel>
-                                <StackPanel Grid.Row="17" Grid.ColumnSpan="2" Orientation="Horizontal">
-                                    <TextBlock Text="ρ =" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
-                                    <TextBox Text="{Binding Path=Rho, Converter={StaticResource FormatZadnyConverterX}}" Name="rhoTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBox_GotKeyboardFocus"/>
-                                    <TextBlock Margin="5, 0, 0, 5" VerticalAlignment="Center">
+                                    <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Text="KRITICKÉ OTÁČKY" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" FontSize="16"/>
+                                    <Separator Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
+                                    <StackPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0, 3, 0, 0">
+                                        <Button Name="newFileButton" Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Nový výpočet" Click="newFileButton_Click">
+                                            <Image Source="/icons/NewFile_16x.png" />
+                                        </Button>
+                                        <Button Name="openFileButton"  Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Otevřít výpočet" Click="openFileButton_Click">
+                                            <Image Source="/icons/OpenFolder_16x.png" />
+                                        </Button>
+                                        <Button Name="saveFileButton"  Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Uložit výpočet" Click="saveFileButton_Click">
+                                            <Image Source="/icons/Save_16x.png" />
+                                        </Button>
+                                        <Button Name="saveAsFileButton"  Height="20" Width="20" Margin="0, 0, 0, 0" ToolTip="Uložit výpočet jako..." Click="saveAsFileButton_Click">
+                                            <Image Source="/icons/SaveAs_16x.png" />
+                                        </Button>
+                                    </StackPanel>
+                                    <Separator Grid.Row="3" Grid.ColumnSpan="2" Margin="0, 5, 0, 5"/>
+                                    <TextBlock Text="Název:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
+                                    <TextBox Text="{Binding Path=VypocetNazev}" Name="nazevTextBox" GotKeyboardFocus="TextBox_GotKeyboardFocus" Grid.Row="4" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5"/>
+                                    <TextBlock Text="Popis:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
+                                    <TextBox Text="{Binding Path=VypocetPopis}" Name="popisTextBox" GotKeyboardFocus="TextBox_GotKeyboardFocus" Grid.Row="5" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5" />
+                                    <TextBlock Text="Řešil:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
+                                    <TextBox Text="{Binding Path=VypocetResil, UpdateSourceTrigger=LostFocus}" Name="resilTextBox" GotKeyboardFocus="TextBox_GotKeyboardFocus" Grid.Row="6" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5" />
+                                    <TextBlock Text="Datum:" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
+                                    <TextBox Text="{Binding Path=VypocetDatum}" Name="datumTextBox" GotKeyboardFocus="TextBox_GotKeyboardFocus" Grid.Row="7" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5" />
+                                    <TextBlock Text="Dnes" Grid.Row="7" Grid.Column="1" HorizontalAlignment="Right" Margin="0, 0, 7, 0" Foreground="Gray" MouseDown="dnesTextBlock_MouseDown">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="TextDecorations" Value="Underline"/>
+                                                        <Setter Property="Cursor" Value="Hand"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsMouseOver" Value="False">
+                                                        <Setter Property="TextDecorations" Value="None"/>
+                                                        <Setter Property="Cursor" Value="Arrow"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <Separator Grid.Row="8" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
+                                    <TextBlock Text="Okrajové podmínky:" Grid.Row="9" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
+                                    <StackPanel Grid.Row="10" Grid.ColumnSpan="2" Orientation="Horizontal">
+                                        <TextBlock Text="Levý konec:" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
+                                        <ComboBox SelectedIndex="{Binding Path=OpLevaIndex}" Name="opLevaComboBox" Width="95" Margin="10, 0, 0, 5" VerticalAlignment="Center">
+                                            <ComboBoxItem Content="volný"/>
+                                            <ComboBoxItem Content="kloub"/>
+                                            <ComboBoxItem Content="vetknutí"/>
+                                        </ComboBox>
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="11" Grid.ColumnSpan="2" Orientation="Horizontal">
+                                        <TextBlock Text="Pravý konec:" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
+                                        <ComboBox SelectedIndex="{Binding Path=OpPravaIndex}" Name="opPravaComboBox" Width="95" Margin="5, 0, 0, 5" VerticalAlignment="Center">
+                                            <ComboBoxItem Content="volný"/>
+                                            <ComboBoxItem Content="kloub"/>
+                                            <ComboBoxItem Content="vetknutí"/>
+                                        </ComboBox>
+                                    </StackPanel>
+                                    <Separator Grid.Row="12" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
+                                    <StackPanel Grid.Row="13" Grid.ColumnSpan="2" Orientation="Horizontal">
+                                        <TextBlock Margin="0, 0, 0, 5" VerticalAlignment="Center" Text="Gyroskopické účinky"/>
+                                        <ComboBox SelectedIndex="{Binding Path=GyrosIndex}" Name="gyrosComboBox" Width="84" Margin="5, 0, 0, 5" VerticalAlignment="Center">
+                                            <ComboBoxItem Content="zanedbání" />
+                                            <ComboBoxItem Content="souběžná precese" />
+                                            <ComboBoxItem Content="protiběžná precese" />
+                                        </ComboBox>
+                                        <Button x:Name="vlivOtacekExpandButton" Tag="hidden" Width="10" Height="22" VerticalAlignment="Center" Margin="2, 0, 0, 5" Click="vlivOtacekExpandButton_Click">
+                                            <Image Source="/icons/StepOverArrow_16x.png" Width="10" HorizontalAlignment="Center" Margin="0, 8, 0, 0"/>
+                                        </Button>
+                                    </StackPanel>
+                                    <StackPanel  Grid.Row="14" Grid.ColumnSpan="2" Orientation="Vertical" Margin="2, 2, 0, 0">
+                                        <CheckBox x:Name="vlivOtacekRotoruCheckBox" IsChecked="{Binding Path=VlivOtacekRotoruIsChecked}" IsEnabled="{Binding Path=VlivOtacekRotoruIsEnabled}" Content="s vlivem otáček rotoru"  VerticalAlignment="Center" HorizontalAlignment="Left" Margin="2, 0, 2, 0" Click="vlivOtacekRotoruCheckBox_Click"/>
+                                        <RadioButton GroupName="vlivOtacekRadioButtons" Name="vlivOtacekProvozniAPrubezneRadioButton" IsChecked="True" Margin="5, 3, 0, 3">provozní a/nebo průběžné otáčky</RadioButton>
+                                        <RadioButton GroupName="vlivOtacekRadioButtons" Name="vlivOtacekVlastniRadioButton" IsChecked="{Binding Path=VlivOtacekVlastniIsChecked}" Margin="5, 0, 0, 0">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="jiné: "/>
+                                                <TextBox Text="{Binding Path=VlivOtacekRotoruVlastni, Converter={StaticResource FormatZadnyConverterX}}" Name="vlivOtacekVlastniTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBox_GotKeyboardFocus"/>
+                                                <TextBlock Margin="5, 0, 0, 5" VerticalAlignment="Center">
+                                            <Run Text="min&#x207B;&#x00B9;" />
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </RadioButton>
+                                    </StackPanel>
+
+                                    <Separator Grid.Row="15" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
+                                    <TextBlock Text="Materiál hřídele:" Grid.Row="16" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
+                                    <StackPanel Grid.Row="17" Grid.ColumnSpan="2" Orientation="Horizontal">
+                                        <TextBlock Text="E =" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
+                                        <TextBox Text="{Binding Path=ModulPruznosti, Converter={StaticResource FormatZadnyConverterX}}" Name="modulPruznostiTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBox_GotKeyboardFocus"/>
+                                        <TextBlock Text="GPa" Margin="5, 0, 0, 5" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="18" Grid.ColumnSpan="2" Orientation="Horizontal">
+                                        <TextBlock Text="ρ =" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
+                                        <TextBox Text="{Binding Path=Rho, Converter={StaticResource FormatZadnyConverterX}}" Name="rhoTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBox_GotKeyboardFocus"/>
+                                        <TextBlock Margin="5, 0, 0, 5" VerticalAlignment="Center">
                                             <Run Text="kg.m&#x207B;&#x00B3;" />
-                                    </TextBlock>
-                                </StackPanel>
-                                <Separator Grid.Row="18" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
-                                <StackPanel Grid.Row="19" Grid.ColumnSpan="2" Orientation="Horizontal">
-                                    <TextBlock Text="Provozní otáčky:" Margin="0, 0, 0, 5" VerticalAlignment="Center"/>
-                                    <TextBox Text="{Binding Path=OtackyProvozni, Converter={StaticResource FormatZadnyConverterX}}" Name="provozniOtackyTextBox" Width="50" Margin="9, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBox_GotKeyboardFocus"/>
-                                    <TextBlock Margin="5, 0, 0, 5" VerticalAlignment="Center">
+                                        </TextBlock>
+                                    </StackPanel>
+                                    <Separator Grid.Row="19" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
+                                    <StackPanel Grid.Row="20" Grid.ColumnSpan="2" Orientation="Horizontal">
+                                        <TextBlock Text="Provozní otáčky:" Margin="0, 0, 0, 5" VerticalAlignment="Center"/>
+                                        <TextBox Text="{Binding Path=OtackyProvozni, Converter={StaticResource FormatZadnyConverterX}}" Name="provozniOtackyTextBox" Width="50" Margin="9, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBox_GotKeyboardFocus"/>
+                                        <TextBlock Margin="5, 0, 0, 5" VerticalAlignment="Center">
                                             <Run Text="min&#x207B;&#x00B9;" />
-                                    </TextBlock>
-                                </StackPanel>
-                                <StackPanel Grid.Row="20" Grid.ColumnSpan="2" Orientation="Horizontal">
-                                    <TextBlock Text="Průběžné otáčky:" Margin="0, 0, 0, 5" VerticalAlignment="Center"/>
-                                    <TextBox Text="{Binding Path=OtackyPrubezne, Converter={StaticResource FormatZadnyConverterX}}" Name="prubezneOtackyTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBox_GotKeyboardFocus"/>
-                                    <TextBlock Margin="5, 0, 0, 5" VerticalAlignment="Center">
+                                        </TextBlock>
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="21" Grid.ColumnSpan="2" Orientation="Horizontal">
+                                        <TextBlock Text="Průběžné otáčky:" Margin="0, 0, 0, 5" VerticalAlignment="Center"/>
+                                        <TextBox Text="{Binding Path=OtackyPrubezne, Converter={StaticResource FormatZadnyConverterX}}" Name="prubezneOtackyTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBox_GotKeyboardFocus"/>
+                                        <TextBlock Margin="5, 0, 0, 5" VerticalAlignment="Center">
                                             <Run Text="min&#x207B;&#x00B9;" />
-                                    </TextBlock>
-                                </StackPanel>
-                                <Separator Grid.Row="22" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
-                                <StackPanel Grid.Row="23" Grid.ColumnSpan="2" Margin="0, 0, 0, 5" Orientation="Vertical" Name="hridelPlusStackPanel">
-                                    <TextBlock Text="Hřídel +" Margin="0, 0, 0, 5"/>
-                                    <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
-                                        <TextBlock Text="Prvek číslo:" VerticalAlignment="Center"/>
-                                        <ComboBox Name="cisloPrvkuHridelPlusComboBox" 
+                                        </TextBlock>
+                                    </StackPanel>
+                                    <Separator Grid.Row="23" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
+                                    <StackPanel Grid.Row="24" Grid.ColumnSpan="2" Margin="0, 0, 0, 5" Orientation="Vertical" Name="hridelPlusStackPanel">
+                                        <TextBlock Text="Hřídel +" Margin="0, 0, 0, 5"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
+                                            <TextBlock Text="Prvek číslo:" VerticalAlignment="Center"/>
+                                            <ComboBox Name="cisloPrvkuHridelPlusComboBox" 
                                                   ItemsSource="{Binding Path=IndexyHrideliPlus, Mode=OneWay}" 
                                                   DropDownClosed="cisloPrvkuHridelPlusComboBox_DropDownClosed"
                                                   DropDownOpened="cisloPrvkuHridelPlusComboBox_DropDownOpened"
                                                   SelectionChanged="cisloPrvkuHridelPlusComboBox_SelectionChanged"
                                                   SelectedValue="{Binding Path=HridelPlusSelectedValue, Mode=OneWay}"
                                                   Width="40" Margin="5, 0, 0, 0"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
-                                        <TextBlock Text="Rozdělit na"/>
-                                        <TextBox Name="deleniHridelPlusTextBox"
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
+                                            <TextBlock Text="Rozdělit na"/>
+                                            <TextBox Name="deleniHridelPlusTextBox"
                                                  Text="{Binding Path=HridelPlusDeleni, Converter={StaticResource FormatToIntConverterX}, UpdateSourceTrigger=LostFocus}"
                                                  TextChanged="deleniHridelPlusTextBox_TextChanged"
                                                  IsEnabled="{Binding Path=HridelPlusOvlPrvkyEnabled}"
                                                  GotKeyboardFocus="TextBox_GotKeyboardFocus"
                                                  Width="35" Margin="5, 0, 5, 0"/>
-                                        <TextBlock Text="částí."/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
-                                        <TextBlock Text="Výpočet Jd&#x1D62;" ToolTip="Způsob výpočtu momentu setrvačnosti kolmého k ose rotoru" VerticalAlignment="Center"/>
-                                        <ComboBox Name="IdNZpusobComboBox" Width="65" Margin="5, 0, 5, 0" 
+                                            <TextBlock Text="částí."/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
+                                            <TextBlock Text="Výpočet Jd&#x1D62;" ToolTip="Způsob výpočtu momentu setrvačnosti kolmého k ose rotoru" VerticalAlignment="Center"/>
+                                            <ComboBox Name="IdNZpusobComboBox" Width="65" Margin="5, 0, 5, 0" 
                                                   SelectedIndex="{Binding Path=HridelPlusZpusobSelectedIndex}" 
                                                   SelectionChanged="IdNZpusobComboBox_SelectionChanged"
                                                   IsEnabled="{Binding Path=HridelPlusOvlPrvkyEnabled}">
-                                            <ComboBoxItem Content="=Jd/n*"/>
-                                            <ComboBoxItem Content="vlastní hodnota"/>
-                                        </ComboBox>
-                                        <TextBox Name="idNTextBox" 
+                                                <ComboBoxItem Content="=Jd/n*"/>
+                                                <ComboBoxItem Content="vlastní hodnota"/>
+                                            </ComboBox>
+                                            <TextBox Name="idNTextBox" 
                                                  Text="{Binding Path=HridelPlusHodnota, Converter={StaticResource FormatZadnyConverterX}}" 
                                                  TextChanged="idNTextBox_TextChanged" 
                                                  IsEnabled="{Binding Path=HridelPlusOvlPrvkyEnabled}"
                                                  GotKeyboardFocus="TextBox_GotKeyboardFocus"
                                                  Width="50"
                                                  VerticalAlignment="Center" />
-                                    </StackPanel>
-                                    <TextBlock Text="(Jd&#x1D62; =  . . .  kg.m&#x00B2;)" Name="idNHodnotaTextBlock" 
+                                        </StackPanel>
+                                        <TextBlock Text="(Jd&#x1D62; =  . . .  kg.m&#x00B2;)" Name="idNHodnotaTextBlock" 
                                                IsEnabled="{Binding Path=HridelPlusOvlPrvkyEnabled}"
                                                VerticalAlignment="Center" Margin="65, 0, 0, 0">
-                                        <TextBlock.Style>
-                                            <Style TargetType="{x:Type TextBlock}">
-                                                <Style.Triggers>
-                                                    <Trigger Property="IsEnabled" Value="False">
-                                                        <Setter Property="Foreground" Value="{StaticResource {x:Static SystemColors.GrayTextBrushKey}}"/>
-                                                    </Trigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
+                                            <TextBlock.Style>
+                                                <Style TargetType="{x:Type TextBlock}">
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsEnabled" Value="False">
+                                                            <Setter Property="Foreground" Value="{StaticResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </ScrollViewer>
                     </Grid>
 
                     <Grid Grid.Row="0" Grid.Column="1" Margin="0, 10, 0, 10">

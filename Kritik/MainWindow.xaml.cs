@@ -41,7 +41,7 @@ namespace Kritik
         /// <summary>
         /// Globální instance třídy Hridel
         /// </summary>
-        public static Hridel hridel { get; set; }
+        public static Hridel hridel;
         /// <summary>
         /// Obsahuje kopii hřídele vytvořenou po výpočtu. Při ukládání se použijí data z této vlastnosti, aby nedošlo k rozporu mezi výsledky a zadáním.
         /// </summary>
@@ -186,12 +186,13 @@ namespace Kritik
 
         private void openFileButton_Click(object sender, RoutedEventArgs e)
         {
+            bool dragEvent = e.GetType().Name == "DragEventArgs";
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Zadání hřídele (*.xlsx)|*.xlsx";
-            if (openFileDialog.ShowDialog() == true)
+            if (dragEvent || openFileDialog.ShowDialog() == true)
             {
                 hridel.HridelNova();
-                hridel.NazevSouboru = openFileDialog.FileName;
+                if (!dragEvent) hridel.NazevSouboru = openFileDialog.FileName;
                 HridelPouzitaKVypoctu = null;
                 NovySoubor = false;
                 bool ok = DataLoadSave.NacistData(hridel.NazevSouboru, hridel);
@@ -259,15 +260,35 @@ namespace Kritik
             }
 
             hridel.KritOt = new double[] { -1 };
-            await Task.Run(() => {
-                hridel.VytvorPrvky();
-                (hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
-                hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
-            });
+            await Task.Run(() => { ProvestVypocetKritickychOtacek(); });
             ZkopirovatHridelPouzitouKVypoctu();
             VykreslitKmity();
             VytvorPopisekVypoctu();
             EasterEgg();
+        }
+
+        private void ProvestVypocetKritickychOtacek()
+        {
+            hridel.VytvorPrvky();
+
+            if (!hridel.VlivOtacekRotoruIsChecked)
+            {
+                (hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
+                hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
+            }
+            else
+            {
+                if (hridel.VlivOtacekVlastniIsChecked)
+                {
+                    foreach (Hridel.Prvek prvek in hridel.PrvkyHridele)
+                    {
+                        prvek.RpmHridele = hridel.VlivOtacekRotoruVlastni;
+                    }
+                    (hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
+                    hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
+                }
+            }
+            
         }
 
         private void DataGridCell_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -729,6 +750,9 @@ namespace Kritik
                 ModulPruznosti = hridel.ModulPruznosti,
                 Rho = hridel.Rho,
                 Gyros = hridel.Gyros,
+                VlivOtacekRotoruIsChecked = hridel.VlivOtacekRotoruIsChecked,
+                VlivOtacekVlastniIsChecked = hridel.VlivOtacekVlastniIsChecked,
+                VlivOtacekRotoruVlastni = hridel.VlivOtacekRotoruVlastni,
                 OtackyProvozni = hridel.OtackyProvozni,
                 OtackyPrubezne = hridel.OtackyPrubezne,
                 Poznamka = hridel.Poznamka,
@@ -736,6 +760,12 @@ namespace Kritik
 
             HridelPouzitaKVypoctu.KritOt = new double[hridel.KritOt.Length];
             hridel.KritOt.CopyTo(HridelPouzitaKVypoctu.KritOt, 0);
+
+            if (hridel.KritOt2 != null)
+            {
+                HridelPouzitaKVypoctu.KritOt2 = new double[hridel.KritOt2.Length];
+                hridel.KritOt2.CopyTo(HridelPouzitaKVypoctu.KritOt2, 0);
+            }
 
             HridelPouzitaKVypoctu.PrvkyHrideleTab = new ObservableCollection<Hridel.PrvekTab>();
             foreach (Hridel.PrvekTab p in hridel.PrvkyHrideleTab)
@@ -847,6 +877,58 @@ namespace Kritik
         private void dnesTextBlock_MouseDown(object sender, MouseButtonEventArgs e)
         {
             hridel.VypocetDatum = DateTime.Today.ToShortDateString();
+        }
+
+        private void vlivOtacekExpandButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button s = (Button)sender;
+            GridLengthConverter gridLength = new GridLengthConverter();
+            System.Windows.ThicknessConverter thickness = new System.Windows.ThicknessConverter();
+            if ((string)s.Tag == "hidden")
+            {
+                s.Tag = "expanded";
+                vlivOtacekGridRow.Height = (GridLength)gridLength.ConvertFrom(vlivOtacekGridRow.MaxHeight);
+                s.Content = new System.Windows.Controls.Image
+                {
+                    Source = new BitmapImage(new Uri("pack://application:,,,/icons/StepBackArrow_16x.png")),
+                    Width = 10,
+                    HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
+                    Margin = (Thickness)thickness.ConvertFromString("0, 8, 0, 0")
+                };  
+            }
+            else if (!(bool)vlivOtacekRotoruCheckBox.IsChecked)
+            {
+                s.Tag = "hidden";
+                vlivOtacekGridRow.Height = (GridLength)gridLength.ConvertFromString("0");
+                s.Content = new System.Windows.Controls.Image
+                {
+                    Source = new BitmapImage(new Uri("pack://application:,,,/icons/StepOverArrow_16x.png")),
+                    Width = 10,
+                    HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
+                    Margin = (Thickness)thickness.ConvertFromString("0, 8, 0, 0")
+                };
+            }
+        }
+
+        private void HlavniOkno_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (files[0].EndsWith(".xlsx"))
+                {
+                    hridel.NazevSouboru = files[0];
+                    openFileButton_Click(sender, e);
+                }
+            }
+            
+        }
+
+        private void vlivOtacekRotoruCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            CheckBox s = (CheckBox)sender;
+            vlivOtacekProvozniAPrubezneRadioButton.IsEnabled = (bool)s.IsChecked;
+            vlivOtacekVlastniRadioButton.IsEnabled = (bool)s.IsChecked;
         }
     }
 }

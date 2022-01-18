@@ -30,9 +30,11 @@
     <None Remove="icons\Remove_16x.png" />
     <None Remove="icons\SaveAs_16x.png" />
     <None Remove="icons\Save_16x.png" />
+    <None Remove="icons\StepBackArrow_16x.png" />
     <None Remove="icons\StepBackwards_16x.png" />
     <None Remove="icons\StepForwards_16x.png" />
     <None Remove="icons\StepForward_16x.png" />
+    <None Remove="icons\StepOverArrow_16x.png" />
     <None Remove="icons\Upload_16x.png" />
     <None Include="icons\kritik.ico">
       <Pack>True</Pack>
@@ -71,8 +73,10 @@
     <Resource Include="icons\Remove_16x.png" />
     <Resource Include="icons\SaveAs_16x.png" />
     <Resource Include="icons\Save_16x.png" />
+    <Resource Include="icons\StepBackArrow_16x.png" />
     <Resource Include="icons\StepBackwards_16x.png" />
     <Resource Include="icons\StepForward_16x.png" />
+    <Resource Include="icons\StepOverArrow_16x.png" />
     <Resource Include="icons\Upload_16x.png" />
   </ItemGroup>
 

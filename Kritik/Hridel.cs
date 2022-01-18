@@ -125,7 +125,40 @@ namespace Kritik
         private string opPrava;
         public string OpPrava { get { return opPrava; } set { opPrava = value; NotifyPropertyChanged("OpPravaIndex"); } }
         private string gyros;
-        public string Gyros { get { return gyros; } set { gyros = value; NotifyPropertyChanged("GyrosIndex"); } }
+        public string Gyros { get { return gyros; } set { gyros = value;
+                VlivOtacekRotoruIsEnabled = value == gyrosZanedbaniKeyword ? false : true;
+                NotifyPropertyChanged("VlivOtacekRotoruIsEnabled");
+                NotifyPropertyChanged("GyrosIndex"); } }
+        private bool vlivOtacekRotoruIsChecked;
+        /// <summary>
+        /// Určuje, zda bude proveden výpočet s vlivem otáček rotoru
+        /// </summary>
+        public bool VlivOtacekRotoruIsChecked
+        {
+            get { return vlivOtacekRotoruIsChecked; }
+            set { vlivOtacekRotoruIsChecked = value; }
+        }
+        private bool vlivOtacekRotoruIsEnabled;
+        /// <summary>
+        /// Určuje, zda lze zaškrtnout výpočet s vlivem otáček rotoru
+        /// </summary>
+        public bool VlivOtacekRotoruIsEnabled
+        {
+            get { return vlivOtacekRotoruIsEnabled; }
+            set { vlivOtacekRotoruIsEnabled = value;
+                if (!value) { VlivOtacekRotoruIsChecked = false; NotifyPropertyChanged("VlivOtacekRotoruIsChecked"); }
+            }
+        }
+        /// <summary>
+        /// Určuje, zda bude pro výpočet kritckých otáček s vlivem otáček rotoru použita vlastní hodnota zadaná uživatelem
+        /// </summary>
+        public bool VlivOtacekVlastniIsChecked { get; set; }
+
+        /// <summary>
+        /// Hodnota otáček rotoru zadaná uživatelem (použití při výpočtu precese s vlivem otáček rotoru)
+        /// </summary>
+        public double VlivOtacekRotoruVlastni { get; set; }
+
         private double modulPruznosti;
         public double ModulPruznosti { get { return modulPruznosti; } set { modulPruznosti = value; NotifyPropertyChanged(); } }
         private double rho;
@@ -300,6 +333,7 @@ namespace Kritik
             PrvkyHrideleTab = new ObservableCollection<PrvekTab>();
             PrvkyHridele = null;
             KritOt = null;
+            KritOt2 = null;
             PrubehDeterminantu = null;
             PrubehRpm = null;
             AnyPropertyChanged = true;
@@ -329,6 +363,10 @@ namespace Kritik
             set { kritOt = value; NotifyPropertyChanged("KritOtText"); NotifyPropertyChanged("KritOtOdpovidajiText"); }
         }
         private double[] kritOt;
+        /// <summary>
+        /// Pole hodnot kritických otáček při výpočtu s vlivem průběžných otáček.
+        /// </summary>
+        public double[] KritOt2 { get; set; }
         /// <summary>
         /// Obsahuje průběh determinantu - pole detUc=f(rpmi)
         /// </summary>
@@ -438,6 +476,9 @@ namespace Kritik
             public double Cm { get { return cm; } set { cm = value; VytvorMatici(); } }
             private double rpm;
             public double Rpm { get { return rpm; } set { rpm = value; VytvorMatici(); } }
+            private double rpmHridele;
+            public double RpmHridele { get { return rpmHridele; } set { rpmHridele = value; VlivRpmHridele = true; VytvorMatici(); } }
+            public bool VlivRpmHridele { get; set; }
             private string gyros;
             public string Gyros { get { return gyros; } set { gyros = value; VytvorMatici(); } }
             private double rho;
@@ -499,8 +540,9 @@ namespace Kritik
                     case diskKeyword:
                         {
                             // Prvek disku:
-                            double omega = 2 * Math.PI * Rpm / 60.0;
-                            double p = 1.0;
+                            double omega = 2 * Math.PI * Rpm / 60.0; // úhlová rychlost vlastní frekvence
+                            double omegaHridele = 2 * Math.PI * (VlivRpmHridele? RpmHridele : Rpm) / 60.0; // úhlová rychlost otáčení hřídele
+                            double sign = 1.0; //znaménko u otáček hřídele;
                             double io = Io;
                             double id = Id;
 
@@ -509,7 +551,7 @@ namespace Kritik
                                 case gyrosSoubeznaKeyword:
                                     break;
                                 case gyrosProtibeznaKeyword:
-                                    p = -1.0;
+                                    sign = -1.0;
                                     break;
                                 case gyrosZanedbaniKeyword:
                                     io = 0;
@@ -520,10 +562,10 @@ namespace Kritik
                                     break;
                             }
 
-                            double[,] matrix = {{                  1.0,                                         0.0, 0.0, 0.0 },
-                                                {                  0.0,                                         1.0, 0.0, 0.0 },
-                                                {                  0.0, id*Math.Pow(omega,2)-io*Math.Pow(omega,2)*p, 1.0, 0.0 },
-                                                { -M*Math.Pow(omega,2),                                         0.0, 0.0, 1.0 }};
+                            double[,] matrix = {{                  1.0,                                             0.0, 0.0, 0.0 },
+                                                {                  0.0,                                             1.0, 0.0, 0.0 },
+                                                {                  0.0, id*Math.Pow(omega,2)-io*omega*omegaHridele*sign, 1.0, 0.0 },
+                                                { -M*Math.Pow(omega,2),                                             0.0, 0.0, 1.0 }};
                             Matice = Matrix<double>.Build.DenseOfArray(matrix);
                             break;
                         }
