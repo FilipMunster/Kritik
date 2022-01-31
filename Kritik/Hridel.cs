@@ -458,7 +458,7 @@ namespace Kritik
                             }
                         }                        
                     }
-                    else
+                    else if ((KritOt != null) && (KritOt.Length > 0))
                     {
                         foreach (double otacky in KritOt)
                         {
