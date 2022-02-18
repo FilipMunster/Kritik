@@ -3,14 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31727.386
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kritik", "Kritik\Kritik.csproj", "{6ABA3189-EEAF-44BD-A9E4-4A4417FEF20E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{819818BD-C07E-460B-A875-F802D673165F}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		Kritik\KritikOld.csproj = Kritik\KritikOld.csproj
 	EndProjectSection
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "KritikSetup", "KritikSetup\KritikSetup.vdproj", "{FCD01522-EF1A-427C-B9ED-CD0F9BCDB9D4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kritik", "Kritik\Kritik.csproj", "{7813D381-AD96-4526-9B71-8BADD828F640}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,14 +19,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6ABA3189-EEAF-44BD-A9E4-4A4417FEF20E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6ABA3189-EEAF-44BD-A9E4-4A4417FEF20E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6ABA3189-EEAF-44BD-A9E4-4A4417FEF20E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6ABA3189-EEAF-44BD-A9E4-4A4417FEF20E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FCD01522-EF1A-427C-B9ED-CD0F9BCDB9D4}.Debug|Any CPU.ActiveCfg = Release
 		{FCD01522-EF1A-427C-B9ED-CD0F9BCDB9D4}.Debug|Any CPU.Build.0 = Release
 		{FCD01522-EF1A-427C-B9ED-CD0F9BCDB9D4}.Release|Any CPU.ActiveCfg = Release
 		{FCD01522-EF1A-427C-B9ED-CD0F9BCDB9D4}.Release|Any CPU.Build.0 = Release
+		{7813D381-AD96-4526-9B71-8BADD828F640}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7813D381-AD96-4526-9B71-8BADD828F640}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7813D381-AD96-4526-9B71-8BADD828F640}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7813D381-AD96-4526-9B71-8BADD828F640}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

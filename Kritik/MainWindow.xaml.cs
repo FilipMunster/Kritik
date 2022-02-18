@@ -67,7 +67,7 @@ namespace Kritik
             VykreslenyHlavniGraf = "w";
             VykreslitKmity();
             VyplnJazyky();
-            Texty.Jazyk = (Texty.Jazyky)jazykCombobox.SelectedIndex;
+            Texts.Language = (Texts.Languages)jazykCombobox.SelectedIndex;
             NacistNastaveni();
 
             //////////////////
@@ -678,13 +678,13 @@ namespace Kritik
                 switch (hridel.Gyros)
                 {
                     case Hridel.gyrosZanedbaniKeyword:
-                        gyros = Texty.VlivGyrosNeniUvazovan;
+                        gyros = Texts.VlivGyrosNeniUvazovan;
                         break;
                     case Hridel.gyrosSoubeznaKeyword:
-                        gyros = Texty.SoubeznaPrecese;
+                        gyros = Texts.SoubeznaPrecese;
                         break;
                     case Hridel.gyrosProtibeznaKeyword:
-                        gyros = Texty.ProtibeznaPrecese;
+                        gyros = Texts.ProtibeznaPrecese;
                         break;
                     default:
                         gyros = "";
@@ -695,19 +695,19 @@ namespace Kritik
                 {
                     case "w":
                     default:
-                        vykresleno = Texty.PruhybHridele + " w";
+                        vykresleno = Texts.PruhybHridele + " w";
                         break;
                     case "phi":
-                        vykresleno = Texty.NatoceniHridele + " φ";
+                        vykresleno = Texts.NatoceniHridele + " φ";
                         break;
                     case "m":
-                        vykresleno = Texty.OhybovyMoment + " M";
+                        vykresleno = Texts.OhybovyMoment + " M";
                         break;
                     case "t":
-                        vykresleno = Texty.PosouvajiciSila + " T";
+                        vykresleno = Texts.PosouvajiciSila + " T";
                         break;
                 }
-                popisek += Texty.RadovaCislovka(cisloKritOt) + " "+ Texty.kritickeOtacky +" = " + kritOt + " min⁻¹\n";
+                popisek += Texts.OrdinalNumber(cisloKritOt) + " "+ Texts.kritickeOtacky +" = " + kritOt + " min⁻¹\n";
                 popisek += vykresleno + "\n";
                 popisek += gyros + "\n";
                 popisek += nazevTextBox.Text + "\n";
@@ -850,9 +850,9 @@ namespace Kritik
         /// </summary>
         private void VyplnJazyky()
         {
-            foreach (var j in Enum.GetNames(typeof(Texty.Jazyky)))
+            foreach (var j in Enum.GetNames(typeof(Texts.Languages)))
             {
-                jazykCombobox.Items.Add(Texty.jazykNazev[j]);
+                jazykCombobox.Items.Add(Texts.LanguageName[j]);
             }
             try { jazykCombobox.SelectedIndex = Properties.Settings.Default.jazyk; }
             catch { jazykCombobox.SelectedIndex = 0; }
@@ -861,7 +861,7 @@ namespace Kritik
         private void jazykCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox s = (ComboBox)sender;
-            Texty.Jazyk = (Texty.Jazyky)s.SelectedIndex;
+            Texts.Jazyk = (Texts.Jazyky)s.SelectedIndex;
             try { Properties.Settings.Default.jazyk = s.SelectedIndex; }
             catch { Properties.Settings.Default.jazyk = 0; }
             VytvorPopisekVypoctu();
