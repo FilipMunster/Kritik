@@ -53,7 +53,7 @@ namespace Kritik
         /// </summary>
         public double Division { get; set; }
         /// <summary>
-        /// Způsob dělení Hřídele+: IdN=0 -> Idi=Id/n*IdNValue, IdN=0 -> Idi=IdNValue
+        /// Způsob dělení Hřídele+: IdN=0 -> Idi=Id/n*IdNValue, IdN=1 -> Idi=IdNValue
         /// </summary>
         public int IdN { get; set; }
         /// <summary>

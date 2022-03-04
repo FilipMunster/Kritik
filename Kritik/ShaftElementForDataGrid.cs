@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -59,5 +60,33 @@ namespace Kritik
             {"Podpora", ElementType.support },
             {"Magnet. tah", ElementType.magnet }
         };
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="elementType"></param>
+        public ShaftElementForDataGrid(ElementType elementType = ElementType.beam) : base(elementType)
+        {
+            Type = elementType;
+        }
+        /// <summary>
+        /// Create ShaftElementForDataGrid from ShaftElement
+        /// </summary>
+        /// <param name="shaftElement">Source ShaftElement object</param>
+        public ShaftElementForDataGrid(ShaftElement shaftElement) : base(shaftElement.Type)
+        {
+            PropertyInfo[] parentProperties = typeof(ShaftElement).GetProperties();
+            PropertyInfo[] thisProperties = this.GetType().GetProperties();
+            foreach (var parentProperty in parentProperties)
+            {
+                foreach(var thisProperty in thisProperties)
+                {
+                    if (thisProperty.Name == parentProperty.Name && thisProperty.PropertyType == parentProperty.PropertyType)
+                    {
+                        thisProperty.SetValue(this, parentProperty.GetValue(shaftElement));
+                        break;
+                    }
+                }
+            }
+        }
     }
 }

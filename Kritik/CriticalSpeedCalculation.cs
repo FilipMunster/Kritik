@@ -16,9 +16,16 @@ namespace Kritik
         private readonly double rpmMax;
         private readonly BoundaryCondition BCLeft;
         private readonly BoundaryCondition BCRight;
+        /// <summary>
+        /// Class for computing of the Critical speed
+        /// </summary>
+        /// <param name="shaftElements">List of ShaftElementsWithMatrix of whole shaft</param>
+        /// <param name="rpmMax">Critical speed will be computed in the interval 0..rpmMax</param>
+        /// <param name="BCLeft">Left boundary condition</param>
+        /// <param name="BCRight">Right boundary condition</param>
         public CriticalSpeedCalculation(List<ShaftElementWithMatrix> shaftElements, double rpmMax, BoundaryCondition BCLeft, BoundaryCondition BCRight)
         {
-            this.shaftElements = new List<ShaftElementWithMatrix>(shaftElements);
+            this.shaftElements = shaftElements;
             this.rpmMax = rpmMax;
             this.BCLeft = BCLeft;
             this.BCRight = BCRight;
@@ -27,7 +34,7 @@ namespace Kritik
         /// Vypočítá kritické otáčky hřídele
         /// </summary>
         /// <returns>Vrátí pole kritických otáček</returns>
-        public double[] Compute()
+        public double[] GetCriticalSpeed()
         {
             double step = 10; // krok otáček
             double[] detUc = new double[Convert.ToInt32(rpmMax / step)];

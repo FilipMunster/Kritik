@@ -17,12 +17,12 @@ namespace Kritik
             cs,
             en
         }
-        public static Dictionary<Languages, string> LanguageName = new Dictionary<Languages, string>
+        public readonly static Dictionary<Languages, string> LanguageName = new Dictionary<Languages, string>
         {
             {Languages.cs, "čeština" },
             {Languages.en, "angličtina" }
         };
-        public static Languages Language { get { return language; } 
+        public static Languages SelectedLanguage { get { return language; } 
             set 
             { 
                 language = value; 
@@ -140,7 +140,7 @@ namespace Kritik
         /// <returns></returns>
         public static string OrdinalNumber(int number)
         {
-            if (Language == Languages.en)
+            if (SelectedLanguage == Languages.en)
             {
                 // předpokládám, že čísla >20 se neobjeví, takže je neřeším
                 switch (number)

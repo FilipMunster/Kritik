@@ -412,7 +412,7 @@ namespace Kritik
                             i++; row++;
                             ws.Cells[row, 1].Value = i;
                             ws.Cells[row, 1].Style.Numberformat.Format = "0\".\"";
-                            ws.Cells[row, 2].Value = Texts.Type(a.Typ);
+                            ws.Cells[row, 2].Value = a.Typ; // !!! potřeba opravit pro novou verzi !!!
                             switch (a.Typ)
                             {
                                 case Hridel.beamKeyword:

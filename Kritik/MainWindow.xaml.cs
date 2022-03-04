@@ -52,8 +52,29 @@ namespace Kritik
         public static bool NovySoubor { get; set; } // slouží k rozpoznávání, jestli tlačítko uložit má soubor uložit, nebo uložit jako. true -> uložit jako
 
         private string VykreslenyHlavniGraf { get; set; }
+
+
         public MainWindow()
         {
+            //Načteno:
+            ShaftElement shaftElement1 = new ShaftElement() { De = 0.5, L = 10 };
+            ShaftElement shaftElement2 = new ShaftElement() { Type = ElementType.rigid, L = 0.25 };
+            ShaftElement shaftElement3 = new ShaftElement(ElementType.beamPlus) { L = 5, De = 0.6, M = 50000, Id = 40000, Io = 40000, Division = 10, IdN = 0, IdNValue = 0.65 };
+
+            List<ShaftElement> shaftElements = new List<ShaftElement>() { shaftElement1, shaftElement2, shaftElement3};
+            // Vytvoří se hřídel:
+            Shaft shaft = new Shaft(shaftElements);
+
+            //Chci počítat:
+            var elementWithMatrices = shaft.GetElementsWithMatrix(GyroscopicEffect.forward, 210e9, 7860, false, 0);
+            CriticalSpeedCalculation calculation = new CriticalSpeedCalculation(elementWithMatrices, 5000, BoundaryCondition.free, BoundaryCondition.joint);
+            double[] critSpeed = calculation.GetCriticalSpeed();
+
+            return;
+
+            
+
+
             InitializeComponent();
             SetMainWindow(this);
 
@@ -67,7 +88,7 @@ namespace Kritik
             VykreslenyHlavniGraf = "w";
             VykreslitKmity();
             VyplnJazyky();
-            Texts.Language = (Texts.Languages)jazykCombobox.SelectedIndex;
+            Texts.SelectedLanguage = (Texts.Languages)jazykCombobox.SelectedIndex;
             NacistNastaveni();
 
             //////////////////
@@ -850,9 +871,9 @@ namespace Kritik
         /// </summary>
         private void VyplnJazyky()
         {
-            foreach (var j in Enum.GetNames(typeof(Texts.Languages)))
+            foreach (var j in Texts.LanguageName)
             {
-                jazykCombobox.Items.Add(Texts.LanguageName[j]);
+                jazykCombobox.Items.Add(j.Value);
             }
             try { jazykCombobox.SelectedIndex = Properties.Settings.Default.jazyk; }
             catch { jazykCombobox.SelectedIndex = 0; }
@@ -861,7 +882,7 @@ namespace Kritik
         private void jazykCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox s = (ComboBox)sender;
-            Texts.Jazyk = (Texts.Jazyky)s.SelectedIndex;
+            Texts.SelectedLanguage = (Texts.Languages)s.SelectedIndex;
             try { Properties.Settings.Default.jazyk = s.SelectedIndex; }
             catch { Properties.Settings.Default.jazyk = 0; }
             VytvorPopisekVypoctu();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
@@ -12,9 +13,10 @@ namespace Kritik
     /// </summary>
     internal class ShaftElementWithMatrix : ShaftElement
     {
+        public new ElementType Type { get { return type; } set { type = value == ElementType.beamPlus ? throw new ArgumentException("Element type cannot be the beamPlus") : value; } }
+        private ElementType type;
         public double Rpm { get; set; }
-        public double ShaftRPM { get { return shaftRPM; } set { shaftRPM = value; ShaftRotationInfluence = true; } }
-        private double shaftRPM;
+        public double ShaftRPM { get; set; }
         public bool ShaftRotationInfluence { get; set; }
         public GyroscopicEffect Gyros { get; set; }
         public double Rho { get; set; }
@@ -105,6 +107,30 @@ namespace Kritik
                     throw new ArgumentNullException("Element of type \"BeamPlus\" cannot be computed.");
                 default:
                     throw new ArgumentNullException("Element type was not set.");
+            }
+        }
+        public ShaftElementWithMatrix(ElementType elementType = ElementType.beam) : base(elementType) 
+        {
+            Type = elementType;
+        }
+        /// <summary>
+        /// Create ShaftElementWithMatrix from ShaftElement
+        /// </summary>
+        /// <param name="shaftElement">Source ShaftElement object</param>
+        public ShaftElementWithMatrix(ShaftElement shaftElement) : base(shaftElement.Type)
+        {
+            PropertyInfo[] parentProperties = typeof(ShaftElement).GetProperties();
+            PropertyInfo[] thisProperties = this.GetType().GetProperties();
+            foreach (var parentProperty in parentProperties)
+            {
+                foreach (var thisProperty in thisProperties)
+                {
+                    if (thisProperty.Name == parentProperty.Name && thisProperty.PropertyType == parentProperty.PropertyType)
+                    {
+                        thisProperty.SetValue(this, parentProperty.GetValue(shaftElement));
+                        break;
+                    }
+                }
             }
         }
     }
