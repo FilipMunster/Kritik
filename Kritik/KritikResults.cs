@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace Kritik
 {
-    public enum GyroscopicEffect
+    public class KritikResults
     {
-        none,
-        forward,
-        backward
+        public double[] CriticalSpeeds { get; set; }
+        public OscillationShape[] OscillationShapes { get; set; }
     }
 }

@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace Kritik
 {
-    class Shaft
+    public class Shaft
     {
         public ObservableCollection<ShaftElementForDataGrid> Elements { get; set; }
         public ShaftElementForDataGrid SelectedItem { get; set; }
+        public ShaftProperties Properties { get; set; }
 
         /// <summary>
         /// Creates shaft with Elements
@@ -31,7 +32,7 @@ namespace Kritik
         {
             Elements = new ObservableCollection<ShaftElementForDataGrid>();
         }
-        public List<ShaftElementWithMatrix> GetElementsWithMatrix(GyroscopicEffect gyros, double youngModulus, double materialDensity, bool shaftRotationInfluence, double shaftRPM)
+        public List<ShaftElementWithMatrix> GetElementsWithMatrix()
         {
             List<ShaftElementWithMatrix> elementsWithMatrix = new List<ShaftElementWithMatrix>();
             foreach (var element in Elements)
@@ -80,11 +81,11 @@ namespace Kritik
             // nakonec nastavit všem prvkům společné vlastnosti
             foreach (var element in elementsWithMatrix)
             {
-                element.Gyros = gyros;
-                element.E = youngModulus;
-                element.Rho = materialDensity;
-                element.ShaftRotationInfluence = shaftRotationInfluence;
-                element.ShaftRPM = shaftRPM;
+                element.Gyros = Properties.Gyros;
+                element.E = Properties.YoungModulus;
+                element.Rho = Properties.MaterialDensity;
+                element.ShaftRotationInfluence = Properties.ShaftRotationInfluence;
+                element.ShaftRPM = Properties.ShaftRPM;
             }
             return elementsWithMatrix;
         }

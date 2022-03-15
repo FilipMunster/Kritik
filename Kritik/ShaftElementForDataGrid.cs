@@ -10,7 +10,7 @@ namespace Kritik
     /// <summary>
     /// Prvek hřídele s vlastnostmi pro použití v DataGridu
     /// </summary>
-    internal class ShaftElementForDataGrid : ShaftElement
+    public class ShaftElementForDataGrid : ShaftElement
     {
         /// <summary>
         /// Text typu prvku tak, jak je zobrazen v tabulce

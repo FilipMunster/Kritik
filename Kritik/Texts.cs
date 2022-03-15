@@ -10,7 +10,7 @@ namespace Kritik
     /// <summary>
     /// Obsahuje vlastnosti s texty
     /// </summary>
-    static class Texts
+    public static class Texts
     {
         public enum Languages
         {

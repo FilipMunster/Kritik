@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Kritik
 {
-    enum ElementType
+    public enum ElementType
     {
         beam,
         beamPlus,

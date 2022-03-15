@@ -9,7 +9,7 @@ namespace Kritik
     /// <summary>
     /// Prvek hřídele
     /// </summary>
-    class ShaftElement
+    public class ShaftElement
     {
         /// <summary>
         /// Typ prvku hřídele

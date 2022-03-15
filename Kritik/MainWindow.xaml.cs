@@ -66,9 +66,7 @@ namespace Kritik
             Shaft shaft = new Shaft(shaftElements);
 
             //Chci počítat:
-            var elementWithMatrices = shaft.GetElementsWithMatrix(GyroscopicEffect.forward, 210e9, 7860, false, 0);
-            CriticalSpeedCalculation calculation = new CriticalSpeedCalculation(elementWithMatrices, 5000, BoundaryCondition.free, BoundaryCondition.joint);
-            double[] critSpeed = calculation.GetCriticalSpeed();
+            
 
             return;
 
@@ -216,7 +214,7 @@ namespace Kritik
                 if (!dragEvent) hridel.NazevSouboru = openFileDialog.FileName;
                 HridelPouzitaKVypoctu = null;
                 NovySoubor = false;
-                bool ok = DataLoadSave.NacistData(hridel.NazevSouboru, hridel);
+                bool ok = DataLoadSaveOld.NacistData(hridel.NazevSouboru, hridel);
                 if (!ok) { 
                     MessageBox.Show("Soubor \"" + hridel.NazevSouboru + "\" se nepodařilo načíst.", "Chyba načítání souboru", MessageBoxButton.OK, MessageBoxImage.Error);
                     hridel.NazevSouboru = "Nový výpočet.xlsx";
@@ -235,8 +233,8 @@ namespace Kritik
         {
             if (!NovySoubor)
             {
-                bool ok1 = DataLoadSave.UlozitVysledky(hridel.NazevSouboru, HridelPouzitaKVypoctu);
-                bool ok2 = DataLoadSave.UlozitData(hridel.NazevSouboru, hridel);                
+                bool ok1 = DataLoadSaveOld.UlozitVysledky(hridel.NazevSouboru, HridelPouzitaKVypoctu);
+                bool ok2 = DataLoadSaveOld.UlozitData(hridel.NazevSouboru, hridel);                
                 if (!(ok1 && ok2)) { MessageBox.Show("Soubor \"" + hridel.NazevSouboru + "\" se nepodařilo uložit.", "Chyba ukládání souboru", MessageBoxButton.OK, MessageBoxImage.Error); }
                 else
                 {
@@ -256,8 +254,8 @@ namespace Kritik
             if (saveFileDialog.ShowDialog() == true)
             {
                 hridel.NazevSouboru = saveFileDialog.FileName;
-                bool ok1 = DataLoadSave.UlozitVysledky(hridel.NazevSouboru, HridelPouzitaKVypoctu);
-                bool ok2 = DataLoadSave.UlozitData(hridel.NazevSouboru, hridel);                
+                bool ok1 = DataLoadSaveOld.UlozitVysledky(hridel.NazevSouboru, HridelPouzitaKVypoctu);
+                bool ok2 = DataLoadSaveOld.UlozitData(hridel.NazevSouboru, hridel);                
                 if (!(ok1 && ok2)) { MessageBox.Show("Soubor \"" + hridel.NazevSouboru + "\" se nepodařilo uložit.", "Chyba ukládání souboru", MessageBoxButton.OK, MessageBoxImage.Error); }
                 else
                 {

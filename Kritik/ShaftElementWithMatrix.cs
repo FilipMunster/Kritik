@@ -11,7 +11,7 @@ namespace Kritik
     /// <summary>
     /// Prvek hřídele k použití pro výpočty
     /// </summary>
-    internal class ShaftElementWithMatrix : ShaftElement
+    public class ShaftElementWithMatrix : ShaftElement
     {
         public new ElementType Type { get { return type; } set { type = value == ElementType.beamPlus ? throw new ArgumentException("Element type cannot be the beamPlus") : value; } }
         private ElementType type;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Kritik
 {
-    enum BoundaryCondition
+    public enum BoundaryCondition
     {
         free,
         joint,
