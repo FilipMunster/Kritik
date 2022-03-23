@@ -65,8 +65,10 @@ namespace Kritik
             // Vytvoří se hřídel:
             Shaft shaft = new Shaft(shaftElements);
 
-            //Chci počítat:
+            CollectionHistory<ShaftElementForDataGrid> history = new(shaft.Elements);
             
+
+
 
             return;
 

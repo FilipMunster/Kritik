@@ -14,7 +14,7 @@ namespace Kritik
         public ShaftProperties Properties { get; set; }
 
         /// <summary>
-        /// Creates shaft with Elements
+        /// Creates shaft with given list of ShaftElements
         /// </summary>
         /// <param name="shaftElements">List of ShaftElements (works with its copy)</param>
         public Shaft(List<ShaftElement> shaftElements)
@@ -32,6 +32,10 @@ namespace Kritik
         {
             Elements = new ObservableCollection<ShaftElementForDataGrid>();
         }
+        /// <summary>
+        /// Transforms collection of Shaft Elements to List of ElementsWithMatrix for usage in computing
+        /// </summary>
+        /// <returns>List of Shaft Elements With Matrix</returns>
         public List<ShaftElementWithMatrix> GetElementsWithMatrix()
         {
             List<ShaftElementWithMatrix> elementsWithMatrix = new List<ShaftElementWithMatrix>();
