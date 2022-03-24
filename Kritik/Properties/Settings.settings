@@ -2,22 +2,22 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Kritik.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="jazyk" Type="System.Int32" Scope="User">
+    <Setting Name="lang" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="vykreslitUzly" Type="System.Boolean" Scope="User">
+    <Setting Name="drawNodes" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="vykreslitSchema" Type="System.Boolean" Scope="User">
+    <Setting Name="drawScheme" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="vykreslitTvar" Type="System.Boolean" Scope="User">
+    <Setting Name="drawShape" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="vykreslitPopisek" Type="System.Boolean" Scope="User">
+    <Setting Name="drawDescription" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="resil" Type="System.String" Scope="User">
+    <Setting Name="author" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

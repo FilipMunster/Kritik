@@ -17,5 +17,27 @@ namespace Kritik
         public double MaterialDensity { get; set; }
         public double OperatingSpeed { get; set; }
         public double RunawaySpeed { get; set; }
+        public double MaxCriticalSpeed { get; set; }
+
+        public ShaftProperties()
+        {
+            BCLeft = BoundaryCondition.free;
+            BCRight = BoundaryCondition.free;
+            Gyros = GyroscopicEffect.none;
+            ShaftRotationInfluence = false;
+            ShaftRPM = 0;
+            YoungModulus = 210e9;
+            MaterialDensity = 7850;
+            OperatingSpeed = 0;
+            RunawaySpeed = 0;
+            MaxCriticalSpeed = 5000;
+        }
+        /// <summary>
+        /// Returns deep copy of the object
+        /// </summary>
+        public ShaftProperties Copy()
+        {
+            return (ShaftProperties)this.MemberwiseClone();
+        }
     }
 }

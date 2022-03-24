@@ -67,7 +67,7 @@ namespace Kritik
 
             CollectionHistory<ShaftElementForDataGrid> history = new(shaft.Elements);
             
-
+            
 
 
             return;
@@ -864,7 +864,7 @@ namespace Kritik
         private void vykreslitUzlyCheckBox_Click(object sender, RoutedEventArgs e)
         {
             VykreslitHlavniGraf(VykreslenyHlavniGraf);
-            Properties.Settings.Default.vykreslitUzly = (bool)((CheckBox)sender).IsChecked;
+            Properties.Settings.Default.drawNodes = (bool)((CheckBox)sender).IsChecked;
         }
         /// <summary>
         /// Naplní combobox výběru jazyků hodnotami
@@ -875,7 +875,7 @@ namespace Kritik
             {
                 jazykCombobox.Items.Add(j.Value);
             }
-            try { jazykCombobox.SelectedIndex = Properties.Settings.Default.jazyk; }
+            try { jazykCombobox.SelectedIndex = Properties.Settings.Default.lang; }
             catch { jazykCombobox.SelectedIndex = 0; }
         }
 
@@ -883,8 +883,8 @@ namespace Kritik
         {
             ComboBox s = (ComboBox)sender;
             Texts.SelectedLanguage = (Texts.Languages)s.SelectedIndex;
-            try { Properties.Settings.Default.jazyk = s.SelectedIndex; }
-            catch { Properties.Settings.Default.jazyk = 0; }
+            try { Properties.Settings.Default.lang = s.SelectedIndex; }
+            catch { Properties.Settings.Default.lang = 0; }
             VytvorPopisekVypoctu();
         }
 
@@ -895,25 +895,25 @@ namespace Kritik
 
         private void vykreslitSchemaCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.vykreslitSchema = (bool)((CheckBox)sender).IsChecked;
+            Properties.Settings.Default.drawScheme = (bool)((CheckBox)sender).IsChecked;
         }
 
         private void vykreslitGrafCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.vykreslitTvar = (bool)((CheckBox)sender).IsChecked;
+            Properties.Settings.Default.drawShape = (bool)((CheckBox)sender).IsChecked;
         }
 
         private void vykreslitPopisekCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.vykreslitPopisek = (bool)((CheckBox)sender).IsChecked;
+            Properties.Settings.Default.drawDescription = (bool)((CheckBox)sender).IsChecked;
         }
         private void NacistNastaveni()
         {
-            if (Properties.Settings.Default.resil != "") { resilTextBox.Text = Properties.Settings.Default.resil; }
-            vykreslitUzlyCheckBox.IsChecked = Properties.Settings.Default.vykreslitUzly;
-            vykreslitSchemaCheckBox.IsChecked = Properties.Settings.Default.vykreslitSchema;
-            vykreslitGrafCheckBox.IsChecked = Properties.Settings.Default.vykreslitTvar;
-            vykreslitPopisekCheckBox.IsChecked = Properties.Settings.Default.vykreslitPopisek;
+            if (Properties.Settings.Default.author != "") { resilTextBox.Text = Properties.Settings.Default.author; }
+            vykreslitUzlyCheckBox.IsChecked = Properties.Settings.Default.drawNodes;
+            vykreslitSchemaCheckBox.IsChecked = Properties.Settings.Default.drawScheme;
+            vykreslitGrafCheckBox.IsChecked = Properties.Settings.Default.drawShape;
+            vykreslitPopisekCheckBox.IsChecked = Properties.Settings.Default.drawDescription;
         }
 
         private void deleniHridelPlusTextBox_LostFocus(object sender, RoutedEventArgs e)

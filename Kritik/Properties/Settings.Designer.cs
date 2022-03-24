@@ -26,72 +26,72 @@ namespace Kritik.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int jazyk {
+        public int lang {
             get {
-                return ((int)(this["jazyk"]));
+                return ((int)(this["lang"]));
             }
             set {
-                this["jazyk"] = value;
+                this["lang"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool vykreslitUzly {
+        public bool drawNodes {
             get {
-                return ((bool)(this["vykreslitUzly"]));
+                return ((bool)(this["drawNodes"]));
             }
             set {
-                this["vykreslitUzly"] = value;
+                this["drawNodes"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool vykreslitSchema {
+        public bool drawScheme {
             get {
-                return ((bool)(this["vykreslitSchema"]));
+                return ((bool)(this["drawScheme"]));
             }
             set {
-                this["vykreslitSchema"] = value;
+                this["drawScheme"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool vykreslitTvar {
+        public bool drawShape {
             get {
-                return ((bool)(this["vykreslitTvar"]));
+                return ((bool)(this["drawShape"]));
             }
             set {
-                this["vykreslitTvar"] = value;
+                this["drawShape"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool vykreslitPopisek {
+        public bool drawDescription {
             get {
-                return ((bool)(this["vykreslitPopisek"]));
+                return ((bool)(this["drawDescription"]));
             }
             set {
-                this["vykreslitPopisek"] = value;
+                this["drawDescription"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string resil {
+        public string author {
             get {
-                return ((string)(this["resil"]));
+                return ((string)(this["author"]));
             }
             set {
-                this["resil"] = value;
+                this["author"] = value;
             }
         }
     }

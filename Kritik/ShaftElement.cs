@@ -65,5 +65,13 @@ namespace Kritik
         {
             Type = elementType;
         }
+
+        /// <summary>
+        /// Creates a shallow copy of object
+        /// </summary>
+        public ShaftElement Copy()
+        {
+            return (ShaftElement)this.MemberwiseClone();
+        }
     }
 }

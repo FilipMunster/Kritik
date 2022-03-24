@@ -10,7 +10,7 @@ namespace Kritik
     /// <summary>
     /// Třída pro výpočet kritických otáček
     /// </summary>
-    public static class Calculation
+    public static class Computation
     {
         /// <summary>
         /// Vypočítá kritické otáčky hřídele

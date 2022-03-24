@@ -117,7 +117,7 @@ namespace Kritik
         public string VypocetPopis { get { return vypocetPopis; } set { vypocetPopis = value; NotifyPropertyChanged(); } }
         private string vypocetResil;
         public string VypocetResil { get { return vypocetResil; } set { vypocetResil = value; NotifyPropertyChanged();
-                if (MainWindow.NovySoubor) { Properties.Settings.Default.resil = value; } } }
+                if (MainWindow.NovySoubor) { Properties.Settings.Default.author = value; } } }
         private string vypocetDatum;
         public string VypocetDatum { get { return vypocetDatum; } set { vypocetDatum = value; NotifyPropertyChanged(); } }
         private string opLeva;
@@ -319,7 +319,7 @@ namespace Kritik
         {
             VypocetNazev = string.Empty;
             VypocetPopis = string.Empty;
-            VypocetResil = Properties.Settings.Default.resil == "" ? Environment.UserName : Properties.Settings.Default.resil;
+            VypocetResil = Properties.Settings.Default.author == "" ? Environment.UserName : Properties.Settings.Default.author;
             VypocetDatum = DateTime.Today.ToShortDateString();
             OpLeva = opVolnyKeyword;
             OpPrava = opVolnyKeyword;
