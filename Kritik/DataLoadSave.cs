@@ -13,7 +13,7 @@ namespace Kritik
 {
     public static class DataLoadSave
     {
-        // klíčová slova ve vstupním souboru
+        // keywords used in input file
         private static readonly string[] colNames = { "Typ", "L", "De", "Di", "m", "Io", "Id", "k", "Cm", "Deleni", "Id/N", "Id/Nvalue" };
         private const string nazevKeyword = "Nazev";
         private const string popisKeyword = "Popis";
@@ -93,16 +93,17 @@ namespace Kritik
         };
 
         /// <summary>
-        /// Načtení vstupních dat hřídele z excelu do kolekce PrvkyHrideleTab
+        /// Loads the input data from xlsx file
         /// </summary>
-        /// <param name="fileName">Plná cesta ke vstupnímu souboru</param>
+        /// <param name="fileName">Full path to source file</param>
+        /// <returns>Loaded data</returns>
         public static (ShaftProperties, CalculationProperties, List<ShaftElement>)? Load(string fileName)
         {
             ShaftProperties shaftProperties = new();
             CalculationProperties calculationProperties = new();
             List<ShaftElement> shaftElements = new();
 
-            // Načtení .xlsx do proměnné excel
+            // Loads .xlsx file into excel variable
             FileInfo fileInfo = new FileInfo(fileName);
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             try
@@ -118,7 +119,6 @@ namespace Kritik
 
                     if ((excel != null) && (excel.Dimension != null))
                     {
-                        // počet řádků eXcelové tabulky
                         numRows = excel.Dimension.Rows;
                     }
                     else
@@ -127,7 +127,7 @@ namespace Kritik
                         return null;
                     }
 
-                    // Načtení zadaných hodnot
+                    // Loading of the input values:
                     int shaftElementsFirstRow = 0;
 
                     for (int i = 1; i <= numRows; i++)
@@ -182,7 +182,7 @@ namespace Kritik
                                     break;
                                 case nKritMaxKeyword:
                                     if (Double.TryParse(value, out double nMax))
-                                        calculationProperties.MaxCriticalSpeed = nMax;
+                                        shaftProperties.MaxCriticalSpeed = nMax;
                                     break;
                                 case poznamkaKeyword:
                                     calculationProperties.Notes = value;
@@ -190,7 +190,7 @@ namespace Kritik
                                 default:
                                     if (excel.Cells[i, 1].Value.ToString() == colNames[0])
                                     {
-                                        for (int j = 0; j < colNames.Length; j++) // kontrola, jestli názvy všech sloupců sedí
+                                        for (int j = 0; j < colNames.Length; j++) // checks if all column titles are correct
                                         {
                                             if (excel.Cells[i, j + 1].Value.ToString() != colNames[j])
                                             {
@@ -205,7 +205,7 @@ namespace Kritik
                         }
                     }
 
-                    // Naplnit kolekci PrvkyHrideleTab daty ze vstupního souboru
+                    // Creating ShaftElements collection:
                     if (shaftElementsFirstRow > 0)
                     {
                         for (int i = shaftElementsFirstRow; i <= numRows; i++)
@@ -241,12 +241,14 @@ namespace Kritik
         }
 
         /// <summary>
-        /// Uloží data hřídele do souboru .xlsx
+        /// Saves shaft and calculation data into xlsx file
         /// </summary>
-        /// <param name="fileName">Úplná cesta k výstupnímu souboru</param>
-        /// <param name="hridel">Objekt hřídele s daty</param>
-        /// <returns>Vrací true, pokud se soubor podařilo uložit</returns>
-        public static bool Save(string fileName, ShaftProperties shaftProperties, CalculationProperties calculationProperties, List<ShaftElement> shaftElements, KritikResults kritikResults)
+        /// <param name="fileName">Full path to output file</param>
+        /// <param name="shaftProperties">Shaft properties</param>
+        /// <param name="calculationProperties">Calculation properties</param>
+        /// <param name="shaftElements">List of Shaft Elements</param>
+        /// <returns>true if file saved successfully</returns>
+        public static bool Save(string fileName, ShaftProperties shaftProperties, CalculationProperties calculationProperties, List<ShaftElement> shaftElements)
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             FileInfo fileInfo = new FileInfo(fileName);
@@ -301,7 +303,7 @@ namespace Kritik
                     ws.Cells[21, 2].Value = shaftProperties.RunawaySpeed;
                     ws.Cells[21, 3].Value = "rpm";
                     ws.Cells[22, 1].Value = nKritMaxKeyword;
-                    ws.Cells[22, 2].Value = calculationProperties.MaxCriticalSpeed;
+                    ws.Cells[22, 2].Value = shaftProperties.MaxCriticalSpeed;
                     ws.Cells[22, 3].Value = "rpm";
                     ws.Cells[24, 1].Value = "Poznámky k výpočtu:";
                     ws.Cells[25, 1].Value = poznamkaKeyword;
@@ -349,24 +351,28 @@ namespace Kritik
         }
 
         /// <summary>
-        /// Uloží výsledky výpočtu do souboru .xlsx
+        /// Saves results of critical speed calculation
         /// </summary>
-        /// <param name="fileName">Úplná cesta k výstupnímu souboru</param>
-        /// <param name="hridel">Objekt hřídele s daty</param>
+        /// <param name="fileName">Full path to output file</param>
+        /// <param name="shaftProperties">Shaft properties</param>
+        /// <param name="calculationProperties">Calculation properties</param>
+        /// <param name="shaftElements">List of Shaft Elements</param>
+        /// <param name="results">Kritik results</param>
+        /// <param name="strings">Instance of strings class</param>
         /// <returns></returns>
-        public static bool SaveResults(string fileName, ShaftProperties shaftProperties, CalculationProperties calculationProperties, List<ShaftElement> shaftElements, KritikResults results)
+        public static bool SaveResults(string fileName, ShaftProperties shaftProperties, CalculationProperties calculationProperties, List<ShaftElement> shaftElements, KritikResults results, Strings strings)
         {
             Dictionary<BoundaryCondition, string> opVypsatDict = new()
             {
-                { BoundaryCondition.free, Texts.VOLNY },
-                { BoundaryCondition.joint, Texts.KLOUB },
-                { BoundaryCondition.fix, Texts.VETKNUTI }
+                { BoundaryCondition.free, strings.VOLNY },
+                { BoundaryCondition.joint, strings.KLOUB },
+                { BoundaryCondition.fix, strings.VETKNUTI }
             };
             Dictionary<GyroscopicEffect, string> gyrosVypsatDict = new()
             {
-                { GyroscopicEffect.none, Texts.VLIVGYROSNENIUVAZOVAN },
-                { GyroscopicEffect.forward, Texts.SOUBEZNAPRECESE },
-                { GyroscopicEffect.backward, Texts.PROTIBEZNAPRECESE }
+                { GyroscopicEffect.none, strings.VLIVGYROSNENIUVAZOVAN },
+                { GyroscopicEffect.forward, strings.SOUBEZNAPRECESE },
+                { GyroscopicEffect.backward, strings.PROTIBEZNAPRECESE }
             };
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -402,86 +408,86 @@ namespace Kritik
                     ws.Cells.Style.Font.Size = 11;
                     ws.Cells.Style.Font.Name = "Calibri";
 
-                    ws.Cells[1, 1].Value = Texts.KritickeOtackykrouzivehoKmitani;
+                    ws.Cells[1, 1].Value = strings.KritickeOtackykrouzivehoKmitani;
                     ws.Cells[1, 1].Style.Font.Bold = true;
-                    ws.Cells[3, 1].Value = Texts.NazevDT;
+                    ws.Cells[3, 1].Value = strings.NazevDT;
                     ws.Cells[3, 2].Value = calculationProperties.Title;
-                    ws.Cells[4, 1].Value = Texts.PopisDT;
+                    ws.Cells[4, 1].Value = strings.PopisDT;
                     ws.Cells[4, 2].Value = calculationProperties.Description;
-                    ws.Cells[5, 1].Value = Texts.ResilDT;
+                    ws.Cells[5, 1].Value = strings.ResilDT;
                     ws.Cells[5, 2].Value = calculationProperties.Author;
-                    ws.Cells[6, 1].Value = Texts.DatumDT;
+                    ws.Cells[6, 1].Value = strings.DatumDT;
                     ws.Cells[6, 2].Value = calculationProperties.Date;
-                    ws.Cells[8, 1].Value = Texts.OkrajovePodminkyDT;
-                    ws.Cells[9, 2].Value = Texts.LEVYKonecRotoru;
+                    ws.Cells[8, 1].Value = strings.OkrajovePodminkyDT;
+                    ws.Cells[9, 2].Value = strings.LEVYKonecRotoru;
                     ws.Cells[9, 4].Value = opVypsatDict[shaftProperties.BCLeft];
                     ws.Cells[9, 4].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
-                    ws.Cells[10, 2].Value = Texts.PRAVYKonecRotoru;
+                    ws.Cells[10, 2].Value = strings.PRAVYKonecRotoru;
                     ws.Cells[10, 4].Value = opVypsatDict[shaftProperties.BCRight];
                     ws.Cells[10, 4].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
-                    ws.Cells[11, 1].Value = Texts.ModulPruznostiVTahuHrideleDT;
+                    ws.Cells[11, 1].Value = strings.ModulPruznostiVTahuHrideleDT;
                     ws.Cells[11, 4].Value = shaftProperties.YoungModulus;
                     ws.Cells[11, 5].Value = "GPa";
-                    ws.Cells[12, 1].Value = Texts.HustotaMaterialuHrideleDT;
+                    ws.Cells[12, 1].Value = strings.HustotaMaterialuHrideleDT;
                     ws.Cells[12, 4].Value = shaftProperties.MaterialDensity;
                     ws.Cells[12, 5].Value = "kg.m⁻³";
                     ws.Cells[14, 1].Value = gyrosVypsatDict[shaftProperties.Gyros];
                     int row = 15;
                     if (shaftProperties.OperatingSpeed > 0)
                     {
-                        ws.Cells[++row, 1].Value = Texts.ProvozniOtackyHrideleDT;
+                        ws.Cells[++row, 1].Value = strings.ProvozniOtackyHrideleDT;
                         ws.Cells[row, 4].Value = shaftProperties.OperatingSpeed;
                         ws.Cells[row, 5].Value = "min⁻¹";
                     }
                     if (shaftProperties.RunawaySpeed > 0)
                     {
-                        ws.Cells[++row, 1].Value = Texts.PrubezneOtackyHrideleDT;
+                        ws.Cells[++row, 1].Value = strings.PrubezneOtackyHrideleDT;
                         ws.Cells[row, 4].Value = shaftProperties.RunawaySpeed;
                         ws.Cells[row, 5].Value = "min⁻¹";
                     }
                     if (calculationProperties.Notes != "")
                     {
                         row = shaftProperties.OperatingSpeed > 0 || shaftProperties.RunawaySpeed > 0 ? row + 2 : row + 1;
-                        ws.Cells[row, 1].Value = Texts.PoznamkyKVypoctuDT;
+                        ws.Cells[row, 1].Value = strings.PoznamkyKVypoctuDT;
                         ws.Cells[++row, 2].Value = calculationProperties.Notes;
                         ws.Cells[row, 2, row, 8].Merge = true;
                         ws.Cells[row, 2].Style.WrapText = true;
                         ws.Row(row).Height = MeasureTextHeight(calculationProperties.Notes, ws.Cells[row, 1].Style.Font, ws.Column(1).Width * 7);
                     }
                     row = shaftProperties.OperatingSpeed > 0 || shaftProperties.RunawaySpeed > 0 || calculationProperties.Notes != "" ? row + 1 : row;
-                    ws.Cells[++row, 1].Value = Texts.VypocteneHodnotyDT;
+                    ws.Cells[++row, 1].Value = strings.VypocteneHodnotyDT;
                     ws.Cells[row, 1].Style.Font.Bold = true;
                     for (int i = 0; i < results.CriticalSpeeds.Length; i++)
                     {
-                        ws.Cells[++row, 2].Value = Texts.OrdinalNumber(i + 1) + " " + Texts.kritickeOtacky;
+                        ws.Cells[++row, 2].Value = strings.OrdinalNumber(i + 1) + " " + strings.kritickeOtacky;
                         ws.Cells[row, 4].Value = results.CriticalSpeeds[i];
                         ws.Cells[row, 5].Value = "min⁻¹";
                         ws.Cells[row, 6].Value = results.CriticalSpeeds[i] / 60.0;
                         ws.Cells[row, 6].Style.Numberformat.Format = "(0.0##)";
                         ws.Cells[row, 7].Value = "Hz";
                     }
-                    if (results.CriticalSpeeds.Length == 0) { ws.Cells[++row, 2].Value = Texts.NebylyVypoctenyZadneKritickeOtacky; }
+                    if (results.CriticalSpeeds.Length == 0) { ws.Cells[++row, 2].Value = strings.NebylyVypoctenyZadneKritickeOtacky; }
 
                     if ((shaftProperties.OperatingSpeed > 0 || shaftProperties.RunawaySpeed > 0) && results.CriticalSpeeds.Length > 0)
                     {
                         row += 2;
-                        ws.Cells[row, 2].Value = Texts.OrdinalNumber(1) + " " + Texts.kritickeOtacky + " " + Texts.odpovidajiDT;
+                        ws.Cells[row, 2].Value = strings.OrdinalNumber(1) + " " + strings.kritickeOtacky + " " + strings.odpovidajiDT;
                     }
                     if (shaftProperties.OperatingSpeed > 0 && results.CriticalSpeeds.Length > 0)
                     {
                         ws.Cells[++row, 2].Value = results.CriticalSpeeds[0] / shaftProperties.OperatingSpeed * 100;
                         ws.Cells[row, 2].Style.Numberformat.Format = "0.0##";
-                        ws.Cells[row, 3].Value = "% " + Texts.provoznichOtacek;
+                        ws.Cells[row, 3].Value = "% " + strings.provoznichOtacek;
                     }
                     if (shaftProperties.RunawaySpeed > 0 && results.CriticalSpeeds.Length > 0)
                     {
                         ws.Cells[++row, 2].Value = results.CriticalSpeeds[0] / shaftProperties.RunawaySpeed * 100;
                         ws.Cells[row, 2].Style.Numberformat.Format = "0.0##";
-                        ws.Cells[row, 3].Value = "% " + Texts.prubeznychOtacek;
+                        ws.Cells[row, 3].Value = "% " + strings.prubeznychOtacek;
                     }
 
                     row += 2;
-                    ws.Cells[row, 1].Value = Texts.GeometrieHrideleDT;
+                    ws.Cells[row, 1].Value = strings.GeometrieHrideleDT;
                     ws.Cells[row, 1].Style.Font.Bold = true;
                     ws.Cells[row, 3].Value = "(L, De, Di - [mm]; m - [kg]; Jo, Jd - [kg.m2]; k, Cm - [N/m])";
 
@@ -497,7 +503,7 @@ namespace Kritik
                             i++; row++;
                             ws.Cells[row, 1].Value = i;
                             ws.Cells[row, 1].Style.Numberformat.Format = "0\".\"";
-                            ws.Cells[row, 2].Value = Texts.Type(element.Type); // !!! potřeba opravit pro novou verzi !!!
+                            ws.Cells[row, 2].Value = strings.Type(element.Type); // !!! potřeba opravit pro novou verzi !!!
                             switch (element.Type)
                             {
                                 case ElementType.beam:
@@ -533,12 +539,12 @@ namespace Kritik
                                     ws.Cells[row, 8].Value = element.Di;
                                     ws.Cells[row, 8].Style.HorizontalAlignment = alignLeft;
                                     ws.Cells[row, 8].Style.Numberformat.Format = formatNum;
-                                    ws.Cells[++row, 2].Value = Texts.HridelJeRozdelenaNa + " " + (element.Division + 1) + " " 
-                                        + Texts.castiODelce + " " + string.Format("{0:#.###}", element.L / (element.Division + 1)) + " mm, " 
-                                        + Texts.meziKterymiJsouUmistenyPrvkyDT;
+                                    ws.Cells[++row, 2].Value = strings.HridelJeRozdelenaNa + " " + (element.Division + 1) + " " 
+                                        + strings.castiODelce + " " + string.Format("{0:#.###}", element.L / (element.Division + 1)) + " mm, " 
+                                        + strings.meziKterymiJsouUmistenyPrvkyDT;
                                     if (element.M > 0)
                                     {
-                                        ws.Cells[++row, 2].Value = Texts.Type(ElementType.disc);
+                                        ws.Cells[++row, 2].Value = strings.Type(ElementType.disc);
                                         ws.Cells[row, 3].Value = "m = ";
                                         ws.Cells[row, 3].Style.HorizontalAlignment = alignRight;
                                         ws.Cells[row, 4].Value = element.M / element.Division;
@@ -557,7 +563,7 @@ namespace Kritik
                                     }
                                     if (element.K > 0)
                                     {
-                                        ws.Cells[++row, 2].Value = Texts.Type(ElementType.support);
+                                        ws.Cells[++row, 2].Value = strings.Type(ElementType.support);
                                         ws.Cells[row, 3].Value = "k = ";
                                         ws.Cells[row, 3].Style.HorizontalAlignment = alignRight;
                                         ws.Cells[row, 4].Value = element.K / element.Division;
@@ -565,7 +571,7 @@ namespace Kritik
                                     }
                                     if (element.Cm > 0)
                                     {
-                                        ws.Cells[++row, 2].Value = Texts.Type(ElementType.magnet);
+                                        ws.Cells[++row, 2].Value = strings.Type(ElementType.magnet);
                                         ws.Cells[row, 3].Value = "Cm = ";
                                         ws.Cells[row, 3].Style.HorizontalAlignment = alignRight;
                                         ws.Cells[row, 4].Value = element.Cm / element.Division;

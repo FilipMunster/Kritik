@@ -32,7 +32,7 @@ namespace Kritik
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, INotifyPropertyChanged
+    public partial class MainWindow : Window
     {
         public static MainWindow GetMainWindow() { return mainWindow; }
         public static void SetMainWindow(MainWindow value) { mainWindow = value; }
@@ -88,7 +88,7 @@ namespace Kritik
             VykreslenyHlavniGraf = "w";
             VykreslitKmity();
             VyplnJazyky();
-            Texts.SelectedLanguage = (Texts.Languages)jazykCombobox.SelectedIndex;
+            //Strings.SelectedLanguage = (Strings.Language)jazykCombobox.SelectedIndex;
             NacistNastaveni();
 
             //////////////////
@@ -689,52 +689,52 @@ namespace Kritik
 
         public void VytvorPopisekVypoctu()
         {
-            if (hridel.TvaryKmitu != null && hridel.TvaryKmitu.Count() > 0)
-            {
-                string popisek = "";
-                int cisloKritOt = int.Parse(cisloKritOtZobrazitTextBox.Text);
-                while (cisloKritOt > hridel.TvaryKmitu.Length) { cisloKritOt--; }
-                string kritOt = String.Format("{0:0.000}", hridel.KritOt[cisloKritOt-1]);
-                string gyros;
-                switch (hridel.Gyros)
-                {
-                    case Hridel.gyrosZanedbaniKeyword:
-                        gyros = Texts.VlivGyrosNeniUvazovan;
-                        break;
-                    case Hridel.gyrosSoubeznaKeyword:
-                        gyros = Texts.SoubeznaPrecese;
-                        break;
-                    case Hridel.gyrosProtibeznaKeyword:
-                        gyros = Texts.ProtibeznaPrecese;
-                        break;
-                    default:
-                        gyros = "";
-                        break;
-                }
-                string vykresleno;
-                switch (VykreslenyHlavniGraf)
-                {
-                    case "w":
-                    default:
-                        vykresleno = Texts.PruhybHridele + " w";
-                        break;
-                    case "phi":
-                        vykresleno = Texts.NatoceniHridele + " φ";
-                        break;
-                    case "m":
-                        vykresleno = Texts.OhybovyMoment + " M";
-                        break;
-                    case "t":
-                        vykresleno = Texts.PosouvajiciSila + " T";
-                        break;
-                }
-                popisek += Texts.OrdinalNumber(cisloKritOt) + " "+ Texts.kritickeOtacky +" = " + kritOt + " min⁻¹\n";
-                popisek += vykresleno + "\n";
-                popisek += gyros + "\n";
-                popisek += nazevTextBox.Text + "\n";
-                popisek += popisTextBox.Text;
-                popisVypoctuTextBlock.Text = popisek;
-            }            
+            //if (hridel.TvaryKmitu != null && hridel.TvaryKmitu.Count() > 0)
+            //{
+            //    string popisek = "";
+            //    int cisloKritOt = int.Parse(cisloKritOtZobrazitTextBox.Text);
+            //    while (cisloKritOt > hridel.TvaryKmitu.Length) { cisloKritOt--; }
+            //    string kritOt = String.Format("{0:0.000}", hridel.KritOt[cisloKritOt-1]);
+            //    string gyros;
+            //    switch (hridel.Gyros)
+            //    {
+            //        case Hridel.gyrosZanedbaniKeyword:
+            //            gyros = Strings.VlivGyrosNeniUvazovan;
+            //            break;
+            //        case Hridel.gyrosSoubeznaKeyword:
+            //            gyros = Strings.SoubeznaPrecese;
+            //            break;
+            //        case Hridel.gyrosProtibeznaKeyword:
+            //            gyros = Strings.ProtibeznaPrecese;
+            //            break;
+            //        default:
+            //            gyros = "";
+            //            break;
+            //    }
+            //    string vykresleno;
+            //    switch (VykreslenyHlavniGraf)
+            //    {
+            //        case "w":
+            //        default:
+            //            vykresleno = Strings.PruhybHridele + " w";
+            //            break;
+            //        case "phi":
+            //            vykresleno = Strings.NatoceniHridele + " φ";
+            //            break;
+            //        case "m":
+            //            vykresleno = Strings.OhybovyMoment + " M";
+            //            break;
+            //        case "t":
+            //            vykresleno = Strings.PosouvajiciSila + " T";
+            //            break;
+            //    }
+            //    popisek += Strings.OrdinalNumber(cisloKritOt) + " "+ Strings.kritickeOtacky +" = " + kritOt + " min⁻¹\n";
+            //    popisek += vykresleno + "\n";
+            //    popisek += gyros + "\n";
+            //    popisek += nazevTextBox.Text + "\n";
+            //    popisek += popisTextBox.Text;
+            //    popisVypoctuTextBlock.Text = popisek;
+            //}            
         }
 
         private void ulozitTvarKmituButton_Click(object sender, RoutedEventArgs e)
@@ -871,21 +871,21 @@ namespace Kritik
         /// </summary>
         private void VyplnJazyky()
         {
-            foreach (var j in Texts.LanguageName)
-            {
-                jazykCombobox.Items.Add(j.Value);
-            }
-            try { jazykCombobox.SelectedIndex = Properties.Settings.Default.lang; }
-            catch { jazykCombobox.SelectedIndex = 0; }
+            //foreach (var j in Strings.LanguageName)
+            //{
+            //    jazykCombobox.Items.Add(j.Value);
+            //}
+            //try { jazykCombobox.SelectedIndex = Properties.Settings.Default.lang; }
+            //catch { jazykCombobox.SelectedIndex = 0; }
         }
 
         private void jazykCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ComboBox s = (ComboBox)sender;
-            Texts.SelectedLanguage = (Texts.Languages)s.SelectedIndex;
-            try { Properties.Settings.Default.lang = s.SelectedIndex; }
-            catch { Properties.Settings.Default.lang = 0; }
-            VytvorPopisekVypoctu();
+            //ComboBox s = (ComboBox)sender;
+            //Strings.SelectedLanguage = (Strings.Language)s.SelectedIndex;
+            //try { Properties.Settings.Default.lang = s.SelectedIndex; }
+            //catch { Properties.Settings.Default.lang = 0; }
+            //VytvorPopisekVypoctu();
         }
 
         private void HlavniOkno_Closing(object sender, CancelEventArgs e)

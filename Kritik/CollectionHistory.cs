@@ -11,20 +11,13 @@ namespace Kritik
     /// Manages history of ObservableCollection given in constructor
     /// </summary>
     /// <typeparam name="T">Type of elements in ObservableCollection</typeparam>
-    class CollectionHistory<T>
+    public class CollectionHistory<T>
     {
         private ObservableCollection<T> collection;
         private List<ObservableCollection<T>> history;
         private int position;
         private const int maxHistoryCount = 33;
-        /// <summary>
-        /// Checks if it is possible to go back in history
-        /// </summary>
-        public bool CanGoBack { get { return position > 0; } }
-        /// <summary>
-        /// Checks if it is possible to go forward in history
-        /// </summary>
-        public bool CanGoForward { get { return position < (history.Count() - 1); } }
+
         /// <summary>
         /// Manages history of given ObservableCollection
         /// </summary>
@@ -68,6 +61,21 @@ namespace Kritik
                 position++;
 
             return new ObservableCollection<T>(history[position]);
+        }
+
+        /// <summary>
+        /// Checks if it is possible to go back in history
+        /// </summary>
+        public bool CanGoBack()
+        {
+            return position > 0;
+        }
+        /// <summary>
+        /// Checks if it is possible to go forward in history
+        /// </summary>
+        public bool CanGoForward()
+        {
+            return position < (history.Count - 1); 
         }
 
     }

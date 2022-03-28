@@ -7,20 +7,26 @@
         xmlns:local="clr-namespace:Kritik"
         xmlns:Data="clr-namespace:System.Data;assembly=System.Data.Common" x:Class="Kritik.MainWindow"
         mc:Ignorable="d"
-        Title="{Binding Path=TextTitulkyOkna}" Height="800" Width="1200" MinHeight="640" MinWidth="1000"
+        Height="800" Width="1200" MinHeight="640" MinWidth="1000"
         WindowStartupLocation="CenterScreen" WindowStyle="ThreeDBorderWindow"
         Name="HlavniOkno"
         Icon="/icons/kritik.ico"
         Closing="HlavniOkno_Closing"
         AllowDrop="True" Drop="HlavniOkno_Drop">
     <Window.Resources>
-        <local:NastaveniVyskyTextBoxuPoznamky x:Key="NastavovacVyskyPoznamky"/>
-        <local:FormatEConverter x:Key="FormatEConverterX"/>
-        <local:FormatZadnyConverter x:Key="FormatZadnyConverterX"/>
-        <local:FormatMezeryConverter x:Key="FormatMezeryConverterX"/>
-        <local:FormatToIntConverter x:Key="FormatToIntConverterX"/>
+        <local:NotesTextBoxHeightConverter x:Key="NotesTextBoxHeightConverter"/>
+        <local:FormatEConverter x:Key="FormatEConverter"/>
+        <local:FormatZadnyConverter x:Key="FormatZadnyConverter"/>
+        <local:FormatSpacesConverter x:Key="FormatSpacesConverter"/>
+        <local:FormatToIntConverter x:Key="FormatToIntConverter"/>
         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="SlateGray"/>
     </Window.Resources>
+    <Window.DataContext>
+        <local:MainViewModel/>
+    </Window.DataContext>
+    <Window.Title>
+        <Binding Path="WindowTitle"/>
+    </Window.Title>
     <Grid Name="MainGrid">
         <TabControl SelectedIndex="0">
             <TabItem Header="Výpočet" Name="vypocetTabItem">
@@ -154,7 +160,7 @@
                                         <RadioButton GroupName="vlivOtacekRadioButtons" Name="vlivOtacekVlastniRadioButton" IsChecked="{Binding Path=VlivOtacekVlastniIsChecked}" Margin="5, 0, 0, 0">
                                             <StackPanel Orientation="Horizontal">
                                                 <TextBlock Text="jiné: "/>
-                                                <TextBox Text="{Binding Path=VlivOtacekRotoruVlastni, Converter={StaticResource FormatZadnyConverterX}}" Name="vlivOtacekVlastniTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBox_GotKeyboardFocus"/>
+                                                <TextBox Text="{Binding Path=VlivOtacekRotoruVlastni, Converter={StaticResource FormatZadnyConverter}}" Name="vlivOtacekVlastniTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBox_GotKeyboardFocus"/>
                                                 <TextBlock Margin="5, 0, 0, 5" VerticalAlignment="Center">
                                             <Run Text="min&#x207B;&#x00B9;" />
                                                 </TextBlock>
@@ -166,12 +172,12 @@
                                     <TextBlock Text="Materiál hřídele:" Grid.Row="16" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
                                     <StackPanel Grid.Row="17" Grid.ColumnSpan="2" Orientation="Horizontal">
                                         <TextBlock Text="E =" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
-                                        <TextBox Text="{Binding Path=ModulPruznosti, Converter={StaticResource FormatZadnyConverterX}}" Name="modulPruznostiTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBox_GotKeyboardFocus"/>
+                                        <TextBox Text="{Binding Path=ModulPruznosti, Converter={StaticResource FormatZadnyConverter}}" Name="modulPruznostiTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBox_GotKeyboardFocus"/>
                                         <TextBlock Text="GPa" Margin="5, 0, 0, 5" VerticalAlignment="Center"/>
                                     </StackPanel>
                                     <StackPanel Grid.Row="18" Grid.ColumnSpan="2" Orientation="Horizontal">
                                         <TextBlock Text="ρ =" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
-                                        <TextBox Text="{Binding Path=Rho, Converter={StaticResource FormatZadnyConverterX}}" Name="rhoTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBox_GotKeyboardFocus"/>
+                                        <TextBox Text="{Binding Path=Rho, Converter={StaticResource FormatZadnyConverter}}" Name="rhoTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBox_GotKeyboardFocus"/>
                                         <TextBlock Margin="5, 0, 0, 5" VerticalAlignment="Center">
                                             <Run Text="kg.m&#x207B;&#x00B3;" />
                                         </TextBlock>
@@ -179,14 +185,14 @@
                                     <Separator Grid.Row="19" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
                                     <StackPanel Grid.Row="20" Grid.ColumnSpan="2" Orientation="Horizontal">
                                         <TextBlock Text="Provozní otáčky:" Margin="0, 0, 0, 5" VerticalAlignment="Center"/>
-                                        <TextBox Text="{Binding Path=OtackyProvozni, Converter={StaticResource FormatZadnyConverterX}}" Name="provozniOtackyTextBox" Width="50" Margin="9, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBox_GotKeyboardFocus"/>
+                                        <TextBox Text="{Binding Path=OtackyProvozni, Converter={StaticResource FormatZadnyConverter}}" Name="provozniOtackyTextBox" Width="50" Margin="9, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBox_GotKeyboardFocus"/>
                                         <TextBlock Margin="5, 0, 0, 5" VerticalAlignment="Center">
                                             <Run Text="min&#x207B;&#x00B9;" />
                                         </TextBlock>
                                     </StackPanel>
                                     <StackPanel Grid.Row="21" Grid.ColumnSpan="2" Orientation="Horizontal">
                                         <TextBlock Text="Průběžné otáčky:" Margin="0, 0, 0, 5" VerticalAlignment="Center"/>
-                                        <TextBox Text="{Binding Path=OtackyPrubezne, Converter={StaticResource FormatZadnyConverterX}}" Name="prubezneOtackyTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBox_GotKeyboardFocus"/>
+                                        <TextBox Text="{Binding Path=OtackyPrubezne, Converter={StaticResource FormatZadnyConverter}}" Name="prubezneOtackyTextBox" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBox_GotKeyboardFocus"/>
                                         <TextBlock Margin="5, 0, 0, 5" VerticalAlignment="Center">
                                             <Run Text="min&#x207B;&#x00B9;" />
                                         </TextBlock>
@@ -207,7 +213,7 @@
                                         <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
                                             <TextBlock Text="Rozdělit na"/>
                                             <TextBox Name="deleniHridelPlusTextBox"
-                                                 Text="{Binding Path=HridelPlusDeleni, Converter={StaticResource FormatToIntConverterX}, UpdateSourceTrigger=LostFocus}"
+                                                 Text="{Binding Path=HridelPlusDeleni, Converter={StaticResource FormatToIntConverter}, UpdateSourceTrigger=LostFocus}"
                                                  TextChanged="deleniHridelPlusTextBox_TextChanged"
                                                  IsEnabled="{Binding Path=HridelPlusOvlPrvkyEnabled}"
                                                  GotKeyboardFocus="TextBox_GotKeyboardFocus"
@@ -224,7 +230,7 @@
                                                 <ComboBoxItem Content="vlastní hodnota"/>
                                             </ComboBox>
                                             <TextBox Name="idNTextBox" 
-                                                 Text="{Binding Path=HridelPlusHodnota, Converter={StaticResource FormatZadnyConverterX}}" 
+                                                 Text="{Binding Path=HridelPlusHodnota, Converter={StaticResource FormatZadnyConverter}}" 
                                                  TextChanged="idNTextBox_TextChanged" 
                                                  IsEnabled="{Binding Path=HridelPlusOvlPrvkyEnabled}"
                                                  GotKeyboardFocus="TextBox_GotKeyboardFocus"
@@ -342,7 +348,7 @@
                                             </Style>
                                         </DataGridComboBoxColumn.CellStyle>
                                     </DataGridComboBoxColumn>
-                                    <DataGridTextColumn Header="Délka úseku&#x0a;L [mm]" Binding="{Binding L, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverterX}}" Width="*">
+                                    <DataGridTextColumn Header="Délka úseku&#x0a;L [mm]" Binding="{Binding L, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverter}}" Width="*">
                                         <DataGridTextColumn.CellStyle>
                                             <Style TargetType="{x:Type DataGridCell}">
                                                 <Style.Triggers>
@@ -363,7 +369,7 @@
                                             </Style>
                                         </DataGridTextColumn.CellStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Vnější průměr&#x0a;De [mm]" Binding="{Binding De, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverterX}}"  Width="*">
+                                    <DataGridTextColumn Header="Vnější průměr&#x0a;De [mm]" Binding="{Binding De, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverter}}"  Width="*">
                                         <DataGridTextColumn.CellStyle>
                                             <Style TargetType="{x:Type DataGridCell}">
                                                 <Style.Triggers>
@@ -384,7 +390,7 @@
                                             </Style>
                                         </DataGridTextColumn.CellStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Vrtání hřídele&#x0a;Di [mm]" Binding="{Binding Di, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverterX}}"  Width="*">
+                                    <DataGridTextColumn Header="Vrtání hřídele&#x0a;Di [mm]" Binding="{Binding Di, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverter}}"  Width="*">
                                         <DataGridTextColumn.CellStyle>
                                             <Style TargetType="{x:Type DataGridCell}">
                                                 <Style.Triggers>
@@ -408,12 +414,12 @@
                                     <DataGridTextColumn Header="Hmotnost disku&#x0a;m [kg]" Width="*">
                                         <DataGridTextColumn.EditingElementStyle>
                                             <Style TargetType="{x:Type TextBox}">
-                                                <Setter Property="Text" Value="{Binding M, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverterX}}"/>
+                                                <Setter Property="Text" Value="{Binding M, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverter}}"/>
                                             </Style>
                                         </DataGridTextColumn.EditingElementStyle>
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="{x:Type TextBlock}">
-                                                <Setter Property="Text" Value="{Binding M, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatMezeryConverterX}}"/>
+                                                <Setter Property="Text" Value="{Binding M, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatSpacesConverter}}"/>
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
                                         <DataGridTextColumn.CellStyle>
@@ -439,12 +445,12 @@
                                     <DataGridTextColumn Header="Moment setrvačnosti&#x0a;k ose rotoru&#x0a;Jo [kg.m&#x00B2;]" Width="*">
                                         <DataGridTextColumn.EditingElementStyle>
                                             <Style TargetType="{x:Type TextBox}">
-                                                <Setter Property="Text" Value="{Binding Io, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverterX}}"/>
+                                                <Setter Property="Text" Value="{Binding Io, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverter}}"/>
                                             </Style>
                                         </DataGridTextColumn.EditingElementStyle>
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="{x:Type TextBlock}">
-                                                <Setter Property="Text" Value="{Binding Io, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatEConverterX}}"/>
+                                                <Setter Property="Text" Value="{Binding Io, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatEConverter}}"/>
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
                                         <DataGridTextColumn.CellStyle>
@@ -470,12 +476,12 @@
                                     <DataGridTextColumn Header="Mom. setrv. kolmo k ose otáčení&#x0a;Jd [kg.m&#x00B2;]" Width="*">
                                         <DataGridTextColumn.EditingElementStyle>
                                             <Style TargetType="{x:Type TextBox}">
-                                                <Setter Property="Text" Value="{Binding Id, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverterX}}"/>
+                                                <Setter Property="Text" Value="{Binding Id, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverter}}"/>
                                             </Style>
                                         </DataGridTextColumn.EditingElementStyle>
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="{x:Type TextBlock}">
-                                                <Setter Property="Text" Value="{Binding Id, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatEConverterX}}"/>
+                                                <Setter Property="Text" Value="{Binding Id, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatEConverter}}"/>
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
                                         <DataGridTextColumn.CellStyle>
@@ -501,12 +507,12 @@
                                     <DataGridTextColumn Header="Radiální tuhost podpory&#x0a;k [N/m]" Width="*">
                                         <DataGridTextColumn.EditingElementStyle>
                                             <Style TargetType="{x:Type TextBox}">
-                                                <Setter Property="Text" Value="{Binding K, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverterX}}"/>
+                                                <Setter Property="Text" Value="{Binding K, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverter}}"/>
                                             </Style>
                                         </DataGridTextColumn.EditingElementStyle>
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="{x:Type TextBlock}">
-                                                <Setter Property="Text" Value="{Binding K, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatEConverterX}}"/>
+                                                <Setter Property="Text" Value="{Binding K, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatEConverter}}"/>
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
                                         <DataGridTextColumn.CellStyle>
@@ -532,12 +538,12 @@
                                     <DataGridTextColumn Header="Magneticko elastická konstanta&#x0a;Cm [N/m]" Width="*">
                                         <DataGridTextColumn.EditingElementStyle>
                                             <Style TargetType="{x:Type TextBox}">
-                                                <Setter Property="Text" Value="{Binding Cm, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverterX}}"/>
+                                                <Setter Property="Text" Value="{Binding Cm, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatZadnyConverter}}"/>
                                             </Style>
                                         </DataGridTextColumn.EditingElementStyle>
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="{x:Type TextBlock}">
-                                                <Setter Property="Text" Value="{Binding Cm, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatEConverterX}}"/>
+                                                <Setter Property="Text" Value="{Binding Cm, UpdateSourceTrigger=LostFocus, Converter={StaticResource FormatEConverter}}"/>
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
                                         <DataGridTextColumn.CellStyle>
@@ -591,13 +597,13 @@
                                     <TextBlock Text="Poznámky k výpočtu:" Margin="0, 0, 0, 5"/>
                                     <TextBox AcceptsReturn="True" MinHeight="190" Width="182" Name="poznamkaVypocetTextBox"
                                                      ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"
-                                                     MaxHeight="{Binding ElementName=MainGrid, Path=ActualHeight, Converter={StaticResource NastavovacVyskyPoznamky}}" Text="{Binding Path=Poznamka}"/>
+                                                     MaxHeight="{Binding ElementName=MainGrid, Path=ActualHeight, Converter={StaticResource NotesTextBoxHeightConverter}}" Text="{Binding Path=Poznamka}"/>
                                 </StackPanel>
 
                                 <StackPanel Grid.Row="3" Orientation="Vertical">
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="Max. kritické otáčky:" Margin="0, 0, 5, 0" VerticalAlignment="Center"/>
-                                        <TextBox Text="{Binding Path=NKritMax, Converter={StaticResource FormatZadnyConverterX}}" Name="kritOtMaxTextBox" Width="35" GotKeyboardFocus="TextBox_GotKeyboardFocus"/>
+                                        <TextBox Text="{Binding Path=NKritMax, Converter={StaticResource FormatZadnyConverter}}" Name="kritOtMaxTextBox" Width="35" GotKeyboardFocus="TextBox_GotKeyboardFocus"/>
                                         <TextBlock Margin="5, 0, 5, 0" Text="min&#x207B;&#x00B9;" VerticalAlignment="Center"/>
                                     </StackPanel>
                                     <Button Name="vypocetKritOtButton" Height="30" Margin="0, 10, 0, 0" Click="vypocetKritOtButton_Click">

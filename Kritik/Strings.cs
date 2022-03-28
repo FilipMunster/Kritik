@@ -10,36 +10,52 @@ namespace Kritik
     /// <summary>
     /// Obsahuje vlastnosti s texty
     /// </summary>
-    public static class Texts
+    public class Strings
     {
-        public enum Languages
+        public Strings(Language language)
+        {
+            SelectedLanguage = language;
+
+            LanguageNames = new List<string>();
+            foreach (var lang in LanguageName)
+            {
+                LanguageNames.Add(lang.Value);
+            }
+        }
+        public enum Language
         {
             cs,
             en
         }
-        public readonly static Dictionary<Languages, string> LanguageName = new Dictionary<Languages, string>
+        public Language SelectedLanguage
         {
-            {Languages.cs, "čeština" },
-            {Languages.en, "angličtina" }
-        };
-        public static Languages SelectedLanguage { get { return language; } 
-            set 
-            { 
-                language = value; 
+            get { return selectedLanguage; }
+            set
+            {
+                selectedLanguage = value;
                 switch (value)
                 {
                     default:
-                    case Languages.cs:
+                    case Language.cs:
                         dict = cs;
                         break;
-                    case Languages.en:
+                    case Language.en:
                         dict = en;
                         break;
                 }
-            } }
-        private static Languages language;
-        private static Dictionary<string, string> dict = cs;
-        private static string This ([CallerMemberName] string memberName = "") { return memberName; }
+            }
+        }
+        private Language selectedLanguage;
+        public List<string> LanguageNames { get; }
+
+        public readonly Dictionary<Language, string> LanguageName = new Dictionary<Language, string>
+        {
+            {Language.cs, "čeština" },
+            {Language.en, "angličtina" }
+        };
+
+        private Dictionary<string, string> dict = cs;
+        private string This ([CallerMemberName] string memberName = "") { return memberName; }
 
         private static Dictionary<string, string> cs = new Dictionary<string, string>
         {
@@ -134,15 +150,15 @@ namespace Kritik
         };
 
         /// <summary>
-        /// Vrací číslovku jako řadovou, např 1st, 1., 2nd, ...
+        /// Returns string with ordinal number of given int
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
-        public static string OrdinalNumber(int number)
+        public string OrdinalNumber(int number)
         {
-            if (SelectedLanguage == Languages.en)
+            if (SelectedLanguage == Language.en)
             {
-                // předpokládám, že čísla >20 se neobjeví, takže je neřeším
+                // Ordinal numbers are used only for number of critical speed. I assume that >20 will not appear.
                 switch (number)
                 {
                     case 1: return number + "st";
@@ -153,42 +169,42 @@ namespace Kritik
             }
             else { return number + "."; }
         }
-        public static string kritickeOtacky => dict[This()];
-        public static string PruhybHridele => dict[This()];
-        public static string NatoceniHridele => dict[This()];
-        public static string OhybovyMoment => dict[This()];
-        public static string PosouvajiciSila => dict[This()];
-        public static string VlivGyrosNeniUvazovan => dict[This()];
-        public static string SoubeznaPrecese => dict[This()];
-        public static string ProtibeznaPrecese => dict[This()];
-        public static string KritickeOtackykrouzivehoKmitani => dict[This()];
-        public static string NazevDT => dict[This()];
-        public static string PopisDT => dict[This()];
-        public static string ResilDT => dict[This()];
-        public static string DatumDT => dict[This()];
-        public static string OkrajovePodminkyDT => dict[This()];
-        public static string LEVYKonecRotoru => dict[This()];
-        public static string PRAVYKonecRotoru => dict[This()];
-        public static string VOLNY => dict[This()];
-        public static string KLOUB => dict[This()];
-        public static string VETKNUTI => dict[This()];
-        public static string ModulPruznostiVTahuHrideleDT => dict[This()];
-        public static string HustotaMaterialuHrideleDT => dict[This()];
-        public static string VLIVGYROSNENIUVAZOVAN => dict[This()];
-        public static string SOUBEZNAPRECESE => dict[This()];
-        public static string PROTIBEZNAPRECESE => dict[This()];
-        public static string ProvozniOtackyHrideleDT => dict[This()];
-        public static string PrubezneOtackyHrideleDT => dict[This()];
-        public static string PoznamkyKVypoctuDT => dict[This()];
-        public static string VypocteneHodnotyDT => dict[This()];
-        public static string odpovidajiDT => dict[This()];
-        public static string provoznichOtacek => dict[This()];
-        public static string prubeznychOtacek => dict[This()];
-        public static string GeometrieHrideleDT => dict[This()];
-        public static string Type(ElementType type) { return dict[type.ToString()]; }
-        public static string HridelJeRozdelenaNa => dict[This()];
-        public static string castiODelce => dict[This()];
-        public static string meziKterymiJsouUmistenyPrvkyDT => dict[This()];
-        public static string NebylyVypoctenyZadneKritickeOtacky => dict[This()];
+        public string kritickeOtacky => dict[This()];
+        public string PruhybHridele => dict[This()];
+        public string NatoceniHridele => dict[This()];
+        public string OhybovyMoment => dict[This()];
+        public string PosouvajiciSila => dict[This()];
+        public string VlivGyrosNeniUvazovan => dict[This()];
+        public string SoubeznaPrecese => dict[This()];
+        public string ProtibeznaPrecese => dict[This()];
+        public string KritickeOtackykrouzivehoKmitani => dict[This()];
+        public string NazevDT => dict[This()];
+        public string PopisDT => dict[This()];
+        public string ResilDT => dict[This()];
+        public string DatumDT => dict[This()];
+        public string OkrajovePodminkyDT => dict[This()];
+        public string LEVYKonecRotoru => dict[This()];
+        public string PRAVYKonecRotoru => dict[This()];
+        public string VOLNY => dict[This()];
+        public string KLOUB => dict[This()];
+        public string VETKNUTI => dict[This()];
+        public string ModulPruznostiVTahuHrideleDT => dict[This()];
+        public string HustotaMaterialuHrideleDT => dict[This()];
+        public string VLIVGYROSNENIUVAZOVAN => dict[This()];
+        public string SOUBEZNAPRECESE => dict[This()];
+        public string PROTIBEZNAPRECESE => dict[This()];
+        public string ProvozniOtackyHrideleDT => dict[This()];
+        public string PrubezneOtackyHrideleDT => dict[This()];
+        public string PoznamkyKVypoctuDT => dict[This()];
+        public string VypocteneHodnotyDT => dict[This()];
+        public string odpovidajiDT => dict[This()];
+        public string provoznichOtacek => dict[This()];
+        public string prubeznychOtacek => dict[This()];
+        public string GeometrieHrideleDT => dict[This()];
+        public string Type(ElementType type) { return dict[type.ToString()]; }
+        public string HridelJeRozdelenaNa => dict[This()];
+        public string castiODelce => dict[This()];
+        public string meziKterymiJsouUmistenyPrvkyDT => dict[This()];
+        public string NebylyVypoctenyZadneKritickeOtacky => dict[This()];
     }
 }

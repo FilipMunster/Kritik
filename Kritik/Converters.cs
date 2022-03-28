@@ -10,16 +10,16 @@ using System.Windows.Data;
 
 namespace Kritik
 {
-    public static class VratCisla
+    public static class GetOnlyNumbers
     {
-        private static char[] znaky = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ',', 'e', 'E' };
-        public static string VC(string input)
+        private static char[] chars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ',', 'e', 'E' };
+        public static string GON(string input)
         {
             
-            return new string(input.Where(c => znaky.Contains(c)).ToArray());
+            return new string(input.Where(c => chars.Contains(c)).ToArray());
         }
     }
-    public class NastaveniVyskyTextBoxuPoznamky : IValueConverter
+    public class NotesTextBoxHeightConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -41,14 +41,12 @@ namespace Kritik
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // Volá se při čtení
             if ((double)value == 0) { return "0"; }
             else { return String.Format("{0:#.######e0}", value); }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // Volá se při zapisování
             return value;
         }
     }
@@ -57,17 +55,15 @@ namespace Kritik
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // Volá se při čtení
             return value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // Volá se při zapisování
             string v = (string)value;
             v = v.Replace(",", ".");
             v = v.TrimStart('-');
-            v = VratCisla.VC(v);
+            v = GetOnlyNumbers.GON(v);
             return v;
         }
     }
@@ -76,27 +72,24 @@ namespace Kritik
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // Volá se při čtení
             return value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // Volá se při zapisování
             string v = (string)value;
             v = v.Replace(",", ".");
             v = v.TrimStart('-');
-            v = VratCisla.VC(v);
+            v = GetOnlyNumbers.GON(v);
             try { v = Math.Round(System.Convert.ToDouble(v)).ToString(); }
             catch { return ""; }
             return v;
         }
     }
-    public class FormatMezeryConverter : IValueConverter
+    public class FormatSpacesConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // Volá se při čtení
             if ((double)value == 0) { return "0"; }
             string s = String.Format("{0:# ### ###.######}", value);
             s = s.TrimStart();
@@ -105,7 +98,6 @@ namespace Kritik
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // Volá se při zapisování
             return value;
         }
     }
