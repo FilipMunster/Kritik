@@ -8,26 +8,27 @@ using System.Threading.Tasks;
 namespace Kritik
 {
     /// <summary>
-    /// Obsahuje vlastnosti s texty
+    /// Contains properties with strings according to selected 
     /// </summary>
     public class Strings
     {
         public Strings(Language language)
         {
-            SelectedLanguage = language;
+            SelectedLanguageEnum = language;
 
-            LanguageNames = new List<string>();
-            foreach (var lang in LanguageName)
+            List<string> languageNames = new List<string>();
+            foreach (var lang in LanguageNameEnumToString)
             {
-                LanguageNames.Add(lang.Value);
+                languageNames.Add(lang.Value);
             }
+            LanguageNames = languageNames.ToArray();
         }
         public enum Language
         {
             cs,
             en
         }
-        public Language SelectedLanguage
+        private Language SelectedLanguageEnum
         {
             get { return selectedLanguage; }
             set
@@ -45,13 +46,23 @@ namespace Kritik
                 }
             }
         }
+        public string SelectedLanguage
+        {
+            get => LanguageNameEnumToString[selectedLanguage];
+            set { selectedLanguage = LanguageNameStringToEnum[value]; }
+        }
         private Language selectedLanguage;
-        public List<string> LanguageNames { get; }
+        public string[] LanguageNames { get; }
 
-        public readonly Dictionary<Language, string> LanguageName = new Dictionary<Language, string>
+        private readonly Dictionary<Language, string> LanguageNameEnumToString = new Dictionary<Language, string>
         {
             {Language.cs, "čeština" },
             {Language.en, "angličtina" }
+        };
+        private readonly Dictionary<string, Language> LanguageNameStringToEnum = new Dictionary<string, Language>
+        {
+            {"čeština", Language.cs },
+            {"angličtina", Language.en }
         };
 
         private Dictionary<string, string> dict = cs;
@@ -100,7 +111,8 @@ namespace Kritik
             {nameof(HridelJeRozdelenaNa), "Hřídel je rozdělena na" },
             {nameof(castiODelce), "částí o délce" },
             {nameof(meziKterymiJsouUmistenyPrvkyDT), "mezi kterými jsou umístěny prvky:" },
-            {nameof(NebylyVypoctenyZadneKritickeOtacky), "Nebyly vypočteny žádné kritické otáčky." }
+            {nameof(NebylyVypoctenyZadneKritickeOtacky), "Nebyly vypočteny žádné kritické otáčky." },
+            {nameof(VypocetNebylDosudProveden), "Výpočet nebyl dosud proveden." }
         };
 
         private static Dictionary<string, string> en = new Dictionary<string, string>
@@ -146,7 +158,8 @@ namespace Kritik
             {nameof(HridelJeRozdelenaNa), "The shaft is divided into" },
             {nameof(castiODelce), "parts with length of" },
             {nameof(meziKterymiJsouUmistenyPrvkyDT), "between which are placed these elements:" },
-            {nameof(NebylyVypoctenyZadneKritickeOtacky), "No critical speed was computed." }
+            {nameof(NebylyVypoctenyZadneKritickeOtacky), "No critical speed was computed." },
+            {nameof(VypocetNebylDosudProveden), "The calculation has not been done yet." }
         };
 
         /// <summary>
@@ -156,7 +169,7 @@ namespace Kritik
         /// <returns></returns>
         public string OrdinalNumber(int number)
         {
-            if (SelectedLanguage == Language.en)
+            if (SelectedLanguageEnum == Language.en)
             {
                 // Ordinal numbers are used only for number of critical speed. I assume that >20 will not appear.
                 switch (number)
@@ -206,5 +219,6 @@ namespace Kritik
         public string castiODelce => dict[This()];
         public string meziKterymiJsouUmistenyPrvkyDT => dict[This()];
         public string NebylyVypoctenyZadneKritickeOtacky => dict[This()];
+        public string VypocetNebylDosudProveden => dict[This()];
     }
 }

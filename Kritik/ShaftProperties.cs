@@ -1,23 +1,121 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Kritik
 {
-    public class ShaftProperties
+    public class ShaftProperties : INotifyPropertyChanged
     {
-        public BoundaryCondition BCLeft { get; set; }
-        public BoundaryCondition BCRight { get; set; }
-        public GyroscopicEffect Gyros { get; set; }
-        public bool ShaftRotationInfluence { get; set; }
-        public double ShaftRPM { get; set; }
-        public double YoungModulus { get; set; }
-        public double MaterialDensity { get; set; }
-        public double OperatingSpeed { get; set; }
-        public double RunawaySpeed { get; set; }
-        public double MaxCriticalSpeed { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private BoundaryCondition bCLeft;
+        public BoundaryCondition BCLeft
+        {
+            get => bCLeft;
+            set
+            {
+                bCLeft = value;
+                NotifyPropertyChanged();
+            }
+        }
+        private BoundaryCondition bCRight;
+        public BoundaryCondition BCRight
+        {
+            get => bCRight;
+            set
+            {
+                bCRight = value;
+                NotifyPropertyChanged();
+            }
+        }
+        private GyroscopicEffect gyros;
+        public GyroscopicEffect Gyros 
+        {
+            get => gyros;
+            set
+            {
+                gyros = value;
+                NotifyPropertyChanged();
+            }
+        }
+        private bool shaftRotationInfluence;
+        public bool ShaftRotationInfluence
+        {
+            get => shaftRotationInfluence;
+            set
+            {
+                shaftRotationInfluence = value;
+                NotifyPropertyChanged();
+            }
+        }
+        private double shaftRPM;
+        public double ShaftRPM
+        {
+            get => shaftRPM;
+            set
+            {
+                shaftRPM = value;
+                NotifyPropertyChanged();
+            }
+        }
+        private double youngModulus;
+        public double YoungModulus
+        {
+            get => youngModulus; 
+            set
+            {
+                youngModulus = value;
+                NotifyPropertyChanged();
+            }
+        }
+        private double materialDensity;
+        public double MaterialDensity
+        {
+            get => materialDensity;
+            set
+            {
+                materialDensity = value;
+                NotifyPropertyChanged();
+            }
+        }
+        private double operatingSpeed;
+        public double OperatingSpeed
+        {
+            get => operatingSpeed;
+            set
+            {
+                operatingSpeed = value;
+                NotifyPropertyChanged();
+            }
+        }
+        private double runawaySpeed;
+        public double RunawaySpeed
+        {
+            get => runawaySpeed;
+            set
+            {
+                runawaySpeed = value;
+                NotifyPropertyChanged();
+            }
+        }
+        private double maxCriticalSpeed;
+        public double MaxCriticalSpeed
+        {
+            get => maxCriticalSpeed;
+            set
+            {
+                maxCriticalSpeed = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         public ShaftProperties()
         {

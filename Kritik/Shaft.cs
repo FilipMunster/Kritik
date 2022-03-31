@@ -1,17 +1,57 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Kritik
 {
-    public class Shaft
+    public class Shaft : INotifyPropertyChanged
     {
-        public ObservableCollection<ShaftElementForDataGrid> Elements { get; set; }
-        public ShaftElementForDataGrid SelectedItem { get; set; }
-        public ShaftProperties Properties { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        private void NotifySenderPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            NotifyPropertyChanged(sender.GetType().Name);
+        }
+
+        private ObservableCollection<ShaftElementForDataGrid> elements;
+        public ObservableCollection<ShaftElementForDataGrid> Elements
+        {
+            get => elements;
+            set
+            {
+                elements = value;
+                NotifyPropertyChanged();
+            }
+        }
+        private ShaftElementForDataGrid selectedItem;
+        public ShaftElementForDataGrid SelectedItem
+        {
+            get => selectedItem;
+            set
+            {
+                selectedItem = value;
+                NotifyPropertyChanged();
+            }
+        }
+        private ShaftProperties properties;
+        public ShaftProperties Properties
+        {
+            get => properties;
+            set
+            {
+                properties = value;
+                NotifyPropertyChanged();
+                properties.PropertyChanged += new PropertyChangedEventHandler(NotifySenderPropertyChanged);
+            }
+        }
 
         /// <summary>
         /// Creates shaft with given list of ShaftElements which are retyped to ShaftElementsForDataGrid
@@ -24,6 +64,7 @@ namespace Kritik
             {
                 Elements.Add(new ShaftElementForDataGrid(shaftElement));
             }
+            Properties = new ShaftProperties();
         }
         /// <summary>
         /// Creates shaft with empty collection of Elements
@@ -31,6 +72,7 @@ namespace Kritik
         public Shaft()
         {
             Elements = new ObservableCollection<ShaftElementForDataGrid>();
+            Properties = new ShaftProperties();
         }
 
         /// <summary>
@@ -142,7 +184,7 @@ namespace Kritik
                                 Io = ioi,
                                 Id = idi,
                                 K = ki,
-                                Cm = cmi,
+                                Cm = cmi
                             });
                         }
                     }
@@ -150,7 +192,7 @@ namespace Kritik
                     {
                         L = li,
                         De = element.De,
-                        Di = element.Di,
+                        Di = element.Di
                     });
                 }
                 else

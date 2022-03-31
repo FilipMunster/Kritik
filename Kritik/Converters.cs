@@ -51,7 +51,7 @@ namespace Kritik
         }
     }
 
-    public class FormatZadnyConverter : IValueConverter
+    public class FormatDefaultConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

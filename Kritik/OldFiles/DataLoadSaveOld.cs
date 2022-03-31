@@ -269,19 +269,19 @@ namespace Kritik
         /// <param name="fileName">Úplná cesta k výstupnímu souboru</param>
         /// <param name="hridel">Objekt hřídele s daty</param>
         /// <returns></returns>
-        public static bool UlozitVysledky(string fileName, Hridel hridel)
+        public static bool UlozitVysledky(string fileName, Hridel hridel, Strings strings)
         {
             Dictionary<string, string> opVypsatDict = new()
             {
-                { Hridel.opVolnyKeyword, Strings.VOLNY },
-                { Hridel.opKloubKeyword, Strings.KLOUB },
-                { Hridel.opVetknutiKeyword, Strings.VETKNUTI }
+                { Hridel.opVolnyKeyword, strings.VOLNY },
+                { Hridel.opKloubKeyword, strings.KLOUB },
+                { Hridel.opVetknutiKeyword, strings.VETKNUTI }
             };
             Dictionary<string, string> gyrosVypsatDict = new()
             {
-                { Hridel.gyrosZanedbaniKeyword, Strings.VLIVGYROSNENIUVAZOVAN },
-                { Hridel.gyrosSoubeznaKeyword, Strings.SOUBEZNAPRECESE },
-                { Hridel.gyrosProtibeznaKeyword, Strings.PROTIBEZNAPRECESE }
+                { Hridel.gyrosZanedbaniKeyword, strings.VLIVGYROSNENIUVAZOVAN },
+                { Hridel.gyrosSoubeznaKeyword, strings.SOUBEZNAPRECESE },
+                { Hridel.gyrosProtibeznaKeyword, strings.PROTIBEZNAPRECESE }
             };
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -317,86 +317,86 @@ namespace Kritik
                     ws.Cells.Style.Font.Size = 11;
                     ws.Cells.Style.Font.Name = "Calibri";
 
-                    ws.Cells[1, 1].Value = Strings.KritickeOtackykrouzivehoKmitani;
+                    ws.Cells[1, 1].Value = strings.KritickeOtackykrouzivehoKmitani;
                     ws.Cells[1, 1].Style.Font.Bold = true;
-                    ws.Cells[3, 1].Value = Strings.NazevDT;
+                    ws.Cells[3, 1].Value = strings.NazevDT;
                     ws.Cells[3, 2].Value = hridel.VypocetNazev;
-                    ws.Cells[4, 1].Value = Strings.PopisDT;
+                    ws.Cells[4, 1].Value = strings.PopisDT;
                     ws.Cells[4, 2].Value = hridel.VypocetPopis;
-                    ws.Cells[5, 1].Value = Strings.ResilDT;
+                    ws.Cells[5, 1].Value = strings.ResilDT;
                     ws.Cells[5, 2].Value = hridel.VypocetResil;
-                    ws.Cells[6, 1].Value = Strings.DatumDT;
+                    ws.Cells[6, 1].Value = strings.DatumDT;
                     ws.Cells[6, 2].Value = hridel.VypocetDatum;
-                    ws.Cells[8, 1].Value = Strings.OkrajovePodminkyDT;
-                    ws.Cells[9, 2].Value = Strings.LEVYKonecRotoru;
+                    ws.Cells[8, 1].Value = strings.OkrajovePodminkyDT;
+                    ws.Cells[9, 2].Value = strings.LEVYKonecRotoru;
                     ws.Cells[9, 4].Value = opVypsatDict[hridel.OpLeva];
                     ws.Cells[9, 4].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
-                    ws.Cells[10, 2].Value = Strings.PRAVYKonecRotoru;
+                    ws.Cells[10, 2].Value = strings.PRAVYKonecRotoru;
                     ws.Cells[10, 4].Value = opVypsatDict[hridel.OpPrava];
                     ws.Cells[10, 4].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
-                    ws.Cells[11, 1].Value = Strings.ModulPruznostiVTahuHrideleDT;
+                    ws.Cells[11, 1].Value = strings.ModulPruznostiVTahuHrideleDT;
                     ws.Cells[11, 4].Value = hridel.ModulPruznosti;
                     ws.Cells[11, 5].Value = Hridel.jednotkaModuluPruznosti;
-                    ws.Cells[12, 1].Value = Strings.HustotaMaterialuHrideleDT;
+                    ws.Cells[12, 1].Value = strings.HustotaMaterialuHrideleDT;
                     ws.Cells[12, 4].Value = hridel.Rho;
                     ws.Cells[12, 5].Value = "kg.m⁻³";
                     ws.Cells[14, 1].Value = gyrosVypsatDict[hridel.Gyros];
                     int row = 15;
                     if (hridel.OtackyProvozni > 0)
                     {
-                        ws.Cells[++row, 1].Value = Strings.ProvozniOtackyHrideleDT;
+                        ws.Cells[++row, 1].Value = strings.ProvozniOtackyHrideleDT;
                         ws.Cells[row, 4].Value = hridel.OtackyProvozni;
                         ws.Cells[row, 5].Value = "min⁻¹";
                     }
                     if (hridel.OtackyPrubezne > 0)
                     {
-                        ws.Cells[++row, 1].Value = Strings.PrubezneOtackyHrideleDT;
+                        ws.Cells[++row, 1].Value = strings.PrubezneOtackyHrideleDT;
                         ws.Cells[row, 4].Value = hridel.OtackyPrubezne;
                         ws.Cells[row, 5].Value = "min⁻¹";
                     }
                     if (hridel.Poznamka != "")
                     {
                         row = hridel.OtackyProvozni > 0 || hridel.OtackyPrubezne > 0 ? row + 2 : row + 1;
-                        ws.Cells[row, 1].Value = Strings.PoznamkyKVypoctuDT;
+                        ws.Cells[row, 1].Value = strings.PoznamkyKVypoctuDT;
                         ws.Cells[++row, 2].Value = hridel.Poznamka;
                         ws.Cells[row, 2, row, 8].Merge = true;
                         ws.Cells[row, 2].Style.WrapText = true;
                         ws.Row(row).Height = MeasureTextHeight(hridel.Poznamka, ws.Cells[row, 1].Style.Font, ws.Column(1).Width * 7);
                     }
                     row = hridel.OtackyProvozni > 0 || hridel.OtackyPrubezne > 0 || hridel.Poznamka != "" ? row + 1 : row;
-                    ws.Cells[++row, 1].Value = Strings.VypocteneHodnotyDT;
+                    ws.Cells[++row, 1].Value = strings.VypocteneHodnotyDT;
                     ws.Cells[row, 1].Style.Font.Bold = true;
                     for (int i = 0; i < hridel.KritOt.Length; i++)
                     {
-                        ws.Cells[++row, 2].Value = Strings.OrdinalNumber(i + 1) + " " + Strings.kritickeOtacky;
+                        ws.Cells[++row, 2].Value = strings.OrdinalNumber(i + 1) + " " + strings.kritickeOtacky;
                         ws.Cells[row, 4].Value = hridel.KritOt[i];
                         ws.Cells[row, 5].Value = "min⁻¹";
                         ws.Cells[row, 6].Value = hridel.KritOt[i] / 60.0;
                         ws.Cells[row, 6].Style.Numberformat.Format = "(0.0##)";
                         ws.Cells[row, 7].Value = "Hz";
                     }
-                    if (hridel.KritOt.Length == 0) { ws.Cells[++row, 2].Value = Strings.NebylyVypoctenyZadneKritickeOtacky; }
+                    if (hridel.KritOt.Length == 0) { ws.Cells[++row, 2].Value = strings.NebylyVypoctenyZadneKritickeOtacky; }
 
                     if ((hridel.OtackyProvozni > 0 || hridel.OtackyPrubezne > 0) && hridel.KritOt.Length > 0)
                     {
                         row += 2;
-                        ws.Cells[row, 2].Value = Strings.OrdinalNumber(1) + " " + Strings.kritickeOtacky + " " + Strings.odpovidajiDT;
+                        ws.Cells[row, 2].Value = strings.OrdinalNumber(1) + " " + strings.kritickeOtacky + " " + strings.odpovidajiDT;
                     }
                     if (hridel.OtackyProvozni > 0 && hridel.KritOt.Length > 0)
                     {
                         ws.Cells[++row, 2].Value = hridel.KritOt[0] / hridel.OtackyProvozni * 100;
                         ws.Cells[row, 2].Style.Numberformat.Format = "0.0##";
-                        ws.Cells[row, 3].Value = "% " + Strings.provoznichOtacek;
+                        ws.Cells[row, 3].Value = "% " + strings.provoznichOtacek;
                     }
                     if (hridel.OtackyPrubezne > 0 && hridel.KritOt.Length > 0)
                     {
                         ws.Cells[++row, 2].Value = hridel.KritOt[0] / hridel.OtackyPrubezne * 100;
                         ws.Cells[row, 2].Style.Numberformat.Format = "0.0##";
-                        ws.Cells[row, 3].Value = "% " + Strings.prubeznychOtacek;
+                        ws.Cells[row, 3].Value = "% " + strings.prubeznychOtacek;
                     }
 
                     row += 2;
-                    ws.Cells[row, 1].Value = Strings.GeometrieHrideleDT;
+                    ws.Cells[row, 1].Value = strings.GeometrieHrideleDT;
                     ws.Cells[row, 1].Style.Font.Bold = true;
                     ws.Cells[row, 3].Value = "(L, De, Di - [mm]; m - [kg]; Jo, Jd - [kg.m2]; k, Cm - [N/m])";
 
@@ -448,7 +448,7 @@ namespace Kritik
                                     ws.Cells[row, 8].Value = a.Di;
                                     ws.Cells[row, 8].Style.HorizontalAlignment = alignLeft;
                                     ws.Cells[row, 8].Style.Numberformat.Format = formatNum;
-                                    ws.Cells[++row, 2].Value = Strings.HridelJeRozdelenaNa + " " + (a.Deleni + 1) + " " + Strings.castiODelce + " " + string.Format("{0:#.###}", a.L / (a.Deleni + 1)) + " mm, " + Strings.meziKterymiJsouUmistenyPrvkyDT;
+                                    ws.Cells[++row, 2].Value = strings.HridelJeRozdelenaNa + " " + (a.Deleni + 1) + " " + strings.castiODelce + " " + string.Format("{0:#.###}", a.L / (a.Deleni + 1)) + " mm, " + strings.meziKterymiJsouUmistenyPrvkyDT;
                                     if (a.M > 0)
                                     {
                                         ws.Cells[++row, 2].Value = Hridel.TypDict[Hridel.diskKeyword];

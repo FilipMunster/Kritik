@@ -56,58 +56,67 @@ namespace Kritik
 
         public MainWindow()
         {
-            //Načteno:
-            ShaftElement shaftElement1 = new ShaftElement() { De = 0.5, L = 10 };
-            ShaftElement shaftElement2 = new ShaftElement() { Type = ElementType.rigid, L = 0.25 };
-            ShaftElement shaftElement3 = new ShaftElement(ElementType.beamPlus) { L = 5, De = 0.6, M = 50000, Id = 40000, Io = 40000, Division = 10, IdN = 0, IdNValue = 0.65 };
-
-            List<ShaftElement> shaftElements = new List<ShaftElement>() { shaftElement1, shaftElement2, shaftElement3};
-            // Vytvoří se hřídel:
-            Shaft shaft = new Shaft(shaftElements);
-
-            CollectionHistory<ShaftElementForDataGrid> history = new(shaft.Elements);
-            
-            
-
-
-            return;
-
-            
-
-
             InitializeComponent();
-            SetMainWindow(this);
 
-            hridel = new Hridel();
-            DataContext = hridel;
-            SloupecTyp.ItemsSource = hridel.ListTypuPrvku;
-            hridel.HridelNova();
-            hridel.AnyPropertyChanged = false;
-            hridel.NazevSouboru = "Nový výpočet.xlsx";
-            NovySoubor = true;
-            VykreslenyHlavniGraf = "w";
-            VykreslitKmity();
-            VyplnJazyky();
-            //Strings.SelectedLanguage = (Strings.Language)jazykCombobox.SelectedIndex;
-            NacistNastaveni();
 
-            //////////////////
-            //string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test1_pulka.xlsx";
+
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //return;
+            ////Načteno:
+            //ShaftElement shaftElement1 = new ShaftElement() { De = 0.5, L = 10 };
+            //ShaftElement shaftElement2 = new ShaftElement() { Type = ElementType.rigid, L = 0.25 };
+            //ShaftElement shaftElement3 = new ShaftElement(ElementType.beamPlus) { L = 5, De = 0.6, M = 50000, Id = 40000, Io = 40000, Division = 10, IdN = 0, IdNValue = 0.65 };
+
+            //List<ShaftElement> shaftElements = new List<ShaftElement>() { shaftElement1, shaftElement2, shaftElement3};
+            //// Vytvoří se hřídel:
+            //Shaft shaft = new Shaft(shaftElements);
+
+            //CollectionHistory<ShaftElementForDataGrid> history = new(shaft.Elements);
+            
+           
+            
+
+
+            
+            //SetMainWindow(this);
+
+            //hridel = new Hridel();
+            //DataContext = hridel;
+            //SloupecTyp.ItemsSource = hridel.ListTypuPrvku;
             //hridel.HridelNova();
-            //hridel.nazevSouboru = vstupniSoubor;
-            //DataLoadSave.NacistData(hridel.nazevSouboru,hridel);
             //hridel.AnyPropertyChanged = false;
-            //novySoubor = false;
-            //Historie.New();
-            //backBtn.IsEnabled = Historie.BackBtnEnabled;
-            //forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
-            //hridel.VytvorPrvky();
-            //(hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
-            //hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
+            //hridel.NazevSouboru = "Nový výpočet.xlsx";
+            //NovySoubor = true;
+            //VykreslenyHlavniGraf = "w";
             //VykreslitKmity();
-            //////////////////
+            //VyplnJazyky();
+            ////Strings.SelectedLanguage = (Strings.Language)jazykCombobox.SelectedIndex;
+            //NacistNastaveni();
+
+            ////////////////////
+            ////string vstupniSoubor = @"d:\TRANSIENT ANALYSIS\_Pokusy\kriticke otacky\kritik_test1_pulka.xlsx";
+            ////hridel.HridelNova();
+            ////hridel.nazevSouboru = vstupniSoubor;
+            ////DataLoadSave.NacistData(hridel.nazevSouboru,hridel);
+            ////hridel.AnyPropertyChanged = false;
+            ////novySoubor = false;
+            ////Historie.New();
+            ////backBtn.IsEnabled = Historie.BackBtnEnabled;
+            ////forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
+            ////hridel.VytvorPrvky();
+            ////(hridel.KritOt, hridel.PrubehRpm, hridel.PrubehDeterminantu) = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
+            ////hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
+            ////VykreslitKmity();
+            ////////////////////
 
         }
+
+
+
+
+
+
+        /// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         private void VykreslitHlavniGraf(string value)
         {
@@ -235,7 +244,7 @@ namespace Kritik
         {
             if (!NovySoubor)
             {
-                bool ok1 = DataLoadSaveOld.UlozitVysledky(hridel.NazevSouboru, HridelPouzitaKVypoctu);
+                bool ok1 = DataLoadSaveOld.UlozitVysledky(hridel.NazevSouboru, HridelPouzitaKVypoctu, new Strings(Strings.Language.cs));
                 bool ok2 = DataLoadSaveOld.UlozitData(hridel.NazevSouboru, hridel);                
                 if (!(ok1 && ok2)) { MessageBox.Show("Soubor \"" + hridel.NazevSouboru + "\" se nepodařilo uložit.", "Chyba ukládání souboru", MessageBoxButton.OK, MessageBoxImage.Error); }
                 else
@@ -256,7 +265,7 @@ namespace Kritik
             if (saveFileDialog.ShowDialog() == true)
             {
                 hridel.NazevSouboru = saveFileDialog.FileName;
-                bool ok1 = DataLoadSaveOld.UlozitVysledky(hridel.NazevSouboru, HridelPouzitaKVypoctu);
+                bool ok1 = DataLoadSaveOld.UlozitVysledky(hridel.NazevSouboru, HridelPouzitaKVypoctu, new Strings(Strings.Language.cs));
                 bool ok2 = DataLoadSaveOld.UlozitData(hridel.NazevSouboru, hridel);                
                 if (!(ok1 && ok2)) { MessageBox.Show("Soubor \"" + hridel.NazevSouboru + "\" se nepodařilo uložit.", "Chyba ukládání souboru", MessageBoxButton.OK, MessageBoxImage.Error); }
                 else
@@ -835,11 +844,7 @@ namespace Kritik
             }
         }
 
-        private void TextBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
-        {
-            TextBox s = (TextBox)sender;
-            s.SelectAll();
-        }
+
 
         private void kritOtTextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -849,16 +854,16 @@ namespace Kritik
 
         private void EasterEgg()
         {
-            if (resilTextBox.Text == "Dave Lister")
-            {
-                Uri uri = new Uri("pack://application:,,,/icons/rd.dat");
-                BitmapImage image = new BitmapImage(uri);
-                ImageBrush ib = new ImageBrush();
-                ib.ImageSource = image;
-                TabulkaDataGrid.Background = ib;
-                TabulkaDataGrid.RowBackground = Brushes.Transparent;
-                TabulkaDataGrid.AlternatingRowBackground = Brushes.Transparent;
-            }
+            //if (resilTextBox.Text == "Dave Lister")
+            //{
+            //    Uri uri = new Uri("pack://application:,,,/icons/rd.dat");
+            //    BitmapImage image = new BitmapImage(uri);
+            //    ImageBrush ib = new ImageBrush();
+            //    ib.ImageSource = image;
+            //    TabulkaDataGrid.Background = ib;
+            //    TabulkaDataGrid.RowBackground = Brushes.Transparent;
+            //    TabulkaDataGrid.AlternatingRowBackground = Brushes.Transparent;
+            //}
         }
 
         private void vykreslitUzlyCheckBox_Click(object sender, RoutedEventArgs e)
@@ -888,10 +893,7 @@ namespace Kritik
             //VytvorPopisekVypoctu();
         }
 
-        private void HlavniOkno_Closing(object sender, CancelEventArgs e)
-        {
-            Properties.Settings.Default.Save();
-        }
+
 
         private void vykreslitSchemaCheckBox_Click(object sender, RoutedEventArgs e)
         {
@@ -909,11 +911,11 @@ namespace Kritik
         }
         private void NacistNastaveni()
         {
-            if (Properties.Settings.Default.author != "") { resilTextBox.Text = Properties.Settings.Default.author; }
-            vykreslitUzlyCheckBox.IsChecked = Properties.Settings.Default.drawNodes;
-            vykreslitSchemaCheckBox.IsChecked = Properties.Settings.Default.drawScheme;
-            vykreslitGrafCheckBox.IsChecked = Properties.Settings.Default.drawShape;
-            vykreslitPopisekCheckBox.IsChecked = Properties.Settings.Default.drawDescription;
+            //if (Properties.Settings.Default.author != "") { resilTextBox.Text = Properties.Settings.Default.author; }
+            //vykreslitUzlyCheckBox.IsChecked = Properties.Settings.Default.drawNodes;
+            //vykreslitSchemaCheckBox.IsChecked = Properties.Settings.Default.drawScheme;
+            //vykreslitGrafCheckBox.IsChecked = Properties.Settings.Default.drawShape;
+            //vykreslitPopisekCheckBox.IsChecked = Properties.Settings.Default.drawDescription;
         }
 
         private void deleniHridelPlusTextBox_LostFocus(object sender, RoutedEventArgs e)
@@ -921,10 +923,7 @@ namespace Kritik
             hridel.NotifyPropertyChanged("SchemaHridele");
         }
 
-        private void dnesTextBlock_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            hridel.VypocetDatum = DateTime.Today.ToShortDateString();
-        }
+
 
         private void vlivOtacekExpandButton_Click(object sender, RoutedEventArgs e)
         {
@@ -968,7 +967,6 @@ namespace Kritik
                     openFileButton_Click(sender, e);
                 }
             }
-            
         }
 
         private void vlivOtacekRotoruCheckBox_Click(object sender, RoutedEventArgs e)
@@ -977,5 +975,35 @@ namespace Kritik
             vlivOtacekProvozniAPrubezneRadioButton.IsEnabled = (bool)s.IsChecked;
             vlivOtacekVlastniRadioButton.IsEnabled = (bool)s.IsChecked;
         }
+
+  
+
+        /// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// 
+      private void KritikMainWindow_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (files[0].EndsWith(".xlsx"))
+                {
+                    ((MainViewModel)this.DataContext).OpenFile(files[0]);
+                }
+            }
+        }
+        private void KritikMainWindow_Closing(object sender, CancelEventArgs e)
+        {
+            Properties.Settings.Default.Save();
+        }
+        private void TextBoxSelectContent(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            TextBox s = (TextBox)sender;
+            s.SelectAll();
+        }
+        private void TodayTextBlock_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            ((MainViewModel)this.DataContext).CalculationProperties.Date = DateTime.Today.ToShortDateString();
+        }
+
     }
 }

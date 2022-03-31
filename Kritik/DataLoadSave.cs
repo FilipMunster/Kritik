@@ -92,12 +92,20 @@ namespace Kritik
             {ElementType.magnet, magnetKeyword }
         };
 
+        public struct LoadResult
+        {
+            public ShaftProperties ShaftProperties { get; set; }
+            public CalculationProperties CalculationProperties { get; set; }
+            public List<ShaftElement> ShaftElements { get; set; }
+        }
+
+
         /// <summary>
         /// Loads the input data from xlsx file
         /// </summary>
         /// <param name="fileName">Full path to source file</param>
         /// <returns>Loaded data</returns>
-        public static (ShaftProperties, CalculationProperties, List<ShaftElement>)? Load(string fileName)
+        public static LoadResult? Load(string fileName)
         {
             ShaftProperties shaftProperties = new();
             CalculationProperties calculationProperties = new();
@@ -235,7 +243,12 @@ namespace Kritik
                         return null;
                     }
                     Debug.WriteLine("Soubor {0} byl načten.", fileName);
-                    return (shaftProperties, calculationProperties, shaftElements);
+                    
+                    LoadResult loadResult = new LoadResult();
+                    loadResult.ShaftProperties = shaftProperties;
+                    loadResult.CalculationProperties = calculationProperties;
+                    loadResult.ShaftElements = shaftElements;
+                    return loadResult;
                 }
             } catch { return null; }
         }
@@ -248,7 +261,7 @@ namespace Kritik
         /// <param name="calculationProperties">Calculation properties</param>
         /// <param name="shaftElements">List of Shaft Elements</param>
         /// <returns>true if file saved successfully</returns>
-        public static bool Save(string fileName, ShaftProperties shaftProperties, CalculationProperties calculationProperties, List<ShaftElement> shaftElements)
+        public static bool SaveData(string fileName, ShaftProperties shaftProperties, CalculationProperties calculationProperties, List<ShaftElement> shaftElements)
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             FileInfo fileInfo = new FileInfo(fileName);
@@ -385,20 +398,6 @@ namespace Kritik
                     {
                         p.Workbook.Worksheets.Delete(excelListVysledky);
                     }
-                    // Pokud ještě nebyl proveden výpočet (-> kritikResults je null), tak to neřeším, jenom smažu list s výsledky
-                    if (results == null)
-                    {
-                        try
-                        {
-                            p.Save();
-                            return true;
-                        }
-                        catch
-                        {
-                            Debug.WriteLine("Chyba při ukládání výsledků do souboru: {0}", fileName);
-                            return false;
-                        }
-                    }
                     ExcelWorksheet ws = p.Workbook.Worksheets.Add(excelListVysledky);
 
                     ws.Cells.Style.Font.Bold = false;
@@ -410,6 +409,23 @@ namespace Kritik
 
                     ws.Cells[1, 1].Value = strings.KritickeOtackykrouzivehoKmitani;
                     ws.Cells[1, 1].Style.Font.Bold = true;
+
+                    // If calculation was not done yet (-> results.CriticalSpeeds == null):
+                    if (results.CriticalSpeeds == null)
+                    {
+                        try
+                        {
+                            ws.Cells[2, 1].Value = strings.VypocetNebylDosudProveden;
+                            p.Save();
+                            return true;
+                        }
+                        catch
+                        {
+                            Debug.WriteLine("Chyba při ukládání výsledků do souboru: {0}", fileName);
+                            return false;
+                        }
+                    }
+
                     ws.Cells[3, 1].Value = strings.NazevDT;
                     ws.Cells[3, 2].Value = calculationProperties.Title;
                     ws.Cells[4, 1].Value = strings.PopisDT;
