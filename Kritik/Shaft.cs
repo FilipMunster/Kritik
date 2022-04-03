@@ -80,7 +80,7 @@ namespace Kritik
         /// </summary>
         public void AddElement()
         {
-            if (SelectedItem is null)
+            if (SelectedItem is not null)
                 Elements.Insert(Elements.IndexOf(SelectedItem), new ShaftElementForDataGrid());
             else
                 Elements.Add(new ShaftElementForDataGrid());
@@ -135,7 +135,7 @@ namespace Kritik
         /// <summary>
         /// Removes all elements of the shaft
         /// </summary>
-        public void RemoveAll()
+        public void RemoveAllElements()
         {
             Elements.Clear();
         }
@@ -222,7 +222,8 @@ namespace Kritik
 
             async Task<double[]> Compute()
             {
-                return await Task.Run(() => Computation.CriticalSpeed(GetElementsWithMatrix(), Properties.BCLeft, Properties.BCRight, Properties.MaxCriticalSpeed));
+                return await Task.Run(() => Computation.CriticalSpeed(GetElementsWithMatrix(),
+                    Properties.BCLeft, Properties.BCRight, Properties.MaxCriticalSpeed));
             }
         }
         /// <summary>

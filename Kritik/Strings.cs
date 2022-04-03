@@ -12,62 +12,68 @@ namespace Kritik
     /// </summary>
     public class Strings
     {
+        private static string[] languageNames = { "čeština", "angličtina" };
+        private Language selectedLanguage;
+
         public Strings(Language language)
         {
-            SelectedLanguageEnum = language;
-
-            List<string> languageNames = new List<string>();
-            foreach (var lang in LanguageNameEnumToString)
-            {
-                languageNames.Add(lang.Value);
-            }
-            LanguageNames = languageNames.ToArray();
+            SetLanguage(language);
         }
+
         public enum Language
         {
             cs,
             en
         }
-        private Language SelectedLanguageEnum
-        {
-            get { return selectedLanguage; }
-            set
-            {
-                selectedLanguage = value;
-                switch (value)
-                {
-                    default:
-                    case Language.cs:
-                        dict = cs;
-                        break;
-                    case Language.en:
-                        dict = en;
-                        break;
-                }
-            }
-        }
+        
+        public string[] LanguageNames => languageNames;
         public string SelectedLanguage
         {
             get => LanguageNameEnumToString[selectedLanguage];
-            set { selectedLanguage = LanguageNameStringToEnum[value]; }
+            set { SetLanguage(LanguageNameStringToEnum[value]); }
         }
-        private Language selectedLanguage;
-        public string[] LanguageNames { get; }
 
+        public void SetLanguage(Language lang)
+        {
+            selectedLanguage = lang;
+            switch (lang)
+            {
+                case Language.cs:
+                    dict = cs;
+                    break;
+                case Language.en:
+                    dict = en;
+                    break;
+            }
+        }
+
+        #region Auxiliary methods
+        /// <summary>
+        /// Returns CallerMamberName
+        /// </summary>
+        /// <returns></returns>
+        private string This([CallerMemberName] string memberName = "")
+        {
+            return memberName; 
+        }
+        #endregion
+
+        #region Enum<->String Dictionaries
         private readonly Dictionary<Language, string> LanguageNameEnumToString = new Dictionary<Language, string>
         {
-            {Language.cs, "čeština" },
-            {Language.en, "angličtina" }
+            {Language.cs, languageNames[0] },
+            {Language.en, languageNames[1] }
         };
         private readonly Dictionary<string, Language> LanguageNameStringToEnum = new Dictionary<string, Language>
         {
-            {"čeština", Language.cs },
-            {"angličtina", Language.en }
+            {languageNames[0], Language.cs },
+            {languageNames[1], Language.en }
         };
 
         private Dictionary<string, string> dict = cs;
-        private string This ([CallerMemberName] string memberName = "") { return memberName; }
+        #endregion
 
+        #region Dictionary for Czech
         private static Dictionary<string, string> cs = new Dictionary<string, string>
         {
             {nameof(kritickeOtacky), "kritické otáčky" },
@@ -114,7 +120,9 @@ namespace Kritik
             {nameof(NebylyVypoctenyZadneKritickeOtacky), "Nebyly vypočteny žádné kritické otáčky." },
             {nameof(VypocetNebylDosudProveden), "Výpočet nebyl dosud proveden." }
         };
+        #endregion
 
+        #region Dictionary for English
         private static Dictionary<string, string> en = new Dictionary<string, string>
         {
             {nameof(kritickeOtacky), "critical speed" },
@@ -161,27 +169,9 @@ namespace Kritik
             {nameof(NebylyVypoctenyZadneKritickeOtacky), "No critical speed was computed." },
             {nameof(VypocetNebylDosudProveden), "The calculation has not been done yet." }
         };
+        #endregion
 
-        /// <summary>
-        /// Returns string with ordinal number of given int
-        /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        public string OrdinalNumber(int number)
-        {
-            if (SelectedLanguageEnum == Language.en)
-            {
-                // Ordinal numbers are used only for number of critical speed. I assume that >20 will not appear.
-                switch (number)
-                {
-                    case 1: return number + "st";
-                    case 2: return number + "nd";
-                    case 3: return number + "rd";
-                    default: return number + "th";
-                }
-            }
-            else { return number + "."; }
-        }
+        #region Properties and methods returning strings according to language set in SelectedLanguage
         public string kritickeOtacky => dict[This()];
         public string PruhybHridele => dict[This()];
         public string NatoceniHridele => dict[This()];
@@ -214,11 +204,39 @@ namespace Kritik
         public string provoznichOtacek => dict[This()];
         public string prubeznychOtacek => dict[This()];
         public string GeometrieHrideleDT => dict[This()];
-        public string Type(ElementType type) { return dict[type.ToString()]; }
         public string HridelJeRozdelenaNa => dict[This()];
         public string castiODelce => dict[This()];
         public string meziKterymiJsouUmistenyPrvkyDT => dict[This()];
         public string NebylyVypoctenyZadneKritickeOtacky => dict[This()];
         public string VypocetNebylDosudProveden => dict[This()];
+
+        /// <summary>
+        /// Converts <see cref="ElementType"/> enum to string according to language set in <see cref="SelectedLanguage"/>
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public string Type(ElementType type) { return dict[type.ToString()]; }
+
+        /// <summary>
+        /// Returns string with ordinal number of given int according to language set in <see cref="SelectedLanguage"/>
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public string OrdinalNumber(int number)
+        {
+            if (selectedLanguage == Language.en)
+            {
+                // Ordinal numbers are used only for number of critical speed. I assume that >20 will not appear.
+                switch (number)
+                {
+                    case 1: return number + "st";
+                    case 2: return number + "nd";
+                    case 3: return number + "rd";
+                    default: return number + "th";
+                }
+            }
+            else { return number + "."; }
+        }
+        #endregion
     }
 }

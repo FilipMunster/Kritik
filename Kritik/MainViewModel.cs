@@ -21,6 +21,8 @@ namespace Kritik
             InitializeNewCalculation();
             Strings = new Strings(Strings.Language.cs);
         }
+
+        #region PropertyChanged Implementation
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
@@ -46,6 +48,7 @@ namespace Kritik
                 }
             }
         }
+        #endregion
 
         #region Properties for Calculation Data
 
@@ -159,7 +162,8 @@ namespace Kritik
             DataLoadSave.LoadResult? loadResult = DataLoadSave.Load(fileName);
             if (loadResult is null)
             {
-                MessageBox.Show("Soubor \"" + fileName + "\" se nepodařilo načíst.", "Chyba načítání souboru", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Soubor \"" + fileName + "\" se nepodařilo načíst.", "Chyba načítání souboru", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 

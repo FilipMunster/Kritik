@@ -35,5 +35,7 @@ namespace Kritik
                 NotifyPropertyChanged();
             }
         }
+        public Shaft ShaftUsedForCalculation { get; set; }
+        public CalculationProperties CalculationPropertiesUsedForCalculation { get; set }
     }
 }
