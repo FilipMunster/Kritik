@@ -57,6 +57,7 @@ namespace Kritik
         public MainWindow()
         {
             InitializeComponent();
+            return;
 
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -374,31 +375,7 @@ namespace Kritik
         }
 
 
-        /// <summary>
-        /// Funkce pro přeskakování needitovatelných buněk
-        /// </summary>
-        private void DataGridCell_PreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
-        {
-            if (e.OldFocus is DataGridCell oldCell && sender is DataGridCell newCell)
-            {
-                try
-                {
-                    DataGridColumn col = newCell.Column;
-                    Hridel.PrvekTab prvek = (Hridel.PrvekTab)newCell.DataContext;
-                    bool isCellEditable = prvek.IsEditableArray[col.DisplayIndex];
 
-                    if (!isCellEditable)
-                    {
-                        var isNext = oldCell.Column.DisplayIndex < newCell.Column.DisplayIndex;
-                        var direction = isNext ? FocusNavigationDirection.Next : FocusNavigationDirection.Previous;
-                        newCell.MoveFocus(new TraversalRequest(direction));
-                        e.Handled = true;
-                        hridel.OznacenyRadek = prvek;
-                    }
-                }
-                catch { }
-            }
-        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
@@ -475,19 +452,16 @@ namespace Kritik
         {
             HridelPlus_MenuChanged();
         }
-        void DataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
-        {
-            e.Row.Header = (e.Row.GetIndex() + 1).ToString();
-        }
+
 
         private void TabulkaDataGrid_AddingNewItem(object sender, AddingNewItemEventArgs e)
         {
-            e.NewItem = new Hridel.PrvekTab
-            {
-                Typ = Hridel.beamKeyword
-            };
-            TabulkaDataGrid.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
-            HistorieAdd();
+            //e.NewItem = new Hridel.PrvekTab
+            //{
+            //    Typ = Hridel.beamKeyword
+            //};
+            //TabulkaDataGrid.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
+            //HistorieAdd();
         }
 
         private void addRowBtn_Click(object sender, RoutedEventArgs e)
@@ -569,7 +543,7 @@ namespace Kritik
 
         private void TabulkaDataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
-            HistorieAdd();
+            //HistorieAdd();
         }
 
         private void backBtn_Click(object sender, RoutedEventArgs e)
@@ -642,12 +616,12 @@ namespace Kritik
 
         private void TabulkaDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            hridel.NotifyPropertyChanged("SchemaHridele");
+            //hridel.NotifyPropertyChanged("SchemaHridele");
         }
 
         private void DataGridCell_LostMouseCapture(object sender, MouseEventArgs e)
         {
-            hridel.NotifyPropertyChanged("SchemaHridele");
+            //hridel.NotifyPropertyChanged("SchemaHridele");
         }
 
         private void TabulkaDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -922,39 +896,6 @@ namespace Kritik
             hridel.NotifyPropertyChanged("SchemaHridele");
         }
 
-
-
-        private void vlivOtacekExpandButton_Click(object sender, RoutedEventArgs e)
-        {
-            Button s = (Button)sender;
-            GridLengthConverter gridLength = new GridLengthConverter();
-            System.Windows.ThicknessConverter thickness = new System.Windows.ThicknessConverter();
-            if ((string)s.Tag == "hidden")
-            {
-                s.Tag = "expanded";
-                vlivOtacekGridRow.Height = (GridLength)gridLength.ConvertFrom(vlivOtacekGridRow.MaxHeight);
-                s.Content = new System.Windows.Controls.Image
-                {
-                    Source = new BitmapImage(new Uri("pack://application:,,,/icons/StepBackArrow_16x.png")),
-                    Width = 10,
-                    HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
-                    Margin = (Thickness)thickness.ConvertFromString("0, 8, 0, 0")
-                };  
-            }
-            else if (!(bool)vlivOtacekRotoruCheckBox.IsChecked)
-            {
-                s.Tag = "hidden";
-                vlivOtacekGridRow.Height = (GridLength)gridLength.ConvertFromString("0");
-                s.Content = new System.Windows.Controls.Image
-                {
-                    Source = new BitmapImage(new Uri("pack://application:,,,/icons/StepOverArrow_16x.png")),
-                    Width = 10,
-                    HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
-                    Margin = (Thickness)thickness.ConvertFromString("0, 8, 0, 0")
-                };
-            }
-        }
-
         private void HlavniOkno_Drop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -970,9 +911,9 @@ namespace Kritik
 
         private void vlivOtacekRotoruCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            CheckBox s = (CheckBox)sender;
-            vlivOtacekProvozniAPrubezneRadioButton.IsEnabled = (bool)s.IsChecked;
-            vlivOtacekVlastniRadioButton.IsEnabled = (bool)s.IsChecked;
+            //CheckBox s = (CheckBox)sender;
+            //vlivOtacekProvozniAPrubezneRadioButton.IsEnabled = (bool)s.IsChecked;
+            //vlivOtacekVlastniRadioButton.IsEnabled = (bool)s.IsChecked;
         }
 
   
@@ -999,10 +940,77 @@ namespace Kritik
             TextBox s = (TextBox)sender;
             s.SelectAll();
         }
-        private void TodayTextBlock_MouseDown(object sender, MouseButtonEventArgs e)
+        private void GyroscopicEffectComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ((MainViewModel)this.DataContext).CalculationProperties.Date = DateTime.Today.ToShortDateString();
+            if (shaftRotationInfluenceCheckBox is null)
+                return;
+
+            if (((ComboBox)sender).SelectedIndex == 0)
+            {
+                shaftRotationInfluenceCheckBox.IsChecked = false;
+                shaftRotationInfluenceCheckBox.IsEnabled = false;
+            }
+            else
+            {
+                shaftRotationInfluenceCheckBox.IsEnabled = true; ;
+            }
+        }
+        private void shaftRotationInfluenceExpandButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button s = (Button)sender;
+            System.Windows.ThicknessConverter thickness = new System.Windows.ThicknessConverter();
+            if ((string)s.Tag == "hidden")
+            {
+                s.Tag = "visible";
+                s.Content = new System.Windows.Controls.Image
+                {
+                    Source = new BitmapImage(new Uri("pack://application:,,,/icons/StepBackArrow_16x.png")),
+                    Width = 10,
+                    HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
+                    Margin = (Thickness)thickness.ConvertFromString("0, 8, 0, 0")
+                };
+            }
+            else
+            {
+                s.Tag = "hidden";
+                s.Content = new System.Windows.Controls.Image
+                {
+                    Source = new BitmapImage(new Uri("pack://application:,,,/icons/StepOverArrow_16x.png")),
+                    Width = 10,
+                    HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
+                    Margin = (Thickness)thickness.ConvertFromString("0, 8, 0, 0")
+                };
+            }
         }
 
+        void DataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
+        {
+            e.Row.Header = (e.Row.GetIndex() + 1).ToString();
+        }
+        /// <summary>
+        /// Method for skipping non-editable cells
+        /// </summary>
+        private void DataGridCell_PreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            if (e.OldFocus is DataGridCell oldCell && sender is DataGridCell newCell)
+            {
+                try
+                {
+                    DataGridColumn col = newCell.Column;
+                    Hridel.PrvekTab prvek = (Hridel.PrvekTab)newCell.DataContext;
+                    bool isCellEditable = prvek.IsEditableArray[col.DisplayIndex];
+
+                    if (!isCellEditable)
+                    {
+                        var isNext = oldCell.Column.DisplayIndex < newCell.Column.DisplayIndex;
+                        var direction = isNext ? FocusNavigationDirection.Next : FocusNavigationDirection.Previous;
+                        newCell.MoveFocus(new TraversalRequest(direction));
+                        e.Handled = true;
+                        hridel.OznacenyRadek = prvek;
+                    }
+                }
+                catch { }
+            }
+        }
     }
 }

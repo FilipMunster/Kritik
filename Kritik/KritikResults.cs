@@ -36,6 +36,6 @@ namespace Kritik
             }
         }
         public Shaft ShaftUsedForCalculation { get; set; }
-        public CalculationProperties CalculationPropertiesUsedForCalculation { get; set }
+        public CalculationProperties CalculationPropertiesUsedForCalculation { get; set; }
     }
 }

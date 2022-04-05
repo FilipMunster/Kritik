@@ -50,20 +50,54 @@ namespace Kritik
             return value;
         }
     }
-
+    
     public class FormatDefaultConverter : IValueConverter
     {
+        /// <summary>
+        /// Converts double value into string with max. 12 decimal places
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="targetType"></param>
+        /// <param name="parameter">(string) order of the unit of the number to be shown in View (eg. GPa -> '9')</param>
+        /// <param name="culture"></param>
+        /// <returns></returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (parameter is not null)
+            {
+                int exponent;
+                if (Int32.TryParse(parameter as string, out exponent))
+                {
+                    double val = (double)value * Math.Pow(10, -1 * exponent);
+                    return String.Format("{0:#.############}", val);
+                }
+            }
+
             return value;
         }
-
+        /// <summary>
+        /// Converts string representation of number, replaces ',' with '.' and deletes '-' -> stores absolute value of number
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="targetType"></param>
+        /// <param name="parameter">(string) order of the unit of the number which is shown in View (eg. GPa -> '9')</param>
+        /// <param name="culture"></param>
+        /// <returns></returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             string v = (string)value;
             v = v.Replace(",", ".");
             v = v.TrimStart('-');
             v = GetOnlyNumbers.GON(v);
+            
+            if (parameter is not null)
+            {
+                double val;
+                int exponent;                
+                if (Double.TryParse(v, out val) && Int32.TryParse(parameter as string, out exponent))
+                    return val * Math.Pow(10, exponent);
+            }
+
             return v;
         }
     }

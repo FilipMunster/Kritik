@@ -7,57 +7,57 @@ using System.Threading.Tasks;
 namespace Kritik
 {
     /// <summary>
-    /// Prvek hřídele
+    /// Shaft Element
     /// </summary>
     public class ShaftElement
     {
         /// <summary>
-        /// Typ prvku hřídele
+        /// Shaft Element Type
         /// </summary>
         public ElementType Type { get; set; }
         /// <summary>
-        /// Délka prvku
+        /// Elements Length
         /// </summary>
         public double L { get { return Type == ElementType.disc || Type == ElementType.support || Type == ElementType.magnet ? 0 : l; } set { l = value; } }
         private double l;
         /// <summary>
-        /// Vnější průměr
+        /// Element outer diameter
         /// </summary>
         public double De { get; set; }
         /// <summary>
-        /// Vrtání hřídele
+        /// Element inner diameter
         /// </summary>
         public double Di { get; set; }
         /// <summary>
-        /// Hmotnost disku
+        /// Disc weight
         /// </summary>
         public double M { get; set; }
         /// <summary>
-        /// Moment setrvačnosti k ose rotoru
+        /// Moment of inertia parallel to the rotor axis
         /// </summary>
         public double Io { get; set; }
         /// <summary>
-        /// Moment setrvačnosti kolmo k ose otáčení
+        /// Moment of inertia perpendicular to the rotor axis
         /// </summary>
         public double Id { get; set; }
         /// <summary>
-        /// Radiální tuhost podpory
+        /// Radial support stiffness
         /// </summary>
         public double K { get; set; }
         /// <summary>
-        /// Magneticko elastická konstanta
+        /// Magnetic-elastic constant
         /// </summary>
         public double Cm { get; set; }
         /// <summary>
-        /// Počet dělení prvku Hřídel+
+        /// Number od divisions of Beam+ element
         /// </summary>
         public double Division { get; set; }
         /// <summary>
-        /// Způsob dělení Hřídele+: IdN=0 -> Idi=Id/n*IdNValue, IdN=1 -> Idi=IdNValue
+        /// Method of Id/N calculation for Beam+ element: IdN=0 -> Idi=Id/n*IdNValue, IdN=1 -> Idi=IdNValue
         /// </summary>
         public int IdN { get; set; }
         /// <summary>
-        /// Hodnota pro výpočet Idi
+        /// Value for calculation of Idi
         /// </summary>
         public double IdNValue { get; set; }
 
@@ -67,7 +67,7 @@ namespace Kritik
         }
 
         /// <summary>
-        /// Creates a shallow copy of object
+        /// Creates a deep copy of object
         /// </summary>
         public ShaftElement Copy()
         {

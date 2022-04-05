@@ -10,6 +10,8 @@ using System.Windows.Input;
 using OxyPlot;
 using System.Windows;
 using Microsoft.Win32;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Kritik
 {
@@ -20,6 +22,7 @@ namespace Kritik
         {
             InitializeNewCalculation();
             Strings = new Strings(Strings.Language.cs);
+            ShaftRotationInfluenceIsVisible = false;
         }
 
         #region PropertyChanged Implementation
@@ -91,7 +94,7 @@ namespace Kritik
         public CollectionHistory<ShaftElementForDataGrid> History { get; set; }
         #endregion
 
-        #region Application Properties
+        #region Application View Properties
         public string WindowTitle
         {
             get
@@ -121,6 +124,55 @@ namespace Kritik
                 fileName = value;
             }
         }
+        public string BoundaryConditionLeftComboBoxValue
+        {
+            get => boundaryConditionsEnumToString[Shaft.Properties.BCLeft];
+            set => Shaft.Properties.BCLeft = boundaryConditionsStringToEnum[value];
+        }
+        public string BoundaryConditionRightComboBoxValue
+        {
+            get => boundaryConditionsEnumToString[Shaft.Properties.BCRight];
+            set => Shaft.Properties.BCRight = boundaryConditionsStringToEnum[value];
+        }
+        public string GyroscopicEffectComboBoxValue
+        {
+            get => gyroscopicEffectEnumToString[Shaft.Properties.Gyros];
+            set => Shaft.Properties.Gyros = gyroscopicEffectStringToEnum[value];
+        }
+
+        public bool ShaftRotationInfluenceIsVisible { get; set; }
+        public string ShaftRotationInfluenceVisibility => ShaftRotationInfluenceIsVisible ? "visible" : "collapsed";
+        public ShaftRotationInfluenceOption ShaftRotationInfluenceSelectedOption { get; set; }
+        private double shaftRotationInfluenceCustom;
+        public double ShaftRotationInfluenceCustom
+        {
+            get => shaftRotationInfluenceCustom;
+            set
+            {
+                shaftRotationInfluenceCustom = value;
+                ShaftRPMUpdate();
+            }
+        }
+        public double ShaftOperatingSpeed
+        {
+            get => Shaft.Properties.OperatingSpeed;
+            set
+            {
+                Shaft.Properties.OperatingSpeed = value;
+                ShaftRPMUpdate();
+            }
+        }
+        public double ShaftRunawaySpeed
+        {
+            get => Shaft.Properties.RunawaySpeed;
+            set
+            {
+                Shaft.Properties.RunawaySpeed = value;
+                ShaftRPMUpdate();
+            }
+        }
+
+
         #endregion
 
         #region Commands
@@ -132,6 +184,19 @@ namespace Kritik
         public ICommand SaveFileCommand => saveFileCommand ??= new CommandHandler(() => SaveFile(false), () => AnyPropertyChanged);
         private ICommand saveFileAsCommand;
         public ICommand SaveFileAsCommand => saveFileAsCommand ??= new CommandHandler(() => SaveFile(true), () => true);
+        private ICommand fillTodayCommand;
+        public ICommand FillTodayCommand => fillTodayCommand ??=
+            new CommandHandler(() => CalculationProperties.Date = DateTime.Today.ToShortDateString(), () => true);
+
+
+        private ICommand shaftRotationOptionCommand;
+
+        public ICommand ShaftRotationOptionCommand => shaftRotationOptionCommand ??=
+            new RelayCommand<object>((o) => ShaftRotationInfluenceOptionChanged(o), (o) => Shaft.Properties.ShaftRotationInfluence);
+        private ICommand shaftRotationInfluenceVisibilityCommand;
+        public ICommand ShaftRotationInfluenceVisibilityCommand => shaftRotationInfluenceVisibilityCommand ??=
+            new CommandHandler(() => { ShaftRotationInfluenceIsVisible = !ShaftRotationInfluenceIsVisible; NotifyPropertyChanged(nameof(ShaftRotationInfluenceVisibility)); }, () => true);
+
 
         #endregion
 
@@ -140,13 +205,17 @@ namespace Kritik
         {
             CalculationProperties = new CalculationProperties();
             Shaft = new Shaft();
+            Shaft.AddElement();
             KritikResults = new KritikResults();
             History = new CollectionHistory<ShaftElementForDataGrid>(Shaft.Elements);
             FileName = newCalculationFileName;
             AnyPropertyChanged = false;
+            NotifyPropertyChanged(nameof(BoundaryConditionLeftComboBoxValue));
+            NotifyPropertyChanged(nameof(BoundaryConditionRightComboBoxValue));
+            NotifyPropertyChanged(nameof(GyroscopicEffectComboBoxValue));
         }
         /// <summary>
-        /// Loads Kritik input .xlsx file and stores its data in <see cref="ShaftProperties"/>, <see cref="CalculationProperties"/> and <see cref="Shaft.Elements"/>
+        /// Loads Kritik input .xlsx file and stores its data in <see cref="this.ShaftProperties"/>, <see cref="this.CalculationProperties"/> and <see cref="this.Shaft.Elements"/>
         /// </summary>
         public void OpenFile(string fileName = null)
         {
@@ -157,9 +226,10 @@ namespace Kritik
                 if (openFileDialog.ShowDialog() == false)
                     return;
                 fileName = openFileDialog.FileName;
-            }            
+            }
 
             DataLoadSave.LoadResult? loadResult = DataLoadSave.Load(fileName);
+
             if (loadResult is null)
             {
                 MessageBox.Show("Soubor \"" + fileName + "\" se nepodařilo načíst.", "Chyba načítání souboru", 
@@ -174,10 +244,13 @@ namespace Kritik
             History = new CollectionHistory<ShaftElementForDataGrid>(Shaft.Elements);
             FileName = fileName;
             AnyPropertyChanged = false;
+            NotifyPropertyChanged(nameof(BoundaryConditionLeftComboBoxValue));
+            NotifyPropertyChanged(nameof(BoundaryConditionRightComboBoxValue));
+            NotifyPropertyChanged(nameof(GyroscopicEffectComboBoxValue));
         }
 
         /// <summary>
-        /// Saves <see cref="ShaftProperties"/>, <see cref="CalculationProperties"/>, <see cref="Shaft.Elements"/> and <see cref="KritikResults"/> into .xlsx file
+        /// Saves data from <see cref="ShaftProperties"/>, <see cref="CalculationProperties"/>, <see cref="Shaft.Elements"/> and <see cref="KritikResults"/> into .xlsx file
         /// </summary>
         /// <param name="saveAs">opens save file dialog when true</param>
         public void SaveFile(bool saveAs)
@@ -201,6 +274,36 @@ namespace Kritik
             else
                 MessageBox.Show("Soubor \"" + FileName + "\" se nepodařilo uložit.", "Chyba ukládání souboru", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+
+        public void ShaftRotationInfluenceOptionChanged(object sender)
+        {
+            ShaftRotationInfluenceSelectedOption = (ShaftRotationInfluenceOption)sender;
+            ShaftRPMUpdate();
+        }
+
+
+
+        #endregion
+
+        #region Other Methods
+        /// <summary>
+        /// Updates <see cref="Shaft.Properties.ShaftRPM"/> value according to <see cref="ShaftRotationInfluenceSelectedOption"/>
+        /// </summary>
+        public void ShaftRPMUpdate()
+        {
+            switch (ShaftRotationInfluenceSelectedOption)
+            {
+                case ShaftRotationInfluenceOption.custom:
+                    Shaft.Properties.ShaftRPM = ShaftRotationInfluenceCustom;
+                    break;
+                case ShaftRotationInfluenceOption.operatingSpeed:
+                    Shaft.Properties.ShaftRPM = Shaft.Properties.OperatingSpeed;
+                    break;
+                case ShaftRotationInfluenceOption.runawaySpeed:
+                    Shaft.Properties.ShaftRPM = Shaft.Properties.RunawaySpeed;
+                    break;
+            }
+        }
         #endregion
 
         #region Properties and Dictionaries for Combobox items To Enums conversion
@@ -218,16 +321,6 @@ namespace Kritik
         };
         private static string[] boundaryConditionsItems = { "volný", "kloub", "vetknutí" };
         public string[] BoundaryConditionsItems => boundaryConditionsItems;
-        public string BoundaryConditionLeftComboBoxValue
-        {
-            get => boundaryConditionsEnumToString[Shaft.Properties.BCLeft];
-            set => Shaft.Properties.BCLeft = boundaryConditionsStringToEnum[value];
-        }
-        public string BoundaryConditionRightComboBoxValue
-        {
-            get => boundaryConditionsEnumToString[Shaft.Properties.BCRight];
-            set => Shaft.Properties.BCRight = boundaryConditionsStringToEnum[value];
-        }
 
         private Dictionary<string, GyroscopicEffect> gyroscopicEffectStringToEnum = new Dictionary<string, GyroscopicEffect>()
         {
@@ -243,13 +336,6 @@ namespace Kritik
         };
         private static string[] gyroscopicEffectsItems = { "zanedbání", "souběžná precese", "protiběžná precese" };
         public string[] GyroscopicEffectsItems => gyroscopicEffectsItems;
-        public string GyroscopicEffectComboBoxValue
-        {
-            get => gyroscopicEffectEnumToString[Shaft.Properties.Gyros];
-            set => Shaft.Properties.Gyros = gyroscopicEffectStringToEnum[value];
-        }
-        
-
         #endregion
     }
 }

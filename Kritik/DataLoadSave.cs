@@ -40,7 +40,8 @@ namespace Kritik
         private const string beamPlusKeyword = "hridel+";
         private const string springKeyword = "pruzina";
         private const string magnetKeyword = "magnet";
-        private const int radJednotkyModuluPruznosti = 9;
+        private const int youngModulusOrder = 9; // Young Modulus is given in GPa
+        private const int lengthOrder = -3; // Lengths are given in mm
         private const string excelListZadani = "KRITIK_zadani";
         private const string excelListVysledky = "KRITIK_vypocet";
 
@@ -165,7 +166,7 @@ namespace Kritik
                                 case opPravaKeyword:
                                     if (!boundaryConditionStringToEnum.TryGetValue(value, out BoundaryCondition bCRight))
                                         bCRight = BoundaryCondition.free;
-                                    shaftProperties.BCLeft = bCRight;
+                                    shaftProperties.BCRight = bCRight;
                                     break;
                                 case gyrosKeyword:
                                     if (!gyroscopicEffectStringToEnum.TryGetValue(value, out GyroscopicEffect gyros))
@@ -174,7 +175,7 @@ namespace Kritik
                                     break;
                                 case modulPruznostiKeyword:
                                     if (Double.TryParse(value, out double e))
-                                        shaftProperties.YoungModulus = e * Math.Pow(10, radJednotkyModuluPruznosti);
+                                        shaftProperties.YoungModulus = e * Math.Pow(10, youngModulusOrder);
                                     break;
                                 case rhoKeyword:
                                     if (Double.TryParse(value, out double rho))
@@ -223,9 +224,9 @@ namespace Kritik
 
                             shaftElements.Add(new ShaftElement(type)
                             {
-                                L = Convert.ToDouble(excel.Cells[i, 2].Value),
-                                De = Convert.ToDouble(excel.Cells[i, 3].Value),
-                                Di = Convert.ToDouble(excel.Cells[i, 4].Value),
+                                L = Convert.ToDouble(excel.Cells[i, 2].Value) * Math.Pow(10, lengthOrder),
+                                De = Convert.ToDouble(excel.Cells[i, 3].Value) * Math.Pow(10, lengthOrder),
+                                Di = Convert.ToDouble(excel.Cells[i, 4].Value) * Math.Pow(10, lengthOrder),
                                 M = Convert.ToDouble(excel.Cells[i, 5].Value),
                                 Io = Convert.ToDouble(excel.Cells[i, 6].Value),
                                 Id = Convert.ToDouble(excel.Cells[i, 7].Value),
@@ -303,7 +304,7 @@ namespace Kritik
                     ws.Cells[13, 2].Value = gyroscopicEffectEnumToString[shaftProperties.Gyros];
                     ws.Cells[15, 1].Value = "Materiál hřídele:";
                     ws.Cells[16, 1].Value = modulPruznostiKeyword;
-                    ws.Cells[16, 2].Value = shaftProperties.YoungModulus;
+                    ws.Cells[16, 2].Value = shaftProperties.YoungModulus * Math.Pow(10, -1 * youngModulusOrder);
                     ws.Cells[16, 3].Value = "GPa";
                     ws.Cells[17, 1].Value = rhoKeyword;
                     ws.Cells[17, 2].Value = shaftProperties.MaterialDensity;
@@ -334,9 +335,9 @@ namespace Kritik
                         foreach (var element in shaftElements)
                         {
                             ws.Cells[row, 1].Value = elementTypeEnumToString[element.Type];
-                            ws.Cells[row, 2].Value = element.L;
-                            ws.Cells[row, 3].Value = element.De;
-                            ws.Cells[row, 4].Value = element.Di;
+                            ws.Cells[row, 2].Value = element.L * Math.Pow(10, -1 * lengthOrder);
+                            ws.Cells[row, 3].Value = element.De * Math.Pow(10, -1 * lengthOrder);
+                            ws.Cells[row, 4].Value = element.Di * Math.Pow(10, -1 * lengthOrder);
                             ws.Cells[row, 5].Value = element.M;
                             ws.Cells[row, 6].Value = element.Io;
                             ws.Cells[row, 7].Value = element.Id;
@@ -442,7 +443,7 @@ namespace Kritik
                     ws.Cells[10, 4].Value = opVypsatDict[shaftProperties.BCRight];
                     ws.Cells[10, 4].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
                     ws.Cells[11, 1].Value = strings.ModulPruznostiVTahuHrideleDT;
-                    ws.Cells[11, 4].Value = shaftProperties.YoungModulus;
+                    ws.Cells[11, 4].Value = shaftProperties.YoungModulus * Math.Pow(10, -1 * youngModulusOrder);
                     ws.Cells[11, 5].Value = "GPa";
                     ws.Cells[12, 1].Value = strings.HustotaMaterialuHrideleDT;
                     ws.Cells[12, 4].Value = shaftProperties.MaterialDensity;
@@ -519,44 +520,44 @@ namespace Kritik
                             i++; row++;
                             ws.Cells[row, 1].Value = i;
                             ws.Cells[row, 1].Style.Numberformat.Format = "0\".\"";
-                            ws.Cells[row, 2].Value = strings.Type(element.Type); // !!! potřeba opravit pro novou verzi !!!
+                            ws.Cells[row, 2].Value = strings.Type(element.Type);
                             switch (element.Type)
                             {
                                 case ElementType.beam:
                                     ws.Cells[row, 3].Value = "L = ";
                                     ws.Cells[row, 3].Style.HorizontalAlignment = alignRight;
-                                    ws.Cells[row, 4].Value = element.L;
+                                    ws.Cells[row, 4].Value = element.L * Math.Pow(10, -1 * lengthOrder);
                                     ws.Cells[row, 4].Style.HorizontalAlignment = alignLeft;
                                     ws.Cells[row, 4].Style.Numberformat.Format = formatNum;
                                     ws.Cells[row, 5].Value = "De = ";
                                     ws.Cells[row, 5].Style.HorizontalAlignment = alignRight;
-                                    ws.Cells[row, 6].Value = element.De;
+                                    ws.Cells[row, 6].Value = element.De * Math.Pow(10, -1 * lengthOrder);
                                     ws.Cells[row, 6].Style.HorizontalAlignment = alignLeft;
                                     ws.Cells[row, 6].Style.Numberformat.Format = formatNum;
                                     ws.Cells[row, 7].Value = "Di = ";
                                     ws.Cells[row, 7].Style.HorizontalAlignment = alignRight;
-                                    ws.Cells[row, 8].Value = element.Di;
+                                    ws.Cells[row, 8].Value = element.Di * Math.Pow(10, -1 * lengthOrder);
                                     ws.Cells[row, 8].Style.HorizontalAlignment = alignLeft;
                                     ws.Cells[row, 8].Style.Numberformat.Format = formatNum;
                                     break;
                                 case ElementType.beamPlus:
                                     ws.Cells[row, 3].Value = "L = ";
                                     ws.Cells[row, 3].Style.HorizontalAlignment = alignRight;
-                                    ws.Cells[row, 4].Value = element.L;
+                                    ws.Cells[row, 4].Value = element.L * Math.Pow(10, -1 * lengthOrder);
                                     ws.Cells[row, 4].Style.HorizontalAlignment = alignLeft;
                                     ws.Cells[row, 4].Style.Numberformat.Format = formatNum;
                                     ws.Cells[row, 5].Value = "De = ";
                                     ws.Cells[row, 5].Style.HorizontalAlignment = alignRight;
-                                    ws.Cells[row, 6].Value = element.De;
+                                    ws.Cells[row, 6].Value = element.De * Math.Pow(10, -1 * lengthOrder);
                                     ws.Cells[row, 6].Style.HorizontalAlignment = alignLeft;
                                     ws.Cells[row, 6].Style.Numberformat.Format = formatNum;
                                     ws.Cells[row, 7].Value = "Di = ";
                                     ws.Cells[row, 7].Style.HorizontalAlignment = alignRight;
-                                    ws.Cells[row, 8].Value = element.Di;
+                                    ws.Cells[row, 8].Value = element.Di * Math.Pow(10, -1 * lengthOrder);
                                     ws.Cells[row, 8].Style.HorizontalAlignment = alignLeft;
                                     ws.Cells[row, 8].Style.Numberformat.Format = formatNum;
                                     ws.Cells[++row, 2].Value = strings.HridelJeRozdelenaNa + " " + (element.Division + 1) + " " 
-                                        + strings.castiODelce + " " + string.Format("{0:#.###}", element.L / (element.Division + 1)) + " mm, " 
+                                        + strings.castiODelce + " " + String.Format("{0:#.###}", element.L * Math.Pow(10, -1 * lengthOrder) / (element.Division + 1)) + " mm, " 
                                         + strings.meziKterymiJsouUmistenyPrvkyDT;
                                     if (element.M > 0)
                                     {
@@ -597,7 +598,7 @@ namespace Kritik
                                 case ElementType.rigid:
                                     ws.Cells[row, 3].Value = "L = ";
                                     ws.Cells[row, 3].Style.HorizontalAlignment = alignRight;
-                                    ws.Cells[row, 4].Value = element.L;
+                                    ws.Cells[row, 4].Value = element.L * Math.Pow(10, -1 * lengthOrder);
                                     ws.Cells[row, 4].Style.HorizontalAlignment = alignLeft;
                                     ws.Cells[row, 4].Style.Numberformat.Format = formatNum;
                                     break;
