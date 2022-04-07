@@ -11,12 +11,12 @@ namespace Kritik
     /// Manages history of ObservableCollection given in constructor
     /// </summary>
     /// <typeparam name="T">Type of elements in ObservableCollection</typeparam>
-    public class CollectionHistory<T>
+    public class CollectionHistory<T> where T : ICloneable
     {
         private ObservableCollection<T> collection;
         private List<ObservableCollection<T>> history;
         private int position;
-        private const int maxHistoryCount = 33;
+        private const int maxHistoryCount = 50;
 
         /// <summary>
         /// Manages history of given ObservableCollection
@@ -37,7 +37,13 @@ namespace Kritik
             if (history.Count == maxHistoryCount)
                 history.RemoveAt(0);
 
-            history.Add(new ObservableCollection<T>(collection));
+            ObservableCollection<T> newCollection = new ObservableCollection<T>();
+            foreach (T item in collection)
+            {
+                newCollection.Add((T)item.Clone());
+            }
+
+            history.Add(newCollection);
             position = history.Count - 1;
         }
         /// <summary>

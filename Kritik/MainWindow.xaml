@@ -4,8 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:oxy="http://oxyplot.org/wpf"
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:Kritik"
-        xmlns:Data="clr-namespace:System.Data;assembly=System.Data.Common" x:Class="Kritik.MainWindow"
+        xmlns:Data="clr-namespace:System.Data;assembly=System.Data.Common"
+        x:Class="Kritik.MainWindow"
         mc:Ignorable="d"
         Height="800" Width="1200" MinHeight="640" MinWidth="1000"
         WindowStartupLocation="CenterScreen" WindowStyle="ThreeDBorderWindow"
@@ -19,6 +21,7 @@
         <local:FormatDefaultConverter x:Key="FormatDefaultConverter"/>
         <local:FormatSpacesConverter x:Key="FormatSpacesConverter"/>
         <local:FormatToIntConverter x:Key="FormatToIntConverter"/>
+        <local:EnumConverter x:Key="EnumConverter"/>
         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="SlateGray"/>
     </Window.Resources>
     <Window.DataContext>
@@ -66,7 +69,7 @@
                                         <RowDefinition Height="27" />
                                         <RowDefinition Height="6" />
                                         <RowDefinition Height="27"/>
-                                        <RowDefinition x:Name="vlivOtacekGridRow"/>
+                                        <RowDefinition />
                                         <RowDefinition Height="6" />
                                         <RowDefinition Height="21" />
                                         <RowDefinition Height="23" />
@@ -132,20 +135,20 @@
                                     <StackPanel Grid.Row="10" Grid.ColumnSpan="2" Orientation="Horizontal">
                                         <TextBlock Text="Levý konec:" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
                                         <ComboBox ItemsSource="{Binding BoundaryConditionsItems}" 
-                                                  SelectedValue="{Binding BoundaryConditionLeftComboBoxValue}"
+                                                  SelectedValue="{Binding Shaft.Properties.BCLeft, Converter={StaticResource EnumConverter}}"
                                                   Width="95" Margin="10, 0, 0, 5" VerticalAlignment="Center" />
                                     </StackPanel>
                                     <StackPanel Grid.Row="11" Grid.ColumnSpan="2" Orientation="Horizontal">
                                         <TextBlock Text="Pravý konec:" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
                                         <ComboBox ItemsSource="{Binding BoundaryConditionsItems}" 
-                                                  SelectedValue="{Binding BoundaryConditionRightComboBoxValue}"
+                                                  SelectedValue="{Binding Shaft.Properties.BCRight, Converter={StaticResource EnumConverter}}"
                                                   Width="95" Margin="5, 0, 0, 5" VerticalAlignment="Center" />
                                     </StackPanel>
                                     <Separator Grid.Row="12" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
                                     <StackPanel Grid.Row="13" Grid.ColumnSpan="2" Orientation="Horizontal">
                                         <TextBlock Margin="0, 0, 0, 5" VerticalAlignment="Center" Text="Gyroskopické účinky"/>
                                         <ComboBox ItemsSource="{Binding GyroscopicEffectsItems}" 
-                                                  SelectedValue="{Binding GyroscopicEffectComboBoxValue}" 
+                                                  SelectedValue="{Binding Shaft.Properties.Gyros, Converter={StaticResource EnumConverter}}" 
                                                   SelectionChanged="GyroscopicEffectComboBox_SelectionChanged"
                                                   Width="84" Margin="5, 0, 0, 5" VerticalAlignment="Center" />
                                         <Button x:Name="shaftRotationInfluenceExpandButton" 
@@ -155,7 +158,8 @@
                                             <Image Source="/icons/StepOverArrow_16x.png" Width="10" HorizontalAlignment="Center" Margin="0, 8, 0, 0"/>
                                         </Button>
                                     </StackPanel>
-                                    <StackPanel  Grid.Row="14" Grid.ColumnSpan="2" Orientation="Vertical" Margin="2, 2, 0, 0" Visibility="{Binding ShaftRotationInfluenceVisibility}">
+                                    <StackPanel  Grid.Row="14" Grid.ColumnSpan="2" Orientation="Vertical" Margin="2, 2, 0, 0" 
+                                                 Visibility="{Binding ShaftRotationInfluenceVisibility}">
                                         <CheckBox IsChecked="{Binding Shaft.Properties.ShaftRotationInfluence}"
                                                   IsEnabled="False"
                                                   Name="shaftRotationInfluenceCheckBox" 
@@ -330,13 +334,18 @@
                                       CanUserReorderColumns="False"
                                       CanUserSortColumns="False"
                                       CanUserResizeRows="False"
-                                      LoadingRow="DataGrid_LoadingRow"
-                                      AddingNewItem="TabulkaDataGrid_AddingNewItem"
-                                      RowEditEnding="TabulkaDataGrid_RowEditEnding"
-                                      CellEditEnding="TabulkaDataGrid_CellEditEnding"
-                                      SelectionChanged="TabulkaDataGrid_SelectionChanged"
+                                      LoadingRow="Table_LoadingRow"
+                                      AddingNewItem="Table_AddingNewItem"
                                       Grid.Row="1"
-                                      Name="TabulkaDataGrid" Margin="0,-2,0,2" CanUserResizeColumns="False" SelectionUnit="FullRow">
+                                      Name="Table" Margin="0,-2,0,2" CanUserResizeColumns="False" SelectionUnit="FullRow">
+                                <b:Interaction.Triggers>
+                                    <b:EventTrigger EventName="RowEditEnding">
+                                        <b:InvokeCommandAction Command="{Binding HistoryAddCommand}"/>
+                                    </b:EventTrigger>
+                                    <b:EventTrigger EventName="CellEditEnding">
+                                        <b:InvokeCommandAction Command="{Binding UpdateShaftSchemeCommand}"/>
+                                    </b:EventTrigger>
+                                </b:Interaction.Triggers>
                                 <DataGrid.ColumnHeaderStyle>
                                     <Style TargetType="DataGridColumnHeader">
                                         <Setter Property="ContentTemplate">
@@ -355,13 +364,12 @@
                                 <DataGrid.Columns>
                                     <DataGridComboBoxColumn Header="Typ prvku"
                                                             Width="*"
-                                                            ItemsSource="{Binding TypyList, UpdateSourceTrigger=PropertyChanged}"
-                                                            SelectedItemBinding="{Binding TypZobrazeny, UpdateSourceTrigger=PropertyChanged}"
+                                                            ItemsSource="{x:Static local:ShaftElementForDataGrid.ElementTypesItems}"
+                                                            SelectedItemBinding="{Binding Type, Converter={StaticResource EnumConverter}, UpdateSourceTrigger=PropertyChanged}"
                                                             x:Name="SloupecTyp">
                                         <DataGridComboBoxColumn.CellStyle>
                                             <Style TargetType="{x:Type DataGridCell}">
-                                                <EventSetter Event="MouseUp" Handler="DataGridCell_PreviewMouseLeftButtonDown" />
-                                                <EventSetter Event="LostMouseCapture" Handler="DataGridCell_LostMouseCapture"/>
+                                                <EventSetter Event="MouseUp" Handler="GridColumnFastEdit" />
                                                 <Style.Triggers>
                                                     <Trigger Property="IsFocused" Value="True">
                                                         <Setter Property="BorderBrush" Value="GhostWhite"/>
@@ -794,7 +802,7 @@
         </TabControl>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0, 5, 20, 0">
             <TextBlock Text="Jazyk výstupu:" Margin="0, 0, 5, 0" VerticalAlignment="Center"/>
-            <ComboBox Width="80" Height="23" ItemsSource="{Binding Strings.LanguageNames}" SelectedValue="{Binding Strings.SelectedLanguage}" />
+            <ComboBox Width="80" Height="23" ItemsSource="{Binding Strings.LanguageNames}" SelectedValue="{Binding Strings.SelectedLanguage, Converter={StaticResource EnumConverter}}" />
         </StackPanel>
 
     </Grid>

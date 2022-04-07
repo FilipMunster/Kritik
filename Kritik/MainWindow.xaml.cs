@@ -26,6 +26,7 @@ using OxyPlot.Series;
 using OxyPlot.Wpf;
 using System.Drawing;
 using Brushes = System.Windows.Media.Brushes;
+using Microsoft.Xaml.Behaviors;
 
 namespace Kritik
 {
@@ -120,259 +121,231 @@ namespace Kritik
 
         private void VykreslitHlavniGraf(string value)
         {
-            if (hridel.TvaryKmitu != null && hridel.TvaryKmitu.Length > 0)
-            {
-                plot1Border.BorderBrush = Brushes.Transparent;
-                plot2Border.BorderBrush = Brushes.Transparent;
-                plot3Border.BorderBrush = Brushes.Transparent;
-                plot4Border.BorderBrush = Brushes.Transparent;
+            //if (hridel.TvaryKmitu != null && hridel.TvaryKmitu.Length > 0)
+            //{
+            //    plot1Border.BorderBrush = Brushes.Transparent;
+            //    plot2Border.BorderBrush = Brushes.Transparent;
+            //    plot3Border.BorderBrush = Brushes.Transparent;
+            //    plot4Border.BorderBrush = Brushes.Transparent;
 
-                int id = Convert.ToInt32(cisloKritOtZobrazitTextBox.Text);
-                while (id > hridel.TvaryKmitu.Length) { id--; cisloKritOtZobrazitTextBox.Text = id.ToString(); }
-                id += - 1;
+            //    int id = Convert.ToInt32(cisloKritOtZobrazitTextBox.Text);
+            //    while (id > hridel.TvaryKmitu.Length) { id--; cisloKritOtZobrazitTextBox.Text = id.ToString(); }
+            //    id += - 1;
 
-                bool kreslitUzly = (bool)vykreslitUzlyCheckBox.IsChecked;
-                PlotModel plt = Plot.NewVelky();
-                switch (value)
-                {
-                    case "w":
-                    default:
-                        if (kreslitUzly) { plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].wUzly)); }
-                        plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].w));
-                        plot1Border.BorderBrush = Brushes.SteelBlue;
-                        break;
-                    case "phi":
-                        if (kreslitUzly) { plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].phiUzly)); }
-                        plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].phi));
-                        plot2Border.BorderBrush = Brushes.SteelBlue;
-                        break;
-                    case "m":
-                        if (kreslitUzly) { plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].mUzly)); }
-                        plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].m));
-                        plot3Border.BorderBrush = Brushes.SteelBlue;
-                        break;
-                    case "t":
-                        if (kreslitUzly) { plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].tUzly)); }
-                        plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].t));
-                        plot4Border.BorderBrush = Brushes.SteelBlue;
-                        break;
-                }
-                plt.Series.Add(Plot.NewOsa(hridel.TvaryKmitu[id].x));
-                hlavniPlot.Model = plt;
-                VykreslenyHlavniGraf = value;
-            }       
+            //    bool kreslitUzly = (bool)vykreslitUzlyCheckBox.IsChecked;
+            //    PlotModel plt = Plot.NewVelky();
+            //    switch (value)
+            //    {
+            //        case "w":
+            //        default:
+            //            if (kreslitUzly) { plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].wUzly)); }
+            //            plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].w));
+            //            plot1Border.BorderBrush = Brushes.SteelBlue;
+            //            break;
+            //        case "phi":
+            //            if (kreslitUzly) { plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].phiUzly)); }
+            //            plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].phi));
+            //            plot2Border.BorderBrush = Brushes.SteelBlue;
+            //            break;
+            //        case "m":
+            //            if (kreslitUzly) { plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].mUzly)); }
+            //            plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].m));
+            //            plot3Border.BorderBrush = Brushes.SteelBlue;
+            //            break;
+            //        case "t":
+            //            if (kreslitUzly) { plt.Series.Add(Plot.NewCircleLine(hridel.TvaryKmitu[id].xUzly, hridel.TvaryKmitu[id].tUzly)); }
+            //            plt.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].t));
+            //            plot4Border.BorderBrush = Brushes.SteelBlue;
+            //            break;
+            //    }
+            //    plt.Series.Add(Plot.NewOsa(hridel.TvaryKmitu[id].x));
+            //    hlavniPlot.Model = plt;
+            //    VykreslenyHlavniGraf = value;
+            //}       
         }
         private void VykreslitKmity()
         {
-            if (hridel.TvaryKmitu != null && hridel.TvaryKmitu.Length > 0)
-            {
-                int id = Convert.ToInt32(cisloKritOtZobrazitTextBox.Text);
-                while (id > hridel.TvaryKmitu.Length) { id--; cisloKritOtZobrazitTextBox.Text = id.ToString(); }
-                id += -1;
+            //if (hridel.TvaryKmitu != null && hridel.TvaryKmitu.Length > 0)
+            //{
+            //    int id = Convert.ToInt32(cisloKritOtZobrazitTextBox.Text);
+            //    while (id > hridel.TvaryKmitu.Length) { id--; cisloKritOtZobrazitTextBox.Text = id.ToString(); }
+            //    id += -1;
 
-                VykreslitHlavniGraf(VykreslenyHlavniGraf);
+            //    VykreslitHlavniGraf(VykreslenyHlavniGraf);
 
-                PlotModel plt1 = Plot.NewMaly();
-                plt1.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].w, OxyColors.Blue));
-                plt1.Series.Add(Plot.NewOsa(hridel.TvaryKmitu[id].x));
-                plotView1.Model = plt1;
-                PlotModel plt2 = Plot.NewMaly();
-                plt2.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].phi, OxyColors.Red));
-                plt2.Series.Add(Plot.NewOsa(hridel.TvaryKmitu[id].x));
-                plotView2.Model = plt2;
-                PlotModel plt3 = Plot.NewMaly();
-                plt3.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].m, OxyColors.Tan));
-                plt3.Series.Add(Plot.NewOsa(hridel.TvaryKmitu[id].x));
-                plotView3.Model = plt3;
-                PlotModel plt4 = Plot.NewMaly();
-                plt4.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].t, OxyColors.Plum));
-                plt4.Series.Add(Plot.NewOsa(hridel.TvaryKmitu[id].x));
-                plotView4.Model = plt4;
-            }
-            else
-            {
-                hlavniPlot.Model = Plot.NewVelky();
-                plotView1.Model = Plot.NewMaly();
-                plotView2.Model = Plot.NewMaly();
-                plotView3.Model = Plot.NewMaly();
-                plotView4.Model = Plot.NewMaly();
-            }
+            //    PlotModel plt1 = Plot.NewMaly();
+            //    plt1.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].w, OxyColors.Blue));
+            //    plt1.Series.Add(Plot.NewOsa(hridel.TvaryKmitu[id].x));
+            //    plotView1.Model = plt1;
+            //    PlotModel plt2 = Plot.NewMaly();
+            //    plt2.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].phi, OxyColors.Red));
+            //    plt2.Series.Add(Plot.NewOsa(hridel.TvaryKmitu[id].x));
+            //    plotView2.Model = plt2;
+            //    PlotModel plt3 = Plot.NewMaly();
+            //    plt3.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].m, OxyColors.Tan));
+            //    plt3.Series.Add(Plot.NewOsa(hridel.TvaryKmitu[id].x));
+            //    plotView3.Model = plt3;
+            //    PlotModel plt4 = Plot.NewMaly();
+            //    plt4.Series.Add(Plot.NewLine(hridel.TvaryKmitu[id].x, hridel.TvaryKmitu[id].t, OxyColors.Plum));
+            //    plt4.Series.Add(Plot.NewOsa(hridel.TvaryKmitu[id].x));
+            //    plotView4.Model = plt4;
+            //}
+            //else
+            //{
+            //    hlavniPlot.Model = Plot.NewVelky();
+            //    plotView1.Model = Plot.NewMaly();
+            //    plotView2.Model = Plot.NewMaly();
+            //    plotView3.Model = Plot.NewMaly();
+            //    plotView4.Model = Plot.NewMaly();
+            //}
         }
 
         private void newFileButton_Click(object sender, RoutedEventArgs e)
         {
-            hridel.HridelNova();
-            hridel.NazevSouboru = "Nový výpočet.xlsx";
-            HridelPouzitaKVypoctu = null;
-            hridel.AnyPropertyChanged = false;
-            NovySoubor = true;
-            Historie.New();
-            backBtn.IsEnabled = Historie.BackBtnEnabled;
-            forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
-            hridel.NotifyPropertyChanged("SchemaHridele");
-            VykreslitKmity();
-            return;
+            //hridel.HridelNova();
+            //hridel.NazevSouboru = "Nový výpočet.xlsx";
+            //HridelPouzitaKVypoctu = null;
+            //hridel.AnyPropertyChanged = false;
+            //NovySoubor = true;
+            //Historie.New();
+            //backBtn.IsEnabled = Historie.BackBtnEnabled;
+            //forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
+            //hridel.NotifyPropertyChanged("SchemaHridele");
+            //VykreslitKmity();
+            //return;
         }
 
         private void openFileButton_Click(object sender, RoutedEventArgs e)
         {
-            bool dragEvent = e.GetType().Name == "DragEventArgs";
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Zadání hřídele (*.xlsx)|*.xlsx";
-            if (dragEvent || openFileDialog.ShowDialog() == true)
-            {
-                hridel.HridelNova();
-                if (!dragEvent) hridel.NazevSouboru = openFileDialog.FileName;
-                HridelPouzitaKVypoctu = null;
-                NovySoubor = false;
-                bool ok = DataLoadSaveOld.NacistData(hridel.NazevSouboru, hridel);
-                if (!ok) { 
-                    MessageBox.Show("Soubor \"" + hridel.NazevSouboru + "\" se nepodařilo načíst.", "Chyba načítání souboru", MessageBoxButton.OK, MessageBoxImage.Error);
-                    hridel.NazevSouboru = "Nový výpočet.xlsx";
-                }
-                hridel.AnyPropertyChanged = false;
-                Historie.New();
-                backBtn.IsEnabled = Historie.BackBtnEnabled;
-                forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
-                hridel.NotifyPropertyChanged("SchemaHridele");
-                VykreslitKmity();
-            }
-            return;
+            //bool dragEvent = e.GetType().Name == "DragEventArgs";
+            //OpenFileDialog openFileDialog = new OpenFileDialog();
+            //openFileDialog.Filter = "Zadání hřídele (*.xlsx)|*.xlsx";
+            //if (dragEvent || openFileDialog.ShowDialog() == true)
+            //{
+            //    hridel.HridelNova();
+            //    if (!dragEvent) hridel.NazevSouboru = openFileDialog.FileName;
+            //    HridelPouzitaKVypoctu = null;
+            //    NovySoubor = false;
+            //    bool ok = DataLoadSaveOld.NacistData(hridel.NazevSouboru, hridel);
+            //    if (!ok) { 
+            //        MessageBox.Show("Soubor \"" + hridel.NazevSouboru + "\" se nepodařilo načíst.", "Chyba načítání souboru", MessageBoxButton.OK, MessageBoxImage.Error);
+            //        hridel.NazevSouboru = "Nový výpočet.xlsx";
+            //    }
+            //    hridel.AnyPropertyChanged = false;
+            //    Historie.New();
+            //    backBtn.IsEnabled = Historie.BackBtnEnabled;
+            //    forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
+            //    hridel.NotifyPropertyChanged("SchemaHridele");
+            //    VykreslitKmity();
+            //}
+            //return;
         }
 
         private void saveFileButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!NovySoubor)
-            {
-                bool ok1 = DataLoadSaveOld.UlozitVysledky(hridel.NazevSouboru, HridelPouzitaKVypoctu, new Strings(Strings.Language.cs));
-                bool ok2 = DataLoadSaveOld.UlozitData(hridel.NazevSouboru, hridel);                
-                if (!(ok1 && ok2)) { MessageBox.Show("Soubor \"" + hridel.NazevSouboru + "\" se nepodařilo uložit.", "Chyba ukládání souboru", MessageBoxButton.OK, MessageBoxImage.Error); }
-                else
-                {
-                    hridel.AnyPropertyChanged = false;
-                }                
-                return;
-            }
-            else { saveAsFileButton_Click(sender, e); }
+            //if (!NovySoubor)
+            //{
+            //    bool ok1 = DataLoadSaveOld.UlozitVysledky(hridel.NazevSouboru, HridelPouzitaKVypoctu, new Strings(Strings.Language.cs));
+            //    bool ok2 = DataLoadSaveOld.UlozitData(hridel.NazevSouboru, hridel);                
+            //    if (!(ok1 && ok2)) { MessageBox.Show("Soubor \"" + hridel.NazevSouboru + "\" se nepodařilo uložit.", "Chyba ukládání souboru", MessageBoxButton.OK, MessageBoxImage.Error); }
+            //    else
+            //    {
+            //        hridel.AnyPropertyChanged = false;
+            //    }                
+            //    return;
+            //}
+            //else { saveAsFileButton_Click(sender, e); }
 
         }
 
         private void saveAsFileButton_Click(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "Zadání hřídele (*.xlsx)|*.xlsx";
-            saveFileDialog.FileName = System.IO.Path.GetFileName(hridel.NazevSouboru);
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                hridel.NazevSouboru = saveFileDialog.FileName;
-                bool ok1 = DataLoadSaveOld.UlozitVysledky(hridel.NazevSouboru, HridelPouzitaKVypoctu, new Strings(Strings.Language.cs));
-                bool ok2 = DataLoadSaveOld.UlozitData(hridel.NazevSouboru, hridel);                
-                if (!(ok1 && ok2)) { MessageBox.Show("Soubor \"" + hridel.NazevSouboru + "\" se nepodařilo uložit.", "Chyba ukládání souboru", MessageBoxButton.OK, MessageBoxImage.Error); }
-                else
-                {
-                    hridel.AnyPropertyChanged = false;
-                    NovySoubor = false;
-                }
-                return;
-            }
+            //SaveFileDialog saveFileDialog = new SaveFileDialog();
+            //saveFileDialog.Filter = "Zadání hřídele (*.xlsx)|*.xlsx";
+            //saveFileDialog.FileName = System.IO.Path.GetFileName(hridel.NazevSouboru);
+            //if (saveFileDialog.ShowDialog() == true)
+            //{
+            //    hridel.NazevSouboru = saveFileDialog.FileName;
+            //    bool ok1 = DataLoadSaveOld.UlozitVysledky(hridel.NazevSouboru, HridelPouzitaKVypoctu, new Strings(Strings.Language.cs));
+            //    bool ok2 = DataLoadSaveOld.UlozitData(hridel.NazevSouboru, hridel);                
+            //    if (!(ok1 && ok2)) { MessageBox.Show("Soubor \"" + hridel.NazevSouboru + "\" se nepodařilo uložit.", "Chyba ukládání souboru", MessageBoxButton.OK, MessageBoxImage.Error); }
+            //    else
+            //    {
+            //        hridel.AnyPropertyChanged = false;
+            //        NovySoubor = false;
+            //    }
+            //    return;
+            //}
         }
 
         private async void vypocetKritOtButton_Click(object sender, RoutedEventArgs e)
         {
-            foreach (Hridel.PrvekTab p in hridel.PrvkyHrideleTab)
-            {
-                if (p.Typ == Hridel.beamPlusKeyword && p.Deleni < 1)
-                {
-                    int i = hridel.PrvkyHrideleTab.IndexOf(p);
-                    MessageBox.Show("Není zadán počet dělení prvku " + (i + 1) + ".", "Špatně zadaná hodnota", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-            }
+            //foreach (Hridel.PrvekTab p in hridel.PrvkyHrideleTab)
+            //{
+            //    if (p.Typ == Hridel.beamPlusKeyword && p.Deleni < 1)
+            //    {
+            //        int i = hridel.PrvkyHrideleTab.IndexOf(p);
+            //        MessageBox.Show("Není zadán počet dělení prvku " + (i + 1) + ".", "Špatně zadaná hodnota", MessageBoxButton.OK, MessageBoxImage.Error);
+            //        return;
+            //    }
+            //}
 
-            hridel.KritOt = new double[] { -1 };
-            await Task.Run(() => { VypocetKritickychOtacek(); });
-            ZkopirovatHridelPouzitouKVypoctu();
-            VykreslitKmity();
-            VytvorPopisekVypoctu();
-            EasterEgg();
+            //hridel.KritOt = new double[] { -1 };
+            //await Task.Run(() => { VypocetKritickychOtacek(); });
+            //ZkopirovatHridelPouzitouKVypoctu();
+            //VykreslitKmity();
+            //VytvorPopisekVypoctu();
+            //EasterEgg();
         }
 
         private void VypocetKritickychOtacek()
         {
-            hridel.VytvorPrvky();
-            hridel.KritOt = null;
-            hridel.KritOt2 = null;
+            //hridel.VytvorPrvky();
+            //hridel.KritOt = null;
+            //hridel.KritOt2 = null;
 
-            if (!hridel.VlivOtacekRotoruIsChecked)
-            {
-                hridel.KritOt = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
-                hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
-            }
-            else
-            {
-                if (hridel.VlivOtacekVlastniIsChecked)
-                {
-                    foreach (Hridel.Prvek prvek in hridel.PrvkyHridele)
-                    {
-                        prvek.RpmHridele = hridel.VlivOtacekRotoruVlastni;
-                    }
-                    hridel.KritOt = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
-                    hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
-                }
-                else
-                {
-                    if (hridel.OtackyProvozni > 0)
-                    {
-                        foreach (Hridel.Prvek prvek in hridel.PrvkyHridele)
-                        {
-                            prvek.RpmHridele = hridel.OtackyProvozni;
-                        }
-                        hridel.KritOt = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
-                        hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
-                    }
-                    if (hridel.OtackyPrubezne > 0)
-                    {
-                        foreach (Hridel.Prvek prvek in hridel.PrvkyHridele)
-                        {
-                            prvek.RpmHridele = hridel.OtackyPrubezne;
-                        }
-                        hridel.KritOt2 = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
-                        hridel.TvaryKmitu2 = Vypocet.TvaryKmitu(hridel);
-                    }
-                }
-            }
+            //if (!hridel.VlivOtacekRotoruIsChecked)
+            //{
+            //    hridel.KritOt = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
+            //    hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
+            //}
+            //else
+            //{
+            //    if (hridel.VlivOtacekVlastniIsChecked)
+            //    {
+            //        foreach (Hridel.Prvek prvek in hridel.PrvkyHridele)
+            //        {
+            //            prvek.RpmHridele = hridel.VlivOtacekRotoruVlastni;
+            //        }
+            //        hridel.KritOt = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
+            //        hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
+            //    }
+            //    else
+            //    {
+            //        if (hridel.OtackyProvozni > 0)
+            //        {
+            //            foreach (Hridel.Prvek prvek in hridel.PrvkyHridele)
+            //            {
+            //                prvek.RpmHridele = hridel.OtackyProvozni;
+            //            }
+            //            hridel.KritOt = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
+            //            hridel.TvaryKmitu = Vypocet.TvaryKmitu(hridel);
+            //        }
+            //        if (hridel.OtackyPrubezne > 0)
+            //        {
+            //            foreach (Hridel.Prvek prvek in hridel.PrvkyHridele)
+            //            {
+            //                prvek.RpmHridele = hridel.OtackyPrubezne;
+            //            }
+            //            hridel.KritOt2 = Vypocet.KritickeOtacky(hridel, hridel.NKritMax);
+            //            hridel.TvaryKmitu2 = Vypocet.TvaryKmitu(hridel);
+            //        }
+            //    }
+            //}
             
         }
 
-        private void DataGridCell_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            var cell = sender as DataGridCell;
-            GridColumnFastEdit(cell, e);
-        }
 
-        /// <summary>
-        /// Funkce pro rozbalení Comboboxu v datgridu hned po kliknutí
-        /// </summary>
-        private void GridColumnFastEdit(DataGridCell cell, RoutedEventArgs e)
-        {
-            if (cell == null || cell.IsEditing || cell.IsReadOnly)
-                return;
-
-            var dataGrid = TabulkaDataGrid;
-            if (dataGrid == null)
-                return;
-
-            if (!cell.IsFocused)
-            {
-                cell.Focus();
-            }
-
-            var cb = cell.Content as ComboBox;
-            if (cb == null) return;
-            TabulkaDataGrid.BeginEdit(e);
-            cell.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
-            cb.IsDropDownOpen = true;
-        }
 
 
 
@@ -380,241 +353,232 @@ namespace Kritik
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void cisloPrvkuHridelPlusComboBox_DropDownOpened(object sender, EventArgs e)
         {
-            ((ComboBox)sender).ItemsSource = hridel.IndexyHrideliPlus;
-            NotifyPropertyChanged("IndexyHrideliPlus");
+            //((ComboBox)sender).ItemsSource = hridel.IndexyHrideliPlus;
+            //NotifyPropertyChanged("IndexyHrideliPlus");
         }
         private void cisloPrvkuHridelPlusComboBox_DropDownClosed(object sender, EventArgs e)
         {
-            int id;
-            if (((ComboBox)sender).HasItems)
-            {
-                if (((ComboBox)sender).SelectedValue != null)
-                {
-                    id = (int)((ComboBox)sender).SelectedValue;
-                    TabulkaDataGrid.SelectedItem = hridel.PrvkyHrideleTab[id - 1];
-                }
+            //int id;
+            //if (((ComboBox)sender).HasItems)
+            //{
+            //    if (((ComboBox)sender).SelectedValue != null)
+            //    {
+            //        id = (int)((ComboBox)sender).SelectedValue;
+            //        Table.SelectedItem = hridel.PrvkyHrideleTab[id - 1];
+            //    }
 
-                TabulkaDataGrid.Focus();
-                return;
-            }
+            //    Table.Focus();
+            //    return;
+            //}
         }
 
         private void HridelPlus_MenuChanged()
         {
-            Hridel.PrvekTab r = hridel.OznacenyRadek;
-            if (r != null && r.Typ == Hridel.beamPlusKeyword)
-            {
-                double val;
-                double deleni;
-                double hodnota;
-                try { deleni = Convert.ToDouble(deleniHridelPlusTextBox.Text); } catch { deleni = 1; }
-                try { hodnota = Convert.ToDouble(idNTextBox.Text); } catch { hodnota = 0; }
+            //Hridel.PrvekTab r = hridel.OznacenyRadek;
+            //if (r != null && r.Typ == Hridel.beamPlusKeyword)
+            //{
+            //    double val;
+            //    double deleni;
+            //    double hodnota;
+            //    try { deleni = Convert.ToDouble(deleniHridelPlusTextBox.Text); } catch { deleni = 1; }
+            //    try { hodnota = Convert.ToDouble(idNTextBox.Text); } catch { hodnota = 0; }
 
-                switch (r.IdN)
-                {
-                    case 0:
-                        val = r.Id / deleni * hodnota;
-                        break;
-                    case 1:
-                        val = hodnota; ;
-                        break;
-                    default:
-                        val = 0;
-                        break;
-                }
-                idNHodnotaTextBlock.Text = "(Jdᵢ = " + val.ToString("0.###") + " kg.m²)";
-                hridel.AnyPropertyChanged = true;
-            }
-            else { idNHodnotaTextBlock.Text = "(Jdᵢ =  . . .  kg.m²)"; }
+            //    switch (r.IdN)
+            //    {
+            //        case 0:
+            //            val = r.Id / deleni * hodnota;
+            //            break;
+            //        case 1:
+            //            val = hodnota; ;
+            //            break;
+            //        default:
+            //            val = 0;
+            //            break;
+            //    }
+            //    idNHodnotaTextBlock.Text = "(Jdᵢ = " + val.ToString("0.###") + " kg.m²)";
+            //    hridel.AnyPropertyChanged = true;
+            //}
+            //else { idNHodnotaTextBlock.Text = "(Jdᵢ =  . . .  kg.m²)"; }
         }
 
         private void deleniHridelPlusTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            HridelPlus_MenuChanged();
+            //HridelPlus_MenuChanged();
         }
 
         private void cisloPrvkuHridelPlusComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            HridelPlus_MenuChanged();
+            //HridelPlus_MenuChanged();
         }
 
         private void IdNZpusobComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            HridelPlus_MenuChanged();
+            //HridelPlus_MenuChanged();
         }
 
         private void idNTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            HridelPlus_MenuChanged();
+            //HridelPlus_MenuChanged();
         }
 
 
-        private void TabulkaDataGrid_AddingNewItem(object sender, AddingNewItemEventArgs e)
-        {
-            //e.NewItem = new Hridel.PrvekTab
-            //{
-            //    Typ = Hridel.beamKeyword
-            //};
-            //TabulkaDataGrid.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
-            //HistorieAdd();
-        }
 
         private void addRowBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (hridel.OznacenyRadek != null)
-            {
-                int indx = hridel.PrvkyHrideleTab.IndexOf(hridel.OznacenyRadek);
-                hridel.PrvkyHrideleTab.Insert(indx, new Hridel.PrvekTab() { Typ = Hridel.beamKeyword });
-                TabulkaDataGrid.Focus();
-                TabulkaDataGrid.SelectedIndex = indx;
-                TabulkaDataGrid.Items.Refresh();
-            }
-            HistorieAdd();
+            //if (hridel.OznacenyRadek != null)
+            //{
+            //    int indx = hridel.PrvkyHrideleTab.IndexOf(hridel.OznacenyRadek);
+            //    hridel.PrvkyHrideleTab.Insert(indx, new Hridel.PrvekTab() { Typ = Hridel.beamKeyword });
+            //    Table.Focus();
+            //    Table.SelectedIndex = indx;
+            //    Table.Items.Refresh();
+            //}
+            //HistorieAdd();
         }
 
         private void deleteRowBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (hridel.OznacenyRadek != null)
-            {
-                int indx = hridel.PrvkyHrideleTab.IndexOf(hridel.OznacenyRadek);
-                hridel.PrvkyHrideleTab.RemoveAt(indx);
-                TabulkaDataGrid.Focus();
-                if (hridel.PrvkyHrideleTab.Count() == indx) { indx--; }
-                TabulkaDataGrid.SelectedIndex = indx;
-                TabulkaDataGrid.Items.Refresh();
-            }
-            HistorieAdd();
+            //if (hridel.OznacenyRadek != null)
+            //{
+            //    int indx = hridel.PrvkyHrideleTab.IndexOf(hridel.OznacenyRadek);
+            //    hridel.PrvkyHrideleTab.RemoveAt(indx);
+            //    Table.Focus();
+            //    if (hridel.PrvkyHrideleTab.Count() == indx) { indx--; }
+            //    Table.SelectedIndex = indx;
+            //    Table.Items.Refresh();
+            //}
+            //HistorieAdd();
         }
 
         private void moveUpBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (hridel.OznacenyRadek != null)
-            {
-                int indx = hridel.PrvkyHrideleTab.IndexOf(hridel.OznacenyRadek);
-                if (indx > 0) { hridel.PrvkyHrideleTab.Move(indx, indx - 1); }
-                TabulkaDataGrid.Focus();
-                TabulkaDataGrid.Items.Refresh();
-            }
-            HistorieAdd();
+            //if (hridel.OznacenyRadek != null)
+            //{
+            //    int indx = hridel.PrvkyHrideleTab.IndexOf(hridel.OznacenyRadek);
+            //    if (indx > 0) { hridel.PrvkyHrideleTab.Move(indx, indx - 1); }
+            //    Table.Focus();
+            //    Table.Items.Refresh();
+            //}
+            //HistorieAdd();
         }
 
         private void moveDownBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (hridel.OznacenyRadek != null)
-            {
-                int indx = hridel.PrvkyHrideleTab.IndexOf(hridel.OznacenyRadek);
-                int tabLen = hridel.PrvkyHrideleTab.Count();
-                if (indx < (tabLen - 1)) { hridel.PrvkyHrideleTab.Move(indx, indx + 1); }
-                TabulkaDataGrid.Focus();
-                TabulkaDataGrid.Items.Refresh();
-            }
-            HistorieAdd();
+            //if (hridel.OznacenyRadek != null)
+            //{
+            //    int indx = hridel.PrvkyHrideleTab.IndexOf(hridel.OznacenyRadek);
+            //    int tabLen = hridel.PrvkyHrideleTab.Count();
+            //    if (indx < (tabLen - 1)) { hridel.PrvkyHrideleTab.Move(indx, indx + 1); }
+            //    Table.Focus();
+            //    Table.Items.Refresh();
+            //}
+            //HistorieAdd();
         }
 
         private void mirrorBtn_Click(object sender, RoutedEventArgs e)
         {
-            ObservableCollection<Hridel.PrvekTab> p = hridel.PrvkyHrideleTab;
-            for (int i = p.Count() - 1; i >= 0; i--)
-            {
-                p.Add(new Hridel.PrvekTab
-                {
-                    Typ = p[i].Typ,
-                    L = p[i].L,
-                    De = p[i].De,
-                    Di = p[i].Di,
-                    M = p[i].M,
-                    Io = p[i].Io,
-                    Id = p[i].Id,
-                    K = p[i].K,
-                    Cm = p[i].Cm,
-                    Deleni = p[i].Deleni,
-                    IdN = p[i].IdN,
-                    IdNValue = p[i].IdNValue
-                });
-            }
-            hridel.PrvkyHrideleTab = p;
-            HistorieAdd();
+            //ObservableCollection<Hridel.PrvekTab> p = hridel.PrvkyHrideleTab;
+            //for (int i = p.Count() - 1; i >= 0; i--)
+            //{
+            //    p.Add(new Hridel.PrvekTab
+            //    {
+            //        Typ = p[i].Typ,
+            //        L = p[i].L,
+            //        De = p[i].De,
+            //        Di = p[i].Di,
+            //        M = p[i].M,
+            //        Io = p[i].Io,
+            //        Id = p[i].Id,
+            //        K = p[i].K,
+            //        Cm = p[i].Cm,
+            //        Deleni = p[i].Deleni,
+            //        IdN = p[i].IdN,
+            //        IdNValue = p[i].IdNValue
+            //    });
+            //}
+            //hridel.PrvkyHrideleTab = p;
+            //HistorieAdd();
         }
 
-        private void TabulkaDataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+        private void Table_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
             //HistorieAdd();
         }
 
         private void backBtn_Click(object sender, RoutedEventArgs e)
         {
-            Historie.Back();
-            backBtn.IsEnabled = Historie.BackBtnEnabled;
-            forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
-            hridel.NotifyPropertyChanged("SchemaHridele");
-            TabulkaDataGrid.Focus();            
+            //Historie.Back();
+            //backBtn.IsEnabled = Historie.BackBtnEnabled;
+            //forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
+            //hridel.NotifyPropertyChanged("SchemaHridele");
+            //Table.Focus();            
         }
         private void forwardBtn_Click(object sender, RoutedEventArgs e)
         {
-            Historie.Forward();
-            backBtn.IsEnabled = Historie.BackBtnEnabled;
-            forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
-            TabulkaDataGrid.Items.Refresh();
-            hridel.NotifyPropertyChanged("SchemaHridele");
-            TabulkaDataGrid.Focus();
+            //Historie.Forward();
+            //backBtn.IsEnabled = Historie.BackBtnEnabled;
+            //forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
+            //Table.Items.Refresh();
+            //hridel.NotifyPropertyChanged("SchemaHridele");
+            //Table.Focus();
         }
 
         private void deleteAllBtn_Click(object sender, RoutedEventArgs e)
         {
-            hridel.PrvkyHrideleTab.Clear();
-            HistorieAdd();
+            //hridel.PrvkyHrideleTab.Clear();
+            //HistorieAdd();
         }
 
         private void HistorieAdd()
         {
-            Historie.Add();
-            backBtn.IsEnabled = Historie.BackBtnEnabled;
-            forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
-            hridel.NotifyPropertyChanged("SchemaHridele");
-            TabulkaDataGrid.Focus();
+            //Historie.Add();
+            //backBtn.IsEnabled = Historie.BackBtnEnabled;
+            //forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
+            //hridel.NotifyPropertyChanged("SchemaHridele");
+            //Table.Focus();
         }
 
         private void plotView1_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            VykreslitHlavniGraf("w");
-            VytvorPopisekVypoctu();
+            //VykreslitHlavniGraf("w");
+            //VytvorPopisekVypoctu();
         }
 
         private void plotView2_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            VykreslitHlavniGraf("phi");
-            VytvorPopisekVypoctu();
+            //VykreslitHlavniGraf("phi");
+            //VytvorPopisekVypoctu();
         }
 
         private void plotView3_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            VykreslitHlavniGraf("m");
-            VytvorPopisekVypoctu();
+            //VykreslitHlavniGraf("m");
+            //VytvorPopisekVypoctu();
         }
 
         private void plotView4_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            VykreslitHlavniGraf("t");
-            VytvorPopisekVypoctu();
+            //VykreslitHlavniGraf("t");
+            //VytvorPopisekVypoctu();
         }
 
         private void CisloKritOtUpButton_Click(object sender, RoutedEventArgs e)
         {
-            int c = Convert.ToInt32(cisloKritOtZobrazitTextBox.Text);
-            if (hridel.TvaryKmitu != null && c < hridel.TvaryKmitu.Length) { cisloKritOtZobrazitTextBox.Text = (c + 1).ToString(); VykreslitKmity(); VytvorPopisekVypoctu(); }
+            //int c = Convert.ToInt32(cisloKritOtZobrazitTextBox.Text);
+            //if (hridel.TvaryKmitu != null && c < hridel.TvaryKmitu.Length) { cisloKritOtZobrazitTextBox.Text = (c + 1).ToString(); VykreslitKmity(); VytvorPopisekVypoctu(); }
         }
         private void CisloKritOtDownButton_Click(object sender, RoutedEventArgs e)
         {
-            int c = Convert.ToInt32(cisloKritOtZobrazitTextBox.Text);
-            if (hridel.TvaryKmitu != null && c > 1) { cisloKritOtZobrazitTextBox.Text = (c - 1).ToString(); VykreslitKmity(); VytvorPopisekVypoctu(); }
+            //int c = Convert.ToInt32(cisloKritOtZobrazitTextBox.Text);
+            //if (hridel.TvaryKmitu != null && c > 1) { cisloKritOtZobrazitTextBox.Text = (c - 1).ToString(); VykreslitKmity(); VytvorPopisekVypoctu(); }
         }
 
-        private void TabulkaDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        private void Table_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
             //hridel.NotifyPropertyChanged("SchemaHridele");
         }
@@ -624,49 +588,49 @@ namespace Kritik
             //hridel.NotifyPropertyChanged("SchemaHridele");
         }
 
-        private void TabulkaDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Table_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
         }
 
         private void TabItem1_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            vypocetKritOtButton_Click(null, null);
-            VykreslitKmity();
-            schemaHridele2.Model = Plot.SchemaHridele(hridel.PrvkyHrideleTab, null, schemaHridele2.ActualWidth);
+            //vypocetKritOtButton_Click(null, null);
+            //VykreslitKmity();
+            //schemaHridele2.Model = Plot.SchemaHridele(hridel.PrvkyHrideleTab, null, schemaHridele2.ActualWidth);
         }
 
         private void schemaHridele_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (deleniHridelPlusTextBox.IsEnabled) { hridel.HridelPlusDeleni = deleniHridelPlusTextBox.Text; }
-            OxyPlot.ElementCollection<OxyPlot.Axes.Axis> axisList = schemaHridele.Model.Axes;
-            OxyPlot.Axes.Axis xAxis = axisList.FirstOrDefault(ax => ax.Position == OxyPlot.Axes.AxisPosition.Bottom);
-            OxyPlot.Axes.Axis yAxis = axisList.FirstOrDefault(ax => ax.Position == OxyPlot.Axes.AxisPosition.Left);
-            var pos = e.GetPosition(schemaHridele);
-            OxyPlot.ScreenPoint screenPoint = new ScreenPoint(pos.X, pos.Y);
-            DataPoint pozice = OxyPlot.Axes.Axis.InverseTransform(screenPoint, xAxis, yAxis);
+            //if (deleniHridelPlusTextBox.IsEnabled) { hridel.HridelPlusDeleni = deleniHridelPlusTextBox.Text; }
+            //OxyPlot.ElementCollection<OxyPlot.Axes.Axis> axisList = schemaHridele.Model.Axes;
+            //OxyPlot.Axes.Axis xAxis = axisList.FirstOrDefault(ax => ax.Position == OxyPlot.Axes.AxisPosition.Bottom);
+            //OxyPlot.Axes.Axis yAxis = axisList.FirstOrDefault(ax => ax.Position == OxyPlot.Axes.AxisPosition.Left);
+            //var pos = e.GetPosition(schemaHridele);
+            //OxyPlot.ScreenPoint screenPoint = new ScreenPoint(pos.X, pos.Y);
+            //DataPoint pozice = OxyPlot.Axes.Axis.InverseTransform(screenPoint, xAxis, yAxis);
 
-            List<double> xovePozice = new List<double> { 0 };
-            foreach (Hridel.PrvekTab p in hridel.PrvkyHrideleTab) { xovePozice.Add(xovePozice.Last() + p.L); }
-            int i = -1;
-            for (int j = 0; j < (xovePozice.Count - 1); j++)
-            {
-                if (pozice.X > xovePozice[j] && pozice.X < xovePozice[j+1]) { i = j; break; }
-            }
-            if (i >= 0 && (Math.Abs(pozice.Y) < Math.Abs(hridel.PrvkyHrideleTab[i].De / 2) 
-                || (hridel.PrvkyHrideleTab[i].Typ == Hridel.rigidKeyword && Math.Abs(pozice.Y) < Math.Abs(Plot.dTuhy / 2))))
-            {
-                TabulkaDataGrid.SelectedItem = hridel.PrvkyHrideleTab[i];
-                TabulkaDataGrid.ScrollIntoView(TabulkaDataGrid.SelectedItem);
-            }
+            //List<double> xovePozice = new List<double> { 0 };
+            //foreach (Hridel.PrvekTab p in hridel.PrvkyHrideleTab) { xovePozice.Add(xovePozice.Last() + p.L); }
+            //int i = -1;
+            //for (int j = 0; j < (xovePozice.Count - 1); j++)
+            //{
+            //    if (pozice.X > xovePozice[j] && pozice.X < xovePozice[j+1]) { i = j; break; }
+            //}
+            //if (i >= 0 && (Math.Abs(pozice.Y) < Math.Abs(hridel.PrvkyHrideleTab[i].De / 2) 
+            //    || (hridel.PrvkyHrideleTab[i].Typ == Hridel.rigidKeyword && Math.Abs(pozice.Y) < Math.Abs(Plot.dTuhy / 2))))
+            //{
+            //    Table.SelectedItem = hridel.PrvkyHrideleTab[i];
+            //    Table.ScrollIntoView(Table.SelectedItem);
+            //}
         }
 
         public void DiskPruzinaMouseDown(object s, OxyPlot.OxyMouseDownEventArgs e)
         {
-            OxyPlot.Series.LineSeries line = (OxyPlot.Series.LineSeries)s;
-            int i = (int)line.Tag;
-            TabulkaDataGrid.SelectedItem = hridel.PrvkyHrideleTab[i];
-            TabulkaDataGrid.ScrollIntoView(TabulkaDataGrid.SelectedItem);
+            //OxyPlot.Series.LineSeries line = (OxyPlot.Series.LineSeries)s;
+            //int i = (int)line.Tag;
+            //Table.SelectedItem = hridel.PrvkyHrideleTab[i];
+            //Table.ScrollIntoView(Table.SelectedItem);
         }
 
         public void VytvorPopisekVypoctu()
@@ -721,108 +685,108 @@ namespace Kritik
 
         private void ulozitTvarKmituButton_Click(object sender, RoutedEventArgs e)
         {
-            hridel.AnyPropertyChanged = true;
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "Obrázek PNG (*.png)|*.png";
-            string path = System.IO.Path.GetDirectoryName(hridel.NazevSouboru);
-            string fname = System.IO.Path.GetFileNameWithoutExtension(hridel.NazevSouboru);
-            string tvar;
-            switch (VykreslenyHlavniGraf)
-            {
-                case "w":
-                case "phi":
-                    tvar = VykreslenyHlavniGraf;
-                    break;
-                case "m":
-                case "t":
-                    tvar = VykreslenyHlavniGraf.ToUpper();
-                    break;
-                default:
-                    tvar = "";
-                    break;
-            }
+            //hridel.AnyPropertyChanged = true;
+            //SaveFileDialog saveFileDialog = new SaveFileDialog();
+            //saveFileDialog.Filter = "Obrázek PNG (*.png)|*.png";
+            //string path = System.IO.Path.GetDirectoryName(hridel.NazevSouboru);
+            //string fname = System.IO.Path.GetFileNameWithoutExtension(hridel.NazevSouboru);
+            //string tvar;
+            //switch (VykreslenyHlavniGraf)
+            //{
+            //    case "w":
+            //    case "phi":
+            //        tvar = VykreslenyHlavniGraf;
+            //        break;
+            //    case "m":
+            //    case "t":
+            //        tvar = VykreslenyHlavniGraf.ToUpper();
+            //        break;
+            //    default:
+            //        tvar = "";
+            //        break;
+            //}
 
-            saveFileDialog.FileName = System.IO.Path.GetFileName(path + "\\" + fname + "_" + tvar + ".png");
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                ModelyDoPNG obrazek = new ModelyDoPNG();
-                int vyskaSchematu = Convert.ToInt32(Math.Round(0.22 * obrazek.Sirka));
-                int vyskaGrafu = Convert.ToInt32(Math.Round(0.4 * obrazek.Sirka));
-                int vyskaPopisu = 240;
+            //saveFileDialog.FileName = System.IO.Path.GetFileName(path + "\\" + fname + "_" + tvar + ".png");
+            //if (saveFileDialog.ShowDialog() == true)
+            //{
+            //    ModelyDoPNG obrazek = new ModelyDoPNG();
+            //    int vyskaSchematu = Convert.ToInt32(Math.Round(0.22 * obrazek.Sirka));
+            //    int vyskaGrafu = Convert.ToInt32(Math.Round(0.4 * obrazek.Sirka));
+            //    int vyskaPopisu = 240;
 
-                if (vykreslitSchemaCheckBox.IsChecked == true) { obrazek.Pridat(schemaHridele2.Model, vyskaSchematu); }
-                if (vykreslitGrafCheckBox.IsChecked == true) { obrazek.Pridat(hlavniPlot.Model, vyskaGrafu); }
-                if (vykreslitPopisekCheckBox.IsChecked == true) 
-                {
-                    PlotModel popisekModel = Plot.ModelFromString(popisVypoctuTextBlock.Text, 4, 0, 15);
-                    obrazek.Pridat(popisekModel, vyskaPopisu); 
-                }
-                obrazek.Ulozit(saveFileDialog.FileName);
-                hridel.AnyPropertyChanged = false;
-                return;
-            }
+            //    if (vykreslitSchemaCheckBox.IsChecked == true) { obrazek.Pridat(schemaHridele2.Model, vyskaSchematu); }
+            //    if (vykreslitGrafCheckBox.IsChecked == true) { obrazek.Pridat(hlavniPlot.Model, vyskaGrafu); }
+            //    if (vykreslitPopisekCheckBox.IsChecked == true) 
+            //    {
+            //        PlotModel popisekModel = Plot.ModelFromString(popisVypoctuTextBlock.Text, 4, 0, 15);
+            //        obrazek.Pridat(popisekModel, vyskaPopisu); 
+            //    }
+            //    obrazek.Ulozit(saveFileDialog.FileName);
+            //    hridel.AnyPropertyChanged = false;
+            //    return;
+            //}
         }
 
         private void ZkopirovatHridelPouzitouKVypoctu()
         {
-            HridelPouzitaKVypoctu = new Hridel()
-            {
-                VypocetNazev = hridel.VypocetNazev,
-                VypocetPopis = hridel.VypocetPopis,
-                VypocetResil = hridel.VypocetResil,
-                VypocetDatum = hridel.VypocetDatum,
-                OpLeva = hridel.OpLeva,
-                OpPrava = hridel.OpPrava,
-                ModulPruznosti = hridel.ModulPruznosti,
-                Rho = hridel.Rho,
-                Gyros = hridel.Gyros,
-                VlivOtacekRotoruIsChecked = hridel.VlivOtacekRotoruIsChecked,
-                VlivOtacekVlastniIsChecked = hridel.VlivOtacekVlastniIsChecked,
-                VlivOtacekRotoruVlastni = hridel.VlivOtacekRotoruVlastni,
-                OtackyProvozni = hridel.OtackyProvozni,
-                OtackyPrubezne = hridel.OtackyPrubezne,
-                Poznamka = hridel.Poznamka,
-            };
+            //HridelPouzitaKVypoctu = new Hridel()
+            //{
+            //    VypocetNazev = hridel.VypocetNazev,
+            //    VypocetPopis = hridel.VypocetPopis,
+            //    VypocetResil = hridel.VypocetResil,
+            //    VypocetDatum = hridel.VypocetDatum,
+            //    OpLeva = hridel.OpLeva,
+            //    OpPrava = hridel.OpPrava,
+            //    ModulPruznosti = hridel.ModulPruznosti,
+            //    Rho = hridel.Rho,
+            //    Gyros = hridel.Gyros,
+            //    VlivOtacekRotoruIsChecked = hridel.VlivOtacekRotoruIsChecked,
+            //    VlivOtacekVlastniIsChecked = hridel.VlivOtacekVlastniIsChecked,
+            //    VlivOtacekRotoruVlastni = hridel.VlivOtacekRotoruVlastni,
+            //    OtackyProvozni = hridel.OtackyProvozni,
+            //    OtackyPrubezne = hridel.OtackyPrubezne,
+            //    Poznamka = hridel.Poznamka,
+            //};
 
-            if (hridel.KritOt != null)
-            {
-                HridelPouzitaKVypoctu.KritOt = new double[hridel.KritOt.Length];
-                hridel.KritOt.CopyTo(HridelPouzitaKVypoctu.KritOt, 0);
-            }
+            //if (hridel.KritOt != null)
+            //{
+            //    HridelPouzitaKVypoctu.KritOt = new double[hridel.KritOt.Length];
+            //    hridel.KritOt.CopyTo(HridelPouzitaKVypoctu.KritOt, 0);
+            //}
 
-            if (hridel.KritOt2 != null)
-            {
-                HridelPouzitaKVypoctu.KritOt2 = new double[hridel.KritOt2.Length];
-                hridel.KritOt2.CopyTo(HridelPouzitaKVypoctu.KritOt2, 0);
-            }
+            //if (hridel.KritOt2 != null)
+            //{
+            //    HridelPouzitaKVypoctu.KritOt2 = new double[hridel.KritOt2.Length];
+            //    hridel.KritOt2.CopyTo(HridelPouzitaKVypoctu.KritOt2, 0);
+            //}
 
-            HridelPouzitaKVypoctu.PrvkyHrideleTab = new ObservableCollection<Hridel.PrvekTab>();
-            foreach (Hridel.PrvekTab p in hridel.PrvkyHrideleTab)
-            {
-                HridelPouzitaKVypoctu.PrvkyHrideleTab.Add(new Hridel.PrvekTab()
-                {
-                    Typ = p.Typ,
-                    L = p.L,
-                    De = p.De,
-                    Di = p.Di,
-                    M = p.M,
-                    Io = p.Io,
-                    Id = p.Id,
-                    K = p.K,
-                    Cm = p.Cm,
-                    Deleni = p.Deleni,
-                    IdN = p.IdN,
-                    IdNValue = p.IdNValue
-                });
-            }
+            //HridelPouzitaKVypoctu.PrvkyHrideleTab = new ObservableCollection<Hridel.PrvekTab>();
+            //foreach (Hridel.PrvekTab p in hridel.PrvkyHrideleTab)
+            //{
+            //    HridelPouzitaKVypoctu.PrvkyHrideleTab.Add(new Hridel.PrvekTab()
+            //    {
+            //        Typ = p.Typ,
+            //        L = p.L,
+            //        De = p.De,
+            //        Di = p.Di,
+            //        M = p.M,
+            //        Io = p.Io,
+            //        Id = p.Id,
+            //        K = p.K,
+            //        Cm = p.Cm,
+            //        Deleni = p.Deleni,
+            //        IdN = p.IdN,
+            //        IdNValue = p.IdNValue
+            //    });
+            //}
         }
 
 
 
         private void kritOtTextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            TextBox s = (TextBox)sender;
-            s.SelectAll();
+            //TextBox s = (TextBox)sender;
+            //s.SelectAll();
         }
 
         private void EasterEgg()
@@ -833,16 +797,16 @@ namespace Kritik
             //    BitmapImage image = new BitmapImage(uri);
             //    ImageBrush ib = new ImageBrush();
             //    ib.ImageSource = image;
-            //    TabulkaDataGrid.Background = ib;
-            //    TabulkaDataGrid.RowBackground = Brushes.Transparent;
-            //    TabulkaDataGrid.AlternatingRowBackground = Brushes.Transparent;
+            //    Table.Background = ib;
+            //    Table.RowBackground = Brushes.Transparent;
+            //    Table.AlternatingRowBackground = Brushes.Transparent;
             //}
         }
 
         private void vykreslitUzlyCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            VykreslitHlavniGraf(VykreslenyHlavniGraf);
-            Properties.Settings.Default.drawNodes = (bool)((CheckBox)sender).IsChecked;
+            //VykreslitHlavniGraf(VykreslenyHlavniGraf);
+            //Properties.Settings.Default.drawNodes = (bool)((CheckBox)sender).IsChecked;
         }
         /// <summary>
         /// Naplní combobox výběru jazyků hodnotami
@@ -870,17 +834,17 @@ namespace Kritik
 
         private void vykreslitSchemaCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.drawScheme = (bool)((CheckBox)sender).IsChecked;
+            //Properties.Settings.Default.drawScheme = (bool)((CheckBox)sender).IsChecked;
         }
 
         private void vykreslitGrafCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.drawShape = (bool)((CheckBox)sender).IsChecked;
+            //Properties.Settings.Default.drawShape = (bool)((CheckBox)sender).IsChecked;
         }
 
         private void vykreslitPopisekCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.drawDescription = (bool)((CheckBox)sender).IsChecked;
+            //Properties.Settings.Default.drawDescription = (bool)((CheckBox)sender).IsChecked;
         }
         private void NacistNastaveni()
         {
@@ -893,21 +857,21 @@ namespace Kritik
 
         private void deleniHridelPlusTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            hridel.NotifyPropertyChanged("SchemaHridele");
+            //hridel.NotifyPropertyChanged("SchemaHridele");
         }
 
-        private void HlavniOkno_Drop(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                if (files[0].EndsWith(".xlsx"))
-                {
-                    hridel.NazevSouboru = files[0];
-                    openFileButton_Click(sender, e);
-                }
-            }
-        }
+        //private void HlavniOkno_Drop(object sender, DragEventArgs e)
+        //{
+        //    if (e.Data.GetDataPresent(DataFormats.FileDrop))
+        //    {
+        //        string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+        //        if (files[0].EndsWith(".xlsx"))
+        //        {
+        //            hridel.NazevSouboru = files[0];
+        //            openFileButton_Click(sender, e);
+        //        }
+        //    }
+        //}
 
         private void vlivOtacekRotoruCheckBox_Click(object sender, RoutedEventArgs e)
         {
@@ -982,8 +946,11 @@ namespace Kritik
                 };
             }
         }
-
-        void DataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
+        private void Table_AddingNewItem(object sender, AddingNewItemEventArgs e)
+        {
+            _ = Table.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
+        }
+        void Table_LoadingRow(object sender, DataGridRowEventArgs e)
         {
             e.Row.Header = (e.Row.GetIndex() + 1).ToString();
         }
@@ -997,8 +964,8 @@ namespace Kritik
                 try
                 {
                     DataGridColumn col = newCell.Column;
-                    Hridel.PrvekTab prvek = (Hridel.PrvekTab)newCell.DataContext;
-                    bool isCellEditable = prvek.IsEditableArray[col.DisplayIndex];
+                    ShaftElementForDataGrid element = (ShaftElementForDataGrid)newCell.DataContext;
+                    bool isCellEditable = element.IsEditableArray[col.DisplayIndex];
 
                     if (!isCellEditable)
                     {
@@ -1006,11 +973,39 @@ namespace Kritik
                         var direction = isNext ? FocusNavigationDirection.Next : FocusNavigationDirection.Previous;
                         newCell.MoveFocus(new TraversalRequest(direction));
                         e.Handled = true;
-                        hridel.OznacenyRadek = prvek;
+                        ((MainViewModel)this.DataContext).Shaft.SelectedItem = element;
                     }
                 }
                 catch { }
             }
         }
+
+        /// <summary>
+        /// Funkce pro rozbalení Comboboxu v datgridu hned po kliknutí
+        /// </summary>
+        private void GridColumnFastEdit(object sender, MouseButtonEventArgs e)
+        {
+            DataGridCell cell = (DataGridCell)sender;
+            if (cell == null || cell.IsEditing || cell.IsReadOnly)
+                return;
+
+            var dataGrid = Table;
+            if (dataGrid == null)
+                return;
+
+            if (!cell.IsFocused)
+            {
+                cell.Focus();
+            }
+
+            var cb = cell.Content as ComboBox;
+            if (cb == null) return;
+            Table.BeginEdit(e);
+            cell.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
+            cb.IsDropDownOpen = true;
+        }
+
+
+
     }
 }

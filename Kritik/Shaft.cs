@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Kritik
 {
-    public class Shaft : INotifyPropertyChanged
+    public class Shaft : INotifyPropertyChanged, ICloneable
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
@@ -128,7 +128,7 @@ namespace Kritik
         {
             for (int i = Elements.Count - 1; i >=0; i--)
             {
-                Elements.Add((ShaftElementForDataGrid)Elements[i].Copy());
+                Elements.Add((ShaftElementForDataGrid)Elements[i].Clone());
             }
         }
 
@@ -138,17 +138,6 @@ namespace Kritik
         public void RemoveAllElements()
         {
             Elements.Clear();
-        }
-
-        /// <summary>
-        /// Returns deep copy of the object
-        /// </summary>
-        public Shaft Copy()
-        {
-            Shaft shaft = (Shaft)this.MemberwiseClone();
-            shaft.Properties = this.Properties.Copy();
-            shaft.Elements = new ObservableCollection<ShaftElementForDataGrid>(this.Elements);
-            return shaft;
         }
 
         /// <summary>
@@ -234,6 +223,21 @@ namespace Kritik
         public OscillationShape[] GetOscillationShapes(double[] criticalSpeeds)
         {
             return Computation.OscillationShapes(GetElementsWithMatrix(), Properties.BCLeft, Properties.BCRight, criticalSpeeds);
+        }
+
+        public object Clone()
+        {
+            Shaft newShaft = (Shaft)this.MemberwiseClone();
+            
+            newShaft.Elements = new ObservableCollection<ShaftElementForDataGrid>();
+            foreach (ShaftElementForDataGrid element in this.Elements)
+            {
+                newShaft.Elements.Add((ShaftElementForDataGrid)element.Clone());
+            }
+
+            newShaft.Properties = (ShaftProperties)this.Properties.Clone();
+            newShaft.SelectedItem = null;
+            return (object)newShaft;
         }
     }
 }

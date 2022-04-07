@@ -69,6 +69,8 @@ namespace Kritik
                 if (Int32.TryParse(parameter as string, out exponent))
                 {
                     double val = (double)value * Math.Pow(10, -1 * exponent);
+                    if (val == 0)
+                        return "0";
                     return String.Format("{0:#.############}", val);
                 }
             }
@@ -133,6 +135,27 @@ namespace Kritik
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value;
+        }
+    }
+    /// <summary>
+    /// Converts Enum to string and vice versa using Enum Description
+    /// </summary>
+    public class EnumConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return ((Enum)value).GetDescription();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            Array enumValues = Enum.GetValues(targetType);
+            foreach (Enum enumValue in enumValues)
+            {
+                if (enumValue.GetDescription() == (string)value)
+                    return enumValue;
+            }
+            return null;
         }
     }
 

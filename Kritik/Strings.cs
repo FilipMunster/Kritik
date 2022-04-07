@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -12,38 +13,37 @@ namespace Kritik
     /// </summary>
     public class Strings
     {
-        private static string[] languageNames = { "čeština", "angličtina" };
-        private Language selectedLanguage;
-
+        private Dictionary<string, string> dictionary;
         public Strings(Language language)
         {
-            SetLanguage(language);
+            SelectedLanguage = language;
         }
 
         public enum Language
         {
+            [Description("čeština")]
             cs,
+            [Description("angličtina")]
             en
         }
         
-        public string[] LanguageNames => languageNames;
-        public string SelectedLanguage
+        public string[] LanguageNames => Enums.GetNames<Language>();
+        private Language selectedLanguage;
+        public Language SelectedLanguage
         {
-            get => LanguageNameEnumToString[selectedLanguage];
-            set { SetLanguage(LanguageNameStringToEnum[value]); }
-        }
-
-        public void SetLanguage(Language lang)
-        {
-            selectedLanguage = lang;
-            switch (lang)
+            get => selectedLanguage;
+            set
             {
-                case Language.cs:
-                    dict = cs;
-                    break;
-                case Language.en:
-                    dict = en;
-                    break;
+                selectedLanguage = value;
+                switch (value)
+                {
+                    case Language.cs:
+                        dictionary = czech;
+                        break;
+                    case Language.en:
+                        dictionary = english;
+                        break;
+                }
             }
         }
 
@@ -58,23 +58,8 @@ namespace Kritik
         }
         #endregion
 
-        #region Enum<->String Dictionaries
-        private readonly Dictionary<Language, string> LanguageNameEnumToString = new Dictionary<Language, string>
-        {
-            {Language.cs, languageNames[0] },
-            {Language.en, languageNames[1] }
-        };
-        private readonly Dictionary<string, Language> LanguageNameStringToEnum = new Dictionary<string, Language>
-        {
-            {languageNames[0], Language.cs },
-            {languageNames[1], Language.en }
-        };
-
-        private Dictionary<string, string> dict = cs;
-        #endregion
-
         #region Dictionary for Czech
-        private static Dictionary<string, string> cs = new Dictionary<string, string>
+        private static Dictionary<string, string> czech = new Dictionary<string, string>
         {
             {nameof(kritickeOtacky), "kritické otáčky" },
             {nameof(PruhybHridele), "Průhyb hřídele"},
@@ -123,7 +108,7 @@ namespace Kritik
         #endregion
 
         #region Dictionary for English
-        private static Dictionary<string, string> en = new Dictionary<string, string>
+        private static Dictionary<string, string> english = new Dictionary<string, string>
         {
             {nameof(kritickeOtacky), "critical speed" },
             {nameof(PruhybHridele), "Shaft deflection"},
@@ -172,50 +157,50 @@ namespace Kritik
         #endregion
 
         #region Properties and methods returning strings according to language set in SelectedLanguage
-        public string kritickeOtacky => dict[This()];
-        public string PruhybHridele => dict[This()];
-        public string NatoceniHridele => dict[This()];
-        public string OhybovyMoment => dict[This()];
-        public string PosouvajiciSila => dict[This()];
-        public string VlivGyrosNeniUvazovan => dict[This()];
-        public string SoubeznaPrecese => dict[This()];
-        public string ProtibeznaPrecese => dict[This()];
-        public string KritickeOtackykrouzivehoKmitani => dict[This()];
-        public string NazevDT => dict[This()];
-        public string PopisDT => dict[This()];
-        public string ResilDT => dict[This()];
-        public string DatumDT => dict[This()];
-        public string OkrajovePodminkyDT => dict[This()];
-        public string LEVYKonecRotoru => dict[This()];
-        public string PRAVYKonecRotoru => dict[This()];
-        public string VOLNY => dict[This()];
-        public string KLOUB => dict[This()];
-        public string VETKNUTI => dict[This()];
-        public string ModulPruznostiVTahuHrideleDT => dict[This()];
-        public string HustotaMaterialuHrideleDT => dict[This()];
-        public string VLIVGYROSNENIUVAZOVAN => dict[This()];
-        public string SOUBEZNAPRECESE => dict[This()];
-        public string PROTIBEZNAPRECESE => dict[This()];
-        public string ProvozniOtackyHrideleDT => dict[This()];
-        public string PrubezneOtackyHrideleDT => dict[This()];
-        public string PoznamkyKVypoctuDT => dict[This()];
-        public string VypocteneHodnotyDT => dict[This()];
-        public string odpovidajiDT => dict[This()];
-        public string provoznichOtacek => dict[This()];
-        public string prubeznychOtacek => dict[This()];
-        public string GeometrieHrideleDT => dict[This()];
-        public string HridelJeRozdelenaNa => dict[This()];
-        public string castiODelce => dict[This()];
-        public string meziKterymiJsouUmistenyPrvkyDT => dict[This()];
-        public string NebylyVypoctenyZadneKritickeOtacky => dict[This()];
-        public string VypocetNebylDosudProveden => dict[This()];
+        public string kritickeOtacky => dictionary[This()];
+        public string PruhybHridele => dictionary[This()];
+        public string NatoceniHridele => dictionary[This()];
+        public string OhybovyMoment => dictionary[This()];
+        public string PosouvajiciSila => dictionary[This()];
+        public string VlivGyrosNeniUvazovan => dictionary[This()];
+        public string SoubeznaPrecese => dictionary[This()];
+        public string ProtibeznaPrecese => dictionary[This()];
+        public string KritickeOtackykrouzivehoKmitani => dictionary[This()];
+        public string NazevDT => dictionary[This()];
+        public string PopisDT => dictionary[This()];
+        public string ResilDT => dictionary[This()];
+        public string DatumDT => dictionary[This()];
+        public string OkrajovePodminkyDT => dictionary[This()];
+        public string LEVYKonecRotoru => dictionary[This()];
+        public string PRAVYKonecRotoru => dictionary[This()];
+        public string VOLNY => dictionary[This()];
+        public string KLOUB => dictionary[This()];
+        public string VETKNUTI => dictionary[This()];
+        public string ModulPruznostiVTahuHrideleDT => dictionary[This()];
+        public string HustotaMaterialuHrideleDT => dictionary[This()];
+        public string VLIVGYROSNENIUVAZOVAN => dictionary[This()];
+        public string SOUBEZNAPRECESE => dictionary[This()];
+        public string PROTIBEZNAPRECESE => dictionary[This()];
+        public string ProvozniOtackyHrideleDT => dictionary[This()];
+        public string PrubezneOtackyHrideleDT => dictionary[This()];
+        public string PoznamkyKVypoctuDT => dictionary[This()];
+        public string VypocteneHodnotyDT => dictionary[This()];
+        public string odpovidajiDT => dictionary[This()];
+        public string provoznichOtacek => dictionary[This()];
+        public string prubeznychOtacek => dictionary[This()];
+        public string GeometrieHrideleDT => dictionary[This()];
+        public string HridelJeRozdelenaNa => dictionary[This()];
+        public string castiODelce => dictionary[This()];
+        public string meziKterymiJsouUmistenyPrvkyDT => dictionary[This()];
+        public string NebylyVypoctenyZadneKritickeOtacky => dictionary[This()];
+        public string VypocetNebylDosudProveden => dictionary[This()];
 
         /// <summary>
         /// Converts <see cref="ElementType"/> enum to string according to language set in <see cref="SelectedLanguage"/>
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public string Type(ElementType type) { return dict[type.ToString()]; }
+        public string Type(ElementType type) { return dictionary[type.ToString()]; }
 
         /// <summary>
         /// Returns string with ordinal number of given int according to language set in <see cref="SelectedLanguage"/>

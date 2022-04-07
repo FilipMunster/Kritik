@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Kritik
 {
-    public class CalculationProperties : INotifyPropertyChanged
+    public class CalculationProperties : INotifyPropertyChanged, ICloneable
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
@@ -74,12 +74,9 @@ namespace Kritik
             Date = DateTime.Today.ToShortDateString();
         }
 
-        /// <summary>
-        /// Returns deep copy of the object
-        /// </summary>
-        public CalculationProperties Copy()
+        public object Clone()
         {
-            return (CalculationProperties)this.MemberwiseClone();
+            return this.MemberwiseClone();
         }
     }
 }

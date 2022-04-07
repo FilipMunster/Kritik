@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Kritik
 {
-    public class ShaftProperties : INotifyPropertyChanged
+    public class ShaftProperties : INotifyPropertyChanged, ICloneable
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
@@ -130,12 +130,10 @@ namespace Kritik
             RunawaySpeed = 0;
             MaxCriticalSpeed = 5000;
         }
-        /// <summary>
-        /// Returns deep copy of the object
-        /// </summary>
-        public ShaftProperties Copy()
+
+        public object Clone()
         {
-            return (ShaftProperties)this.MemberwiseClone();
+            return this.MemberwiseClone();
         }
     }
 }

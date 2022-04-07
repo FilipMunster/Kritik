@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Kritik
 {
-    public class KritikResults : INotifyPropertyChanged
+    public partial class KritikCalculation : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
