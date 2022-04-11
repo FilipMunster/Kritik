@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -31,16 +32,16 @@ namespace Kritik
                 NotifyPropertyChanged();
             }
         }
-        private ShaftElementForDataGrid selectedItem;
-        public ShaftElementForDataGrid SelectedItem
-        {
-            get => selectedItem;
-            set
-            {
-                selectedItem = value;
-                NotifyPropertyChanged();
-            }
-        }
+        //private ShaftElementForDataGrid selectedItem;
+        //public ShaftElementForDataGrid SelectedItem
+        //{
+        //    get => selectedItem;
+        //    set
+        //    {
+        //        selectedItem = value;
+        //        NotifyPropertyChanged();
+        //    }
+        //}
         private ShaftProperties properties;
         public ShaftProperties Properties
         {
@@ -78,32 +79,32 @@ namespace Kritik
         /// <summary>
         /// Inserts new element to shaft at selected row index. If no row is selected, the element is added at the end of the collection.
         /// </summary>
-        public void AddElement()
+        public void AddElement(ShaftElementForDataGrid selectedElement)
         {
-            if (SelectedItem is not null)
-                Elements.Insert(Elements.IndexOf(SelectedItem), new ShaftElementForDataGrid());
+            if (selectedElement is not null)
+                Elements.Insert(Elements.IndexOf(selectedElement), new ShaftElementForDataGrid());
             else
                 Elements.Add(new ShaftElementForDataGrid());
         }
         /// <summary>
         /// Removes selected element from the collection
         /// </summary>
-        public void RemoveSelectedElement()
+        public void RemoveSelectedElement(ShaftElementForDataGrid selectedElement)
         {
-            if (SelectedItem is null)
+            if (selectedElement is null)
                 return;
 
-            Elements.Remove(SelectedItem);
+            Elements.Remove(selectedElement);
         }
         /// <summary>
         /// Moves selected element one row up.
         /// </summary>
-        public void MoveElementUp()
+        public void MoveElementUp(ShaftElementForDataGrid selectedElement)
         {
-            if (SelectedItem is null)
+            if (selectedElement is null)
                 return;
 
-            int selectedItemIndex = Elements.IndexOf(SelectedItem);
+            int selectedItemIndex = Elements.IndexOf(selectedElement);
             if (selectedItemIndex > 0)
                 Elements.Move(selectedItemIndex, selectedItemIndex - 1);
         }
@@ -111,12 +112,12 @@ namespace Kritik
         /// <summary>
         /// Moves selected element one row down.
         /// </summary>
-        public void MoveElementDown()
+        public void MoveElementDown(ShaftElementForDataGrid selectedElement)
         {
-            if (SelectedItem is null)
+            if (selectedElement is null)
                 return;
 
-            int selectedItemIndex = Elements.IndexOf(SelectedItem);
+            int selectedItemIndex = Elements.IndexOf(selectedElement);
             if (selectedItemIndex < (Elements.Count - 1))
                 Elements.Move(selectedItemIndex, selectedItemIndex + 1);
         }
@@ -144,7 +145,7 @@ namespace Kritik
         /// Transforms collection of Shaft Elements to List of ElementsWithMatrix
         /// </summary>
         /// <returns>List of Shaft Elements With Matrix</returns>
-        private List<ShaftElementWithMatrix> GetElementsWithMatrix()
+        public List<ShaftElementWithMatrix> GetElementsWithMatrix()
         {
             List<ShaftElementWithMatrix> elementsWithMatrix = new List<ShaftElementWithMatrix>();
             foreach (var element in Elements)
@@ -201,29 +202,6 @@ namespace Kritik
             }
             return elementsWithMatrix;
         }
-        /// <summary>
-        /// Computes critical speeds of the shaft
-        /// </summary>
-        /// <returns>Array of computed critical speeds</returns>
-        public double[] GetCriticalSpeeds()
-        {
-            return Compute().Result;
-
-            async Task<double[]> Compute()
-            {
-                return await Task.Run(() => Computation.CriticalSpeed(GetElementsWithMatrix(),
-                    Properties.BCLeft, Properties.BCRight, Properties.MaxCriticalSpeed));
-            }
-        }
-        /// <summary>
-        /// Computes the oscillation shapes of the shaft
-        /// </summary>
-        /// <param name="criticalSpeeds">Array of critical speeds for which the Oscillation shapes are computed</param>
-        /// <returns>Array of oscillation shapes</returns>
-        public OscillationShape[] GetOscillationShapes(double[] criticalSpeeds)
-        {
-            return Computation.OscillationShapes(GetElementsWithMatrix(), Properties.BCLeft, Properties.BCRight, criticalSpeeds);
-        }
 
         public object Clone()
         {
@@ -236,7 +214,6 @@ namespace Kritik
             }
 
             newShaft.Properties = (ShaftProperties)this.Properties.Clone();
-            newShaft.SelectedItem = null;
             return (object)newShaft;
         }
     }

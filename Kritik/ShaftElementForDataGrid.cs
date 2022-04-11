@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Kritik
 {
@@ -13,7 +15,7 @@ namespace Kritik
     /// </summary>
     public class ShaftElementForDataGrid : ShaftElement, INotifyPropertyChanged, ICloneable
     {
-        private string[] isEditableNames = {
+        private static readonly string[] isEditableNames = {
             nameof(IsEditableL),
             nameof(IsEditableDe),
             nameof(IsEditableDi),
@@ -74,11 +76,27 @@ namespace Kritik
             set
             {
                 type = value;
+                base.Type = value;
                 foreach (string property in isEditableNames)
                 {
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
                 }
-
+            }
+        }
+        private int division;
+        public new int Division
+        {
+            get => division > 0 ? division : 1;
+            set
+            {
+                if (value < 1)
+                {
+                    MessageBox.Show("Hodnota dělení nesmí být menší než 1.", "Špatně zadaná hodnota", 
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                division = value;
+                base.Division = value;
             }
         }
 

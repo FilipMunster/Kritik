@@ -783,11 +783,7 @@ namespace Kritik
 
 
 
-        private void kritOtTextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            //TextBox s = (TextBox)sender;
-            //s.SelectAll();
-        }
+
 
         private void EasterEgg()
         {
@@ -899,26 +895,17 @@ namespace Kritik
         {
             Properties.Settings.Default.Save();
         }
-        private void TextBoxSelectContent(object sender, KeyboardFocusChangedEventArgs e)
+        private void TextBoxSelectContentByKeyboard(object sender, KeyboardFocusChangedEventArgs e)
         {
             TextBox s = (TextBox)sender;
             s.SelectAll();
         }
-        private void GyroscopicEffectComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void TextBoxSelectContentByMouse(object sender, MouseButtonEventArgs e)
         {
-            if (shaftRotationInfluenceCheckBox is null)
-                return;
-
-            if (((ComboBox)sender).SelectedIndex == 0)
-            {
-                shaftRotationInfluenceCheckBox.IsChecked = false;
-                shaftRotationInfluenceCheckBox.IsEnabled = false;
-            }
-            else
-            {
-                shaftRotationInfluenceCheckBox.IsEnabled = true; ;
-            }
+            TextBox s = (TextBox)sender;
+            s.SelectAll();
         }
+
         private void shaftRotationInfluenceExpandButton_Click(object sender, RoutedEventArgs e)
         {
             Button s = (Button)sender;
@@ -961,22 +948,21 @@ namespace Kritik
         {
             if (e.OldFocus is DataGridCell oldCell && sender is DataGridCell newCell)
             {
-                try
-                {
-                    DataGridColumn col = newCell.Column;
-                    ShaftElementForDataGrid element = (ShaftElementForDataGrid)newCell.DataContext;
-                    bool isCellEditable = element.IsEditableArray[col.DisplayIndex];
+                if (newCell.DataContext.GetType().Name == "NamedObject")
+                    return;
 
-                    if (!isCellEditable)
-                    {
-                        var isNext = oldCell.Column.DisplayIndex < newCell.Column.DisplayIndex;
-                        var direction = isNext ? FocusNavigationDirection.Next : FocusNavigationDirection.Previous;
-                        newCell.MoveFocus(new TraversalRequest(direction));
-                        e.Handled = true;
-                        ((MainViewModel)this.DataContext).Shaft.SelectedItem = element;
-                    }
+                DataGridColumn col = newCell.Column;
+                ShaftElementForDataGrid element = (ShaftElementForDataGrid)newCell.DataContext;
+                bool isCellEditable = element.IsEditableArray[col.DisplayIndex];
+
+                if (!isCellEditable)
+                {
+                    var isNext = oldCell.Column.DisplayIndex < newCell.Column.DisplayIndex;
+                    var direction = isNext ? FocusNavigationDirection.Next : FocusNavigationDirection.Previous;
+                    newCell.MoveFocus(new TraversalRequest(direction));
+                    e.Handled = true;
+                    ((MainViewModel)this.DataContext).ShaftElementSelected = element;
                 }
-                catch { }
             }
         }
 

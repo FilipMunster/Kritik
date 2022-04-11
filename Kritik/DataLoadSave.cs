@@ -222,6 +222,8 @@ namespace Kritik
                             if (!elementTypeStringToEnum.TryGetValue(excel.Cells[i, 1].Value.ToString(), out ElementType type))
                                 return null;
 
+                            int division = Convert.ToInt32(excel.Cells[i, 10].Value);
+
                             shaftElements.Add(new ShaftElement(type)
                             {
                                 L = Convert.ToDouble(excel.Cells[i, 2].Value) * Math.Pow(10, lengthOrder),
@@ -232,7 +234,7 @@ namespace Kritik
                                 Id = Convert.ToDouble(excel.Cells[i, 7].Value),
                                 K = Convert.ToDouble(excel.Cells[i, 8].Value),
                                 Cm = Convert.ToDouble(excel.Cells[i, 9].Value),
-                                Division = Convert.ToDouble(excel.Cells[i, 10].Value),
+                                Division = division > 0 ? division : 1,
                                 IdN = Convert.ToInt32(excel.Cells[i, 11].Value),
                                 IdNValue = Convert.ToDouble(excel.Cells[i, 12].Value)
                             });
@@ -374,7 +376,7 @@ namespace Kritik
         /// <param name="results">Kritik results</param>
         /// <param name="strings">Instance of strings class</param>
         /// <returns></returns>
-        public static bool SaveResults(string fileName, ShaftProperties shaftProperties, CalculationProperties calculationProperties, List<ShaftElement> shaftElements, KritikResults results, Strings strings)
+        public static bool SaveResults(string fileName, ShaftProperties shaftProperties, CalculationProperties calculationProperties, List<ShaftElement> shaftElements, KritikCalculation results, Strings strings)
         {
             Dictionary<BoundaryCondition, string> opVypsatDict = new()
             {

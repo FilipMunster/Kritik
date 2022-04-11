@@ -44,6 +44,8 @@ namespace Kritik
             {
                 gyros = value;
                 NotifyPropertyChanged();
+                if (value == GyroscopicEffect.none)
+                    ShaftRotationInfluence = false;
             }
         }
         private bool shaftRotationInfluence;

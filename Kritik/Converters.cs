@@ -159,4 +159,18 @@ namespace Kritik
         }
     }
 
+    public class NewDataGridItemConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (targetType == typeof(ShaftElementForDataGrid))
+                return new ShaftElementForDataGrid();
+            return value;
+        }
+    }
 }

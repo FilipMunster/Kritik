@@ -11,7 +11,6 @@ using OxyPlot;
 using System.Windows;
 using Microsoft.Win32;
 using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace Kritik
 {
@@ -36,6 +35,7 @@ namespace Kritik
         {
             NotifyPropertyChanged(sender.GetType().Name);
         }
+
         private bool anyPropertyChanged;
         /// <summary>
         /// Reflects if any property has changed since file was saved
@@ -76,18 +76,29 @@ namespace Kritik
                 shaft = value; 
                 NotifyPropertyChanged();
                 shaft.PropertyChanged += new PropertyChangedEventHandler(NotifySenderPropertyChanged);
+                BeamPlusControlsUpdate();
+            }
+        }
+        private ShaftElementForDataGrid shaftElementSelected;
+        public ShaftElementForDataGrid ShaftElementSelected
+        {
+            get => shaftElementSelected;
+            set
+            {
+                shaftElementSelected = value;
+                BeamPlusControlsUpdate();
             }
         }
 
-        private KritikResults kritikResults;
-        public KritikResults KritikResults
+        private KritikCalculation kritikCalculation;
+        public KritikCalculation KritikCalculation
         {
-            get => kritikResults;
+            get => kritikCalculation;
             set 
             {
-                kritikResults = value; 
+                kritikCalculation = value; 
                 NotifyPropertyChanged();
-                kritikResults.PropertyChanged += new PropertyChangedEventHandler(NotifySenderPropertyChanged);
+                kritikCalculation.PropertyChanged += new PropertyChangedEventHandler(NotifySenderPropertyChanged);
             }
         }
         public PlotModel ShaftScheme { get; set; }
@@ -130,6 +141,7 @@ namespace Kritik
 
         public string ShaftRotationInfluenceVisibility => shaftRotationInfluenceControlsAreVisible ? "visible" : "collapsed";
         public ShaftRotationInfluenceOption ShaftRotationInfluenceSelectedOption { get; set; }
+
         private double shaftRotationInfluenceCustomValue;
         public double ShaftRotationInfluenceCustomValue
         {
@@ -158,6 +170,80 @@ namespace Kritik
                 ShaftRPMUpdate();
             }
         }
+
+        #region BeamPlus Controls properties
+        /// <summary>
+        /// True of selected item in datagrid is <see cref="ElementType.beamPlus"/>
+        /// </summary>
+        public bool BeamPlusElementIsSelected => ShaftElementSelected?.Type == ElementType.beamPlus;
+        /// <summary>
+        /// Array of beamPlus elements numbers - 1-based indexing
+        /// </summary>
+        public List<int> BeamPlusComboBoxItems
+        {
+            get
+            {
+                List<int> numbers = new List<int>();
+                for (int i = 0; i < Shaft.Elements.Count; i++)
+                {
+                    if (Shaft.Elements[i].Type == ElementType.beamPlus)
+                        numbers.Add(i + 1);
+                }
+                return numbers;
+            }
+        }
+        public int BeamPlusComboBoxSelectedItem
+        {
+            get
+            {
+                if (ShaftElementSelected is null || ShaftElementSelected.Type != ElementType.beamPlus)
+                    return -1;
+
+                return Shaft.Elements.IndexOf(ShaftElementSelected) + 1;
+            }
+            set
+            {
+                ShaftElementSelected = Shaft.Elements[value - 1];
+                NotifyPropertyChanged(nameof(ShaftElementSelected));
+            }
+        }
+        public int BeamPlusDivision
+        {
+            get => ShaftElementSelected?.Type == ElementType.beamPlus ? ShaftElementSelected.Division : 0;
+            set { ShaftElementSelected.Division = value; NotifyPropertyChanged(nameof(BeamPlusText)); }
+        }
+        public int BeamPlusIdN
+        {
+            get => ShaftElementSelected?.Type == ElementType.beamPlus ? ShaftElementSelected.IdN : 0;
+            set { ShaftElementSelected.IdN = value; NotifyPropertyChanged(nameof(BeamPlusText)); }
+        }
+        public double BeamPlusIdNValue
+        {
+            get => ShaftElementSelected?.Type == ElementType.beamPlus ? ShaftElementSelected.IdNValue : 0;
+            set { ShaftElementSelected.IdNValue = value; NotifyPropertyChanged(nameof(BeamPlusText)); }
+        }
+        public string BeamPlusText
+        {
+            get
+            {
+                ShaftElementForDataGrid element = ShaftElementSelected;
+                if (element is null || element.Type != ElementType.beamPlus)
+                    return "(Jdᵢ =  . . . kg.m²)";
+                double value = 0;
+                switch (element.IdN)
+                {
+                    case 0:
+                        value = element.Id / element.Division * element.IdNValue;
+                        break;
+                    case 1:
+                        value = element.IdNValue;
+                        break;
+                }
+                return "(Jdᵢ = " + value.ToString("0.###") + " kg.m²)";
+            }
+        }
+        #endregion
+
         #endregion
 
         #region Commands
@@ -172,39 +258,53 @@ namespace Kritik
         private ICommand fillTodayCommand;
         public ICommand FillTodayCommand => fillTodayCommand ??=
             new CommandHandler(() => CalculationProperties.Date = DateTime.Today.ToShortDateString(), () => true);
-        private ICommand shaftRotationOptionCommand;
-        public ICommand ShaftRotationOptionCommand => shaftRotationOptionCommand ??=
+
+        #region Rotation Influence Commands
+        private ICommand shaftRotationInfluenceCheckBoxCommand;
+        public ICommand ShaftRotationInfluenceCheckBoxCommand => shaftRotationInfluenceCheckBoxCommand ??=
+            new CommandHandler(() => ShaftRPMUpdate(), () => Shaft.Properties.Gyros != GyroscopicEffect.none);
+        private ICommand shaftRotationOptionChangedCommand;
+        public ICommand ShaftRotationOptionChangedCommand => shaftRotationOptionChangedCommand ??=
             new RelayCommand<ShaftRotationInfluenceOption>(
                 (e) => { ShaftRotationInfluenceSelectedOption = e; ShaftRPMUpdate(); },
                 (e) => Shaft.Properties.ShaftRotationInfluence);
+
         private ICommand shaftRotationInfluenceVisibilityCommand;
         public ICommand ShaftRotationInfluenceVisibilityCommand => shaftRotationInfluenceVisibilityCommand ??=
             new CommandHandler(
                 () => { shaftRotationInfluenceControlsAreVisible = !shaftRotationInfluenceControlsAreVisible; NotifyPropertyChanged(nameof(ShaftRotationInfluenceVisibility)); }, 
                 () => true);
+        #endregion
+
         private ICommand historyAddCommand;
         public ICommand HistoryAddCommand => historyAddCommand ??= new CommandHandler(() => History.Add(), () => true);
-        private ICommand updateShaftSchemeCommand;
-        public ICommand UpdateShaftSchemeCommand => updateShaftSchemeCommand ??= new CommandHandler(() => { }, () => true);
+        private ICommand cellEditEndingCommand;
+        public ICommand CellEditEndingCommand => cellEditEndingCommand ??= new CommandHandler(() => CellEditEnding(), () => true);
+        private ICommand kritikCalculateCommand;
+        public ICommand KritikCalculateCommand => kritikCalculateCommand ??=
+            new CommandHandler(
+                async () => { KritikCalculation = new KritikCalculation(Shaft, CalculationProperties); await KritikCalculation.Calculate(); }, 
+                () => !KritikCalculation.IsCalculationInProgress);
 
         #endregion
 
         #region Button actions
         private void InitializeNewCalculation()
         {
-            CalculationProperties = new CalculationProperties();
+            CalculationProperties = new CalculationProperties(true);
             Shaft = new Shaft();
-            KritikResults = new KritikResults();
+            KritikCalculation = new KritikCalculation();
             History = new CollectionHistory<ShaftElementForDataGrid>(Shaft.Elements);
             FileName = newCalculationFileName;
             NotifyPropertyChanged(nameof(ShaftOperatingSpeed));
             NotifyPropertyChanged(nameof(ShaftRunawaySpeed));
             AnyPropertyChanged = false;
+            ShaftRotationInfluenceSelectedOption = ShaftRotationInfluenceOption.operatingSpeed;
         }
         /// <summary>
         /// Loads Kritik input .xlsx file and stores its data in <see cref="this.ShaftProperties"/>, <see cref="this.CalculationProperties"/> and <see cref="this.Shaft.Elements"/>
         /// </summary>
-        public void OpenFile(string fileName = null)
+        internal void OpenFile(string fileName = null)
         {
             if (fileName is null)
             {
@@ -227,7 +327,7 @@ namespace Kritik
             CalculationProperties = loadResult?.CalculationProperties;
             Shaft = new Shaft(loadResult?.ShaftElements);
             Shaft.Properties = loadResult?.ShaftProperties;
-            KritikResults = new KritikResults();
+            KritikCalculation = new KritikCalculation();
             History = new CollectionHistory<ShaftElementForDataGrid>(Shaft.Elements);
             FileName = fileName;
             NotifyPropertyChanged(nameof(ShaftOperatingSpeed));
@@ -236,10 +336,10 @@ namespace Kritik
         }
 
         /// <summary>
-        /// Saves data from <see cref="ShaftProperties"/>, <see cref="CalculationProperties"/>, <see cref="Shaft.Elements"/> and <see cref="KritikResults"/> into .xlsx file
+        /// Saves data from <see cref="ShaftProperties"/>, <see cref="CalculationProperties"/>, <see cref="Shaft.Elements"/> and <see cref="KritikCalculation"/> into .xlsx file
         /// </summary>
         /// <param name="saveAs">opens save file dialog when true</param>
-        public void SaveFile(bool saveAs)
+        private void SaveFile(bool saveAs)
         {
             if (saveAs || FileName == newCalculationFileName)
             {
@@ -252,7 +352,7 @@ namespace Kritik
             }
 
             List<ShaftElement> shaftElements = new List<ShaftElement>(Shaft.Elements);
-            bool saveResultsSuccess = DataLoadSave.SaveResults(FileName, Shaft.Properties, CalculationProperties, shaftElements, KritikResults, Strings);
+            bool saveResultsSuccess = DataLoadSave.SaveResults(FileName, Shaft.Properties, CalculationProperties, shaftElements, KritikCalculation, Strings);
             bool saveDataSuccess = DataLoadSave.SaveData(FileName, Shaft.Properties, CalculationProperties, shaftElements);
 
             if (saveResultsSuccess && saveDataSuccess)
@@ -266,7 +366,7 @@ namespace Kritik
         /// <summary>
         /// Updates <see cref="Shaft.Properties.ShaftRPM"/> value according to <see cref="ShaftRotationInfluenceSelectedOption"/>
         /// </summary>
-        public void ShaftRPMUpdate()
+        private void ShaftRPMUpdate()
         {
             switch (ShaftRotationInfluenceSelectedOption)
             {
@@ -280,6 +380,25 @@ namespace Kritik
                     Shaft.Properties.ShaftRPM = Shaft.Properties.RunawaySpeed;
                     break;
             }
+        }
+        private void CellEditEnding()
+        {
+            if (ShaftElementSelected?.Type == ElementType.beamPlus)
+                BeamPlusControlsUpdate();
+
+        }
+        private void BeamPlusControlsUpdate([CallerMemberName] string caller = "")
+        {
+            if (caller != nameof(ShaftElementSelected))
+                NotifyPropertyChanged(nameof(BeamPlusComboBoxItems));
+
+            NotifyPropertyChanged(nameof(BeamPlusComboBoxSelectedItem));
+            NotifyPropertyChanged(nameof(BeamPlusElementIsSelected));
+            NotifyPropertyChanged(nameof(BeamPlusComboBoxSelectedItem));
+            NotifyPropertyChanged(nameof(BeamPlusDivision));
+            NotifyPropertyChanged(nameof(BeamPlusIdN));
+            NotifyPropertyChanged(nameof(BeamPlusIdNValue));
+            NotifyPropertyChanged(nameof(BeamPlusText));
         }
         #endregion
     }

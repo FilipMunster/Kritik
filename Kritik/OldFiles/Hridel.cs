@@ -173,23 +173,26 @@ namespace Kritik
         public string Poznamka { get { return poznamka; } set { poznamka = value; NotifyPropertyChanged(); } }
         public string HridelPlusDeleni {
             get {
-                if (OznacenyRadek != null) {
-                    return OznacenyRadek.Deleni.ToString();
-                }
-                else { return string.Empty; }
+                //    if (OznacenyRadek != null) {
+                //        return OznacenyRadek.Deleni.ToString();
+                //    }
+                //    else { return string.Empty; }
+                return null;
             }
-            set {
-                try { OznacenyRadek.Deleni = Convert.ToDouble(value); }
-                catch { MessageBox.Show("Hodnota dělení nesmí být prázdná.", "Špatně zadaná hodnota", MessageBoxButton.OK, MessageBoxImage.Error);
-                    MainWindow.GetMainWindow().deleniHridelPlusTextBox.Focus();
-                    return;
-                }
-                if (OznacenyRadek.Deleni < 1)
-                {
-                    MessageBox.Show("Hodnota dělení nesmí být menší než 1.", "Špatně zadaná hodnota", MessageBoxButton.OK, MessageBoxImage.Error);
-                    MainWindow.GetMainWindow().deleniHridelPlusTextBox.Focus();
-                }
-                Historie.Add(); NotifyPropertyChanged("SchemaHridele"); } 
+            set
+            {
+                //    try { OznacenyRadek.Deleni = Convert.ToDouble(value); }
+                //    catch { MessageBox.Show("Hodnota dělení nesmí být prázdná.", "Špatně zadaná hodnota", MessageBoxButton.OK, MessageBoxImage.Error);
+                //        MainWindow.GetMainWindow().deleniHridelPlusTextBox.Focus();
+                //        return;
+                //    }
+                //    if (OznacenyRadek.Deleni < 1)
+                //    {
+                //        MessageBox.Show("Hodnota dělení nesmí být menší než 1.", "Špatně zadaná hodnota", MessageBoxButton.OK, MessageBoxImage.Error);
+                //        MainWindow.GetMainWindow().deleniHridelPlusTextBox.Focus();
+                //    }
+                //    Historie.Add(); NotifyPropertyChanged("SchemaHridele"); } 
+            }
         }
 
         /// <summary>

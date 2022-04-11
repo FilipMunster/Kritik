@@ -10,27 +10,27 @@ namespace Kritik
     public partial class KritikCalculation
     {
         /// <summary>
-        /// Třída pro výpočet kritických otáček
+        /// Contains methods for calculations associated with Shaft critical speed
         /// </summary>
-        public static class Calculate
+        public class CalculationMethods
         {
             /// <summary>
-            /// Vypočítá kritické otáčky hřídele
+            /// Calculates Shaft critical speed
             /// </summary>
-            /// <returns>Vrátí pole kritických otáček</returns>
-            public static double[] CriticalSpeed(List<ShaftElementWithMatrix> shaftElements, BoundaryCondition bCLeft, BoundaryCondition bCRight, double rpmMax)
+            /// <returns>Array of critical speed values</returns>
+            public double[] CriticalSpeed(List<ShaftElementWithMatrix> shaftElements, BoundaryCondition bCLeft, BoundaryCondition bCRight, double rpmMax)
             {
-                double step = 10; // krok otáček
-                double[] detUc = new double[Convert.ToInt32(rpmMax / step)];
-                double[] rpmi = new double[Convert.ToInt32(rpmMax / step)];
+                double rpmStep = 10;
+                double[] detUc = new double[Convert.ToInt32(rpmMax / rpmStep)];
+                double[] rpmi = new double[Convert.ToInt32(rpmMax / rpmStep)];
                 List<double> critSpeedList = new List<double>();
                 int i = 0;
 
-                for (double rpm = step; rpm <= rpmMax; rpm = rpm + step)
+                for (double rpm = rpmStep; rpm <= rpmMax; rpm = rpm + rpmStep)
                 {
-                    Matrix<double> uc = Matrix<double>.Build.DenseIdentity(4); // Jednotková matice 4x4
+                    Matrix<double> uc = Matrix<double>.Build.DenseIdentity(4); // Indentity matrix 4x4
 
-                    // Nastavit všem prvkům rpm a vynásobit matice
+                    // Set RPM to all elements and multiply matrices
                     foreach (ShaftElementWithMatrix element in shaftElements)
                     {
                         element.Rpm = rpm;
@@ -48,11 +48,13 @@ namespace Kritik
                     }
                     i++;
                 }
-
                 return critSpeedList.ToArray();
             }
-
-            public static OscillationShape[] OscillationShapes(List<ShaftElementWithMatrix> shaftElements,
+            /// <summary>
+            /// Calculates Shaft oscillation shapes for given critical speeds
+            /// </summary>
+            /// <returns>Array of oscillation shapes</returns>
+            public OscillationShape[] OscillationShapes(List<ShaftElementWithMatrix> shaftElements,
                 BoundaryCondition bCLeft, BoundaryCondition bCRight, double[] criticalSpeeds)
             {
                 OscillationShape[] shapes = new OscillationShape[criticalSpeeds.Length];
@@ -71,8 +73,9 @@ namespace Kritik
                     shapes[i] = new OscillationShape();
                     shapes[i].Rpm = criticalSpeeds[i];
 
-                    Matrix<double> uc = Matrix<double>.Build.DenseIdentity(4); // Jednotková matice 4x4
-                                                                               // Nastavit všem prvkům rpm a vynásobit matice
+                    Matrix<double> uc = Matrix<double>.Build.DenseIdentity(4); // Identity matrix 4x4
+                    
+                    // Set RPM to all elements and multiply matrices
                     foreach (var element in shaftElements)
                     {
                         element.Rpm = shapes[i].Rpm;
@@ -80,7 +83,7 @@ namespace Kritik
                     }
                     uc = GetMatrix2x2(uc, bCLeft, bCRight); // celková přenosová matice pro dané kritické otáčky
 
-                    // Řešení dle Pilkey: FORMULAS FOR STRESS, STRAIN, AND STRUCTURAL MATRICES, str. 1426 - 1428
+                    // Solution according to Pilkey: FORMULAS FOR STRESS, STRAIN, AND STRUCTURAL MATRICES, pages 1426 - 1428
                     double ucRatio = -uc[1, 0] / uc[1, 1]; // poměr hodnot mezi dvěma neznámými hodnotami na levém konci
 
                     // Tvary kmitů v uzlech
@@ -187,7 +190,7 @@ namespace Kritik
             /// </summary>
             /// <param name="matrix">Matice 4x4</param>
             /// <returns>Vrátí matici 2x2 na základě okrajových podmínek</returns>
-            private static Matrix<double> GetMatrix2x2(Matrix<double> matrix, BoundaryCondition bCLeft, BoundaryCondition bCRight)
+            private Matrix<double> GetMatrix2x2(Matrix<double> matrix, BoundaryCondition bCLeft, BoundaryCondition bCRight)
             {
                 int col1;
                 int col2;
@@ -197,16 +200,16 @@ namespace Kritik
                 switch (bCLeft)
                 {
                     case BoundaryCondition.free:
-                        col1 = 1;
-                        col2 = 2;
+                        col1 = 0;
+                        col2 = 1;
                         break;
                     case BoundaryCondition.joint:
-                        col1 = 2;
-                        col2 = 4;
+                        col1 = 1;
+                        col2 = 3;
                         break;
                     case BoundaryCondition.fix:
-                        col1 = 3;
-                        col2 = 4;
+                        col1 = 2;
+                        col2 = 3;
                         break;
                     default:
                         throw new ArgumentNullException(nameof(bCLeft));
@@ -215,35 +218,29 @@ namespace Kritik
                 switch (bCRight)
                 {
                     case BoundaryCondition.free:
-                        row1 = 3;
-                        row2 = 4;
-                        break;
-                    case BoundaryCondition.joint:
-                        row1 = 1;
+                        row1 = 2;
                         row2 = 3;
                         break;
-                    case BoundaryCondition.fix:
-                        row1 = 1;
+                    case BoundaryCondition.joint:
+                        row1 = 0;
                         row2 = 2;
+                        break;
+                    case BoundaryCondition.fix:
+                        row1 = 0;
+                        row2 = 1;
                         break;
                     default:
                         throw new ArgumentNullException(nameof(bCRight));
                 }
-
-                // odčítám jedničku, protože se indexuje od 0 a já jsem indexoval od 1.
-                col1--;
-                col2--;
-                row1--;
-                row2--;
 
                 Vector<double> c1r1 = matrix.Column(col1, row1, 1);
                 Vector<double> c2r1 = matrix.Column(col2, row1, 1);
                 Vector<double> c1r2 = matrix.Column(col1, row2, 1);
                 Vector<double> c2r2 = matrix.Column(col2, row2, 1);
 
-                Matrix<double>[,] maticeArray = { { c1r1.ToRowMatrix(), c2r1.ToRowMatrix() },
+                Matrix<double>[,] matrixArray = { { c1r1.ToRowMatrix(), c2r1.ToRowMatrix() },
                                               { c1r2.ToRowMatrix(), c2r2.ToRowMatrix() } };
-                return Matrix<double>.Build.DenseOfMatrixArray(maticeArray);
+                return Matrix<double>.Build.DenseOfMatrixArray(matrixArray);
             }
 
             /// <summary>
@@ -252,7 +249,7 @@ namespace Kritik
             /// <param name="rpmL">Levá strana intervalu otáček</param>
             /// <param name="rpmR">Pravá strana intervalu otáček</param>
             /// <returns></returns>
-            private static double FindCriticalSpeed(List<ShaftElementWithMatrix> shaftElements, BoundaryCondition bCLeft, BoundaryCondition bCRight, double rpmL, double rpmR)
+            private double FindCriticalSpeed(List<ShaftElementWithMatrix> shaftElements, BoundaryCondition bCLeft, BoundaryCondition bCRight, double rpmL, double rpmR)
             {
                 Matrix<double> uc;
                 double rpmC = (rpmL + rpmR) / 2.0;

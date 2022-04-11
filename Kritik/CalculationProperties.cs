@@ -10,6 +10,7 @@ namespace Kritik
 {
     public class CalculationProperties : INotifyPropertyChanged, ICloneable
     {
+        private bool newCalculation;
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
@@ -42,7 +43,8 @@ namespace Kritik
             set 
             { 
                 author = value;
-                Properties.Settings.Default.author = value;
+                if (newCalculation)
+                    Properties.Settings.Default.author = value;
                 NotifyPropertyChanged();
             }
         }
@@ -59,9 +61,14 @@ namespace Kritik
             get => notes;
             set { notes = value; NotifyPropertyChanged(); }
         }
-
-        public CalculationProperties()
+        /// <summary>
+        /// Create new instance of <see cref="CalculationProperties"/>
+        /// </summary>
+        /// <param name="newCalculation">Set to true if the instance is for new calculation (e.g. false when loading data from file)</param>
+        public CalculationProperties(bool newCalculation = false)
         {
+            this.newCalculation = newCalculation;
+
             if (Properties.Settings.Default.author is not null) 
             {
                 Author = Properties.Settings.Default.author == "" ? Environment.UserName : Properties.Settings.Default.author;

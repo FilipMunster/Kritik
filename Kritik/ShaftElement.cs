@@ -51,7 +51,7 @@ namespace Kritik
         /// <summary>
         /// Number od divisions of Beam+ element
         /// </summary>
-        public double Division { get; set; }
+        public int Division { get; set; }
         /// <summary>
         /// Method of Id/N calculation for Beam+ element: IdN=0 -> Idi=Id/n*IdNValue, IdN=1 -> Idi=IdNValue
         /// </summary>
