@@ -90,7 +90,7 @@ namespace Kritik
             return text;
         }
 
-        public async Task Calculate()
+        public async Task CalculateAsync()
         {
             if (Shaft is null || CalculationProperties is null)
                 throw new ArgumentNullException();

@@ -28,6 +28,7 @@
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>
+    
     <Window.Title>
         <Binding Path="WindowTitle"/>
     </Window.Title>
@@ -90,16 +91,16 @@
                                     <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Text="KRITICKÉ OTÁČKY" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" FontSize="16"/>
                                     <Separator Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
                                     <StackPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0, 3, 0, 0">
-                                        <Button Name="newFileButton" Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Nový výpočet" Command="{Binding NewCalculationCommand}">
+                                        <Button Name="newFileButton" Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Nový výpočet (Ctrl+N)" Command="{Binding NewCalculationCommand}">
                                             <Image Source="/icons/NewFile_16x.png" />
                                         </Button>
-                                        <Button Name="openFileButton"  Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Otevřít výpočet" Command="{Binding OpenFileCommand}">
+                                        <Button Name="openFileButton"  Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Otevřít výpočet (Ctrl+O)" Command="{Binding OpenFileCommand}">
                                             <Image Source="/icons/OpenFolder_16x.png" />
                                         </Button>
-                                        <Button Name="saveFileButton"  Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Uložit výpočet" Command="{Binding SaveFileCommand}">
+                                        <Button Name="saveFileButton"  Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Uložit výpočet (Ctrl+S)" Command="{Binding SaveFileCommand}">
                                             <Image Source="/icons/Save_16x.png" />
                                         </Button>
-                                        <Button Name="saveAsFileButton"  Height="20" Width="20" Margin="0, 0, 0, 0" ToolTip="Uložit výpočet jako..." Command="{Binding SaveFileAsCommand}">
+                                        <Button Name="saveAsFileButton"  Height="20" Width="20" Margin="0, 0, 0, 0" ToolTip="Uložit výpočet jako... (Ctrl+Shift+S)" Command="{Binding SaveFileAsCommand}">
                                             <Image Source="/icons/SaveAs_16x.png" />
                                         </Button>
                                     </StackPanel>
@@ -305,31 +306,31 @@
                             </Grid.RowDefinitions>
 
                             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
-                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Přidat prvek" Command="{Binding AddItemCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Přidat prvek (Ctrl+'+')" Command="{Binding AddItemCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}">
                                     <Image Source="/icons/Add_16x.png" />
                                 </Button>
-                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Smazat prvek" Command="{Binding RemoveItemCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Smazat prvek (Ctrl+'-')" Command="{Binding RemoveItemCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}">
                                     <Image Source="/icons/Remove_16x.png" />
                                 </Button>
                                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0, 0, 5, 0" Stroke="Black" />
-                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Posun prvku nahoru" Command="{Binding MoveItemUpCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Posun prvku nahoru (Ctrl+↑)" Command="{Binding MoveItemUpCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}">
                                     <Image Source="/icons/Upload_16x.png" />
                                 </Button>
-                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Posun prvku dolů" Command="{Binding MoveItemDownCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Posun prvku dolů (Ctrl+↓)" Command="{Binding MoveItemDownCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}">
                                     <Image Source="/icons/Download_16x.png" />
                                 </Button>
                                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0, 0, 5, 0" Stroke="Black" />
-                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Zrcadlit hřídel" Command="{Binding MirrorShaftCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Zrcadlit hřídel (Ctrl+M)" Command="{Binding MirrorShaftCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}">
                                     <Image Source="/icons/Mirror.png" />
                                 </Button>
-                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Smazat vše" Command="{Binding RemoveAllItemsCommand}">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Smazat vše (Ctrl+Shift+'-')" Command="{Binding RemoveAllItemsCommand}">
                                     <Image Source="/icons/DeleteAllRows_16x.png" />
                                 </Button>
                                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0, 0, 5, 0" Stroke="Black" />
-                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Zpět" Command="{Binding HistoryBackCommand}">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Zpět (Ctrl+Z)" Command="{Binding HistoryBackCommand}">
                                     <Image Source="/icons/StepBackwards_16x.png" />
                                 </Button>
-                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Vpřed" Command="{Binding HistoryForwardCommand}">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Vpřed (Ctrl+Y)" Command="{Binding HistoryForwardCommand}">
                                     <Image Source="/icons/StepForward_16x.png" />
                                 </Button>
                             </StackPanel>
@@ -342,6 +343,7 @@
                                       CanUserReorderColumns="False"
                                       CanUserSortColumns="False"
                                       CanUserResizeRows="False"
+                                      CanUserDeleteRows="False"
                                       LoadingRow="ShaftDataGrid_LoadingRow"
                                       AddingNewItem="ShaftDataGrid_AddingNewItem"
                                       Grid.Row="1"
@@ -666,7 +668,7 @@
                                         <TextBox Text="{Binding Shaft.Properties.MaxCriticalSpeed, Converter={StaticResource FormatDefaultConverter}}" Width="35" GotKeyboardFocus="TextBoxSelectContentByKeyboard"/>
                                         <TextBlock Margin="5, 0, 5, 0" Text="min&#x207B;&#x00B9;" VerticalAlignment="Center"/>
                                     </StackPanel>
-                                    <Button Height="30" Margin="0, 10, 0, 0" Command="{Binding KritikCalculateCommand}">
+                                    <Button Height="30" Margin="0, 10, 0, 0" Command="{Binding KritikCalculateCommand}" ToolTip="(F5)">
                                         Výpočet kritických otáček
                                     </Button>
 
@@ -814,4 +816,19 @@
         </StackPanel>
 
     </Grid>
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding NewCalculationCommand}" Key="N" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding OpenFileCommand}" Key="O" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding SaveFileCommand}" Key="S" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding SaveFileAsCommand}" Key="S" Modifiers="Ctrl+Shift"/>
+        <KeyBinding Command="{Binding AddItemCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}" Key="Add" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding RemoveItemCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}" Key="Subtract" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding MoveItemUpCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}" Key="Up" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding MoveItemDownCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}" Key="Down" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding MirrorShaftCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}" Key="M" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding RemoveAllItemsCommand}" Key="Subtract" Modifiers="Ctrl+Shift"/>
+        <KeyBinding Command="{Binding HistoryBackCommand}" Key="Z" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding HistoryForwardCommand}" Key="Y" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding KritikCalculateCommand}" Key="F5"/>
+    </Window.InputBindings>
 </Window>

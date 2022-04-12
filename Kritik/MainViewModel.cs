@@ -320,7 +320,7 @@ namespace Kritik
         private ICommand kritikCalculateCommand;
         public ICommand KritikCalculateCommand => kritikCalculateCommand ??=
             new CommandHandler(
-                async () => { KritikCalculation = new KritikCalculation(Shaft, CalculationProperties); await KritikCalculation.Calculate(); }, 
+                async () => { KritikCalculation = new KritikCalculation(Shaft, CalculationProperties); await KritikCalculation.CalculateAsync(); }, 
                 () => !KritikCalculation.IsCalculationInProgress);
         #endregion
 
