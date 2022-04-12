@@ -139,6 +139,7 @@ namespace Kritik
         public string[] BoundaryConditionsItems => Enums.GetNames<BoundaryCondition>();
         public string[] GyroscopicEffectsItems => Enums.GetNames<GyroscopicEffect>();
 
+        #region Shaft rotation influence controls
         public string ShaftRotationInfluenceVisibility => shaftRotationInfluenceControlsAreVisible ? "visible" : "collapsed";
         public ShaftRotationInfluenceOption ShaftRotationInfluenceSelectedOption { get; set; }
 
@@ -152,6 +153,7 @@ namespace Kritik
                 ShaftRPMUpdate();
             }
         }
+        #endregion
         public double ShaftOperatingSpeed
         {
             get => Shaft.Properties.OperatingSpeed;
@@ -171,9 +173,9 @@ namespace Kritik
             }
         }
 
-        #region BeamPlus Controls properties
+        #region Beam+ controls
         /// <summary>
-        /// True of selected item in datagrid is <see cref="ElementType.beamPlus"/>
+        /// True if <see cref="ShaftElementSelected"/> in datagrid is <see cref="ElementType.beamPlus"/>
         /// </summary>
         public bool BeamPlusElementIsSelected => ShaftElementSelected?.Type == ElementType.beamPlus;
         /// <summary>
@@ -276,19 +278,53 @@ namespace Kritik
                 () => true);
         #endregion
 
-        private ICommand historyAddCommand;
-        public ICommand HistoryAddCommand => historyAddCommand ??= new CommandHandler(() => History.Add(), () => true);
+        #region DataGrid Controls Commands
+        private ICommand addItemCommand;
+        public ICommand AddItemCommand => addItemCommand ??= new RelayCommand<object>(
+            (o) => { ShaftElementSelected = Shaft.AddElement(ShaftElementSelected); History.Add(); DataGridRefresh(o); }, 
+            (o) => true);
+        private ICommand removeItemCommand;
+        public ICommand RemoveItemCommand => removeItemCommand ??= new RelayCommand<object>(
+            (o) => { ShaftElementSelected = Shaft.RemoveSelectedElement(ShaftElementSelected); History.Add(); DataGridRefresh(o); }, 
+            (o) => { return Shaft.Elements.Count > 0; });
+        private ICommand moveItemUpCommand;
+        public ICommand MoveItemUpCommand => moveItemUpCommand ??= new RelayCommand<object>(
+            (o) => { Shaft.MoveElementUp(ShaftElementSelected); History.Add(); DataGridRefresh(o); },
+            (o) => { return Shaft.Elements.IndexOf(ShaftElementSelected) > 0; });
+        private ICommand moveItemDownCommand;
+        public ICommand MoveItemDownCommand => moveItemDownCommand ??= new RelayCommand<object>(
+            (o) => { Shaft.MoveElementDown(ShaftElementSelected); History.Add(); DataGridRefresh(o); },
+            (o) => { int i = Shaft.Elements.IndexOf(ShaftElementSelected); return i < Shaft.Elements.Count - 1 && i >= 0; });
+        private ICommand mirrorShaftCommand;
+        public ICommand MirrorShaftCommand => mirrorShaftCommand ??= new RelayCommand<object>(
+            (o) => { if (History.Count == 0) { History.Add(); } ShaftElementSelected = Shaft.Mirror(); History.Add(); DataGridRefresh(o); },
+            (o) => { return Shaft.Elements.Count > 0; });
+        private ICommand removeAllItemsCommand;
+        public ICommand RemoveAllItemsCommand => removeAllItemsCommand ??= new CommandHandler(
+            () => { Shaft.RemoveAllElements(); History.Add(); },
+            () => { return Shaft.Elements.Count > 0; });
+        private ICommand historyBackCommand;
+        public ICommand HistoryBackCommand => historyBackCommand ??= new CommandHandler(
+            () => { Shaft.Elements = History.Back(); History.SetCollection(Shaft.Elements); }, 
+            () => History.CanGoBack());
+        private ICommand historyForwardCommand;
+        public ICommand HistoryForwardCommand => historyForwardCommand ??= new CommandHandler(
+            () => { Shaft.Elements = History.Forward(); History.SetCollection(Shaft.Elements); }, 
+            () => History.CanGoForward());
+        #endregion
+
         private ICommand cellEditEndingCommand;
         public ICommand CellEditEndingCommand => cellEditEndingCommand ??= new CommandHandler(() => CellEditEnding(), () => true);
+        private ICommand historyAddCommand;
+        public ICommand HistoryAddCommand => historyAddCommand ??= new CommandHandler(() => History.Add(), () => true);
         private ICommand kritikCalculateCommand;
         public ICommand KritikCalculateCommand => kritikCalculateCommand ??=
             new CommandHandler(
                 async () => { KritikCalculation = new KritikCalculation(Shaft, CalculationProperties); await KritikCalculation.Calculate(); }, 
                 () => !KritikCalculation.IsCalculationInProgress);
-
         #endregion
 
-        #region Button actions
+        #region Button actions methods
         private void InitializeNewCalculation()
         {
             CalculationProperties = new CalculationProperties(true);
@@ -399,6 +435,15 @@ namespace Kritik
             NotifyPropertyChanged(nameof(BeamPlusIdN));
             NotifyPropertyChanged(nameof(BeamPlusIdNValue));
             NotifyPropertyChanged(nameof(BeamPlusText));
+        }
+        private void DataGridRefresh(object sender)
+        {
+            if (sender is System.Windows.Controls.DataGrid grid)
+            {
+                grid.Focus();
+                grid.Items.Refresh();
+                grid.SelectedIndex = Shaft.Elements.IndexOf(ShaftElementSelected);
+            }
         }
         #endregion
     }

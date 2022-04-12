@@ -168,7 +168,7 @@ namespace Kritik
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (targetType == typeof(ShaftElementForDataGrid))
+            if (targetType == typeof(ShaftElementForDataGrid)  && value?.GetType().Name == "NamedObject")
                 return new ShaftElementForDataGrid();
             return value;
         }

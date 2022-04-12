@@ -238,10 +238,16 @@
                                         <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
                                             <TextBlock Text="Rozdělit na"/>
                                             <TextBox
-                                                 Text="{Binding BeamPlusDivision, Converter={StaticResource FormatToIntConverter}, UpdateSourceTrigger=LostFocus}"
+                                                 Text="{Binding BeamPlusDivision, Converter={StaticResource FormatToIntConverter}, UpdateSourceTrigger=PropertyChanged}"
                                                  IsEnabled="{Binding BeamPlusElementIsSelected}"
                                                  GotKeyboardFocus="TextBoxSelectContentByKeyboard"
-                                                 Width="35" Margin="5, 0, 5, 0"/>
+                                                 Width="35" Margin="5, 0, 5, 0">
+                                                <b:Interaction.Triggers>
+                                                    <b:EventTrigger EventName="LostFocus">
+                                                        <b:InvokeCommandAction Command="{Binding HistoryAddCommand}"/>
+                                                    </b:EventTrigger>
+                                                </b:Interaction.Triggers>
+                                            </TextBox>
                                             <TextBlock Text="částí."/>
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
@@ -251,12 +257,23 @@
                                                   IsEnabled="{Binding BeamPlusElementIsSelected}">
                                                 <ComboBoxItem Content="=Jd/n*"/>
                                                 <ComboBoxItem Content="vlastní hodnota"/>
+                                                <b:Interaction.Triggers>
+                                                    <b:EventTrigger EventName="LostFocus">
+                                                        <b:InvokeCommandAction Command="{Binding HistoryAddCommand}"/>
+                                                    </b:EventTrigger>
+                                                </b:Interaction.Triggers>
                                             </ComboBox>
                                             <TextBox Text="{Binding BeamPlusIdNValue, Converter={StaticResource FormatDefaultConverter}}" 
                                                  IsEnabled="{Binding BeamPlusElementIsSelected}"
                                                  GotKeyboardFocus="TextBoxSelectContentByKeyboard"
                                                  Width="50"
-                                                 VerticalAlignment="Center" />
+                                                 VerticalAlignment="Center">
+                                                <b:Interaction.Triggers>
+                                                    <b:EventTrigger EventName="LostFocus">
+                                                        <b:InvokeCommandAction Command="{Binding HistoryAddCommand}"/>
+                                                    </b:EventTrigger>
+                                                </b:Interaction.Triggers>
+                                            </TextBox>
                                         </StackPanel>
                                         <TextBlock Text="{Binding BeamPlusText}"
                                                IsEnabled="{Binding BeamPlusElementIsSelected}"
@@ -288,32 +305,31 @@
                             </Grid.RowDefinitions>
 
                             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
-                                <Button Name="addRowBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Přidat prvek" Click="addRowBtn_Click">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Přidat prvek" Command="{Binding AddItemCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}">
                                     <Image Source="/icons/Add_16x.png" />
                                 </Button>
-                                <Button Name="deleteRowBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Smazat prvek" Click="deleteRowBtn_Click"
-                                        >
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Smazat prvek" Command="{Binding RemoveItemCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}">
                                     <Image Source="/icons/Remove_16x.png" />
                                 </Button>
                                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0, 0, 5, 0" Stroke="Black" />
-                                <Button Name="moveUpBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Posun prvku nahoru" Click="moveUpBtn_Click">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Posun prvku nahoru" Command="{Binding MoveItemUpCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}">
                                     <Image Source="/icons/Upload_16x.png" />
                                 </Button>
-                                <Button Name="moveDownBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Posun prvku dolů" Click="moveDownBtn_Click">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Posun prvku dolů" Command="{Binding MoveItemDownCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}">
                                     <Image Source="/icons/Download_16x.png" />
                                 </Button>
                                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0, 0, 5, 0" Stroke="Black" />
-                                <Button Name="mirrorBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Zrcadlit hřídel" Click="mirrorBtn_Click">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Zrcadlit hřídel" Command="{Binding MirrorShaftCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}">
                                     <Image Source="/icons/Mirror.png" />
                                 </Button>
-                                <Button Name="deleteAllBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Smazat vše" Click="deleteAllBtn_Click">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Smazat vše" Command="{Binding RemoveAllItemsCommand}">
                                     <Image Source="/icons/DeleteAllRows_16x.png" />
                                 </Button>
                                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0, 0, 5, 0" Stroke="Black" />
-                                <Button Name="backBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Zpět" Click="backBtn_Click" IsEnabled="False">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Zpět" Command="{Binding HistoryBackCommand}">
                                     <Image Source="/icons/StepBackwards_16x.png" />
                                 </Button>
-                                <Button Name="forwardBtn" Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Vpřed" Click="forwardBtn_Click" IsEnabled="False">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Vpřed" Command="{Binding HistoryForwardCommand}">
                                     <Image Source="/icons/StepForward_16x.png" />
                                 </Button>
                             </StackPanel>
@@ -326,10 +342,10 @@
                                       CanUserReorderColumns="False"
                                       CanUserSortColumns="False"
                                       CanUserResizeRows="False"
-                                      LoadingRow="Table_LoadingRow"
-                                      AddingNewItem="Table_AddingNewItem"
+                                      LoadingRow="ShaftDataGrid_LoadingRow"
+                                      AddingNewItem="ShaftDataGrid_AddingNewItem"
                                       Grid.Row="1"
-                                      Name="Table" Margin="0,-2,0,2" CanUserResizeColumns="False" SelectionUnit="FullRow">
+                                      Name="ShaftDataGrid" Margin="0,-2,0,2" CanUserResizeColumns="False" SelectionUnit="FullRow">
                                 <b:Interaction.Triggers>
                                     <b:EventTrigger EventName="RowEditEnding">
                                         <b:InvokeCommandAction Command="{Binding HistoryAddCommand}"/>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace Kritik
     public class Shaft : INotifyPropertyChanged, ICloneable
     {
         public event PropertyChangedEventHandler PropertyChanged;
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
+
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -32,16 +35,7 @@ namespace Kritik
                 NotifyPropertyChanged();
             }
         }
-        //private ShaftElementForDataGrid selectedItem;
-        //public ShaftElementForDataGrid SelectedItem
-        //{
-        //    get => selectedItem;
-        //    set
-        //    {
-        //        selectedItem = value;
-        //        NotifyPropertyChanged();
-        //    }
-        //}
+
         private ShaftProperties properties;
         public ShaftProperties Properties
         {
@@ -79,22 +73,33 @@ namespace Kritik
         /// <summary>
         /// Inserts new element to shaft at selected row index. If no row is selected, the element is added at the end of the collection.
         /// </summary>
-        public void AddElement(ShaftElementForDataGrid selectedElement)
+        public ShaftElementForDataGrid AddElement(ShaftElementForDataGrid selectedElement)
         {
-            if (selectedElement is not null)
-                Elements.Insert(Elements.IndexOf(selectedElement), new ShaftElementForDataGrid());
-            else
+            int index = Elements.IndexOf(selectedElement);
+            if (selectedElement is null || index < 0)
+            {
                 Elements.Add(new ShaftElementForDataGrid());
+                return Elements.Last();
+            }
+            
+            Elements.Insert(index, new ShaftElementForDataGrid());
+            return Elements[index];
         }
         /// <summary>
         /// Removes selected element from the collection
         /// </summary>
-        public void RemoveSelectedElement(ShaftElementForDataGrid selectedElement)
+        /// <param name="selectedElement">Selected element of shaft</param>
+        /// <returns>New selected element</returns>
+        public ShaftElementForDataGrid RemoveSelectedElement(ShaftElementForDataGrid selectedElement)
         {
             if (selectedElement is null)
-                return;
+                return null;
 
+            int index = Elements.IndexOf(selectedElement);
             Elements.Remove(selectedElement);
+            if (index == Elements.Count) 
+                index--;
+            return index >= 0 ? Elements[index] : null;
         }
         /// <summary>
         /// Moves selected element one row up.
@@ -125,12 +130,18 @@ namespace Kritik
         /// <summary>
         /// Mirrors the shaft
         /// </summary>
-        public void Mirror()
+        /// <param name="selectedElement">Selected element of shaft</param>
+        /// <returns>New selected element</returns>
+        public ShaftElementForDataGrid Mirror()
         {
-            for (int i = Elements.Count - 1; i >=0; i--)
+            int count = Elements.Count;
+            
+            for (int i = count - 1; i >=0; i--)
             {
                 Elements.Add((ShaftElementForDataGrid)Elements[i].Clone());
             }
+
+            return Elements[count];
         }
 
         /// <summary>
@@ -206,13 +217,7 @@ namespace Kritik
         public object Clone()
         {
             Shaft newShaft = (Shaft)this.MemberwiseClone();
-            
-            newShaft.Elements = new ObservableCollection<ShaftElementForDataGrid>();
-            foreach (ShaftElementForDataGrid element in this.Elements)
-            {
-                newShaft.Elements.Add((ShaftElementForDataGrid)element.Clone());
-            }
-
+            newShaft.Elements = this.Elements.Clone();
             newShaft.Properties = (ShaftProperties)this.Properties.Clone();
             return (object)newShaft;
         }

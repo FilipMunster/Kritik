@@ -6,7 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Kritik
-{    public static class EnumExtensionMethods
+{
+    public static class EnumExtensionMethods
     {
         public static string GetDescription(this Enum GenericEnum)
         {

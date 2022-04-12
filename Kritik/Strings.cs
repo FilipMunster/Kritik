@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Kritik
 {
     /// <summary>
-    /// Contains properties with strings according to selected 
+    /// Contains properties with strings according to <see cref="SelectedLanguage"/>
     /// </summary>
     public class Strings
     {

@@ -28,6 +28,18 @@ namespace Kritik
             history = new();
         }
         /// <summary>
+        /// History length
+        /// </summary>
+        public int Count => history.Count;
+        /// <summary>
+        /// Sets new link to collection. Needs to be called after <see cref="Back"/> or <see cref="Forward"/>.
+        /// </summary>
+        /// <param name="collection">The same collection property as parameter in constructor</param>
+        public void SetCollection(ObservableCollection<T> collection)
+        {
+            this.collection = collection;
+        }
+        /// <summary>
         /// Adds current state of collection to history
         /// </summary>
         public void Add()
@@ -37,17 +49,11 @@ namespace Kritik
             if (history.Count == maxHistoryCount)
                 history.RemoveAt(0);
 
-            ObservableCollection<T> newCollection = new ObservableCollection<T>();
-            foreach (T item in collection)
-            {
-                newCollection.Add((T)item.Clone());
-            }
-
-            history.Add(newCollection);
+            history.Add(collection.Clone());
             position = history.Count - 1;
         }
         /// <summary>
-        /// Returns previous state of collection
+        /// Returns previous state of collection. Note: Its necessary to subsequently call <see cref="SetCollection(ObservableCollection{T})"/> method!
         /// </summary>
         /// <returns>New collection</returns>
         public ObservableCollection<T> Back()
@@ -55,10 +61,10 @@ namespace Kritik
             if (position > 0)
                 position--;
 
-            return new ObservableCollection<T>(history[position]);
+            return history[position].Clone();
         }
         /// <summary>
-        /// Returns next state of collection
+        /// Returns next state of collection. Note: Its necessary to subsequently call <see cref="SetCollection(ObservableCollection{T})"/> method!
         /// </summary>
         /// <returns>New collection</returns>
         public ObservableCollection<T> Forward()
@@ -66,7 +72,7 @@ namespace Kritik
             if (position < (history.Count - 1))
                 position++;
 
-            return new ObservableCollection<T>(history[position]);
+            return history[position].Clone();
         }
 
         /// <summary>
@@ -81,7 +87,7 @@ namespace Kritik
         /// </summary>
         public bool CanGoForward()
         {
-            return position < (history.Count - 1); 
+            return position < (history.Count - 1);
         }
 
     }

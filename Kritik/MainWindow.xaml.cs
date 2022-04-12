@@ -369,10 +369,10 @@ namespace Kritik
             //    if (((ComboBox)sender).SelectedValue != null)
             //    {
             //        id = (int)((ComboBox)sender).SelectedValue;
-            //        Table.SelectedItem = hridel.PrvkyHrideleTab[id - 1];
+            //        ShaftDataGrid.SelectedItem = hridel.PrvkyHrideleTab[id - 1];
             //    }
 
-            //    Table.Focus();
+            //    ShaftDataGrid.Focus();
             //    return;
             //}
         }
@@ -434,9 +434,9 @@ namespace Kritik
             //{
             //    int indx = hridel.PrvkyHrideleTab.IndexOf(hridel.OznacenyRadek);
             //    hridel.PrvkyHrideleTab.Insert(indx, new Hridel.PrvekTab() { Typ = Hridel.beamKeyword });
-            //    Table.Focus();
-            //    Table.SelectedIndex = indx;
-            //    Table.Items.Refresh();
+            //    ShaftDataGrid.Focus();
+            //    ShaftDataGrid.SelectedIndex = indx;
+            //    ShaftDataGrid.Items.Refresh();
             //}
             //HistorieAdd();
         }
@@ -447,10 +447,10 @@ namespace Kritik
             //{
             //    int indx = hridel.PrvkyHrideleTab.IndexOf(hridel.OznacenyRadek);
             //    hridel.PrvkyHrideleTab.RemoveAt(indx);
-            //    Table.Focus();
+            //    ShaftDataGrid.Focus();
             //    if (hridel.PrvkyHrideleTab.Count() == indx) { indx--; }
-            //    Table.SelectedIndex = indx;
-            //    Table.Items.Refresh();
+            //    ShaftDataGrid.SelectedIndex = indx;
+            //    ShaftDataGrid.Items.Refresh();
             //}
             //HistorieAdd();
         }
@@ -461,8 +461,8 @@ namespace Kritik
             //{
             //    int indx = hridel.PrvkyHrideleTab.IndexOf(hridel.OznacenyRadek);
             //    if (indx > 0) { hridel.PrvkyHrideleTab.Move(indx, indx - 1); }
-            //    Table.Focus();
-            //    Table.Items.Refresh();
+            //    ShaftDataGrid.Focus();
+            //    ShaftDataGrid.Items.Refresh();
             //}
             //HistorieAdd();
         }
@@ -474,8 +474,8 @@ namespace Kritik
             //    int indx = hridel.PrvkyHrideleTab.IndexOf(hridel.OznacenyRadek);
             //    int tabLen = hridel.PrvkyHrideleTab.Count();
             //    if (indx < (tabLen - 1)) { hridel.PrvkyHrideleTab.Move(indx, indx + 1); }
-            //    Table.Focus();
-            //    Table.Items.Refresh();
+            //    ShaftDataGrid.Focus();
+            //    ShaftDataGrid.Items.Refresh();
             //}
             //HistorieAdd();
         }
@@ -505,7 +505,7 @@ namespace Kritik
             //HistorieAdd();
         }
 
-        private void Table_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+        private void ShaftDataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
             //HistorieAdd();
         }
@@ -516,16 +516,16 @@ namespace Kritik
             //backBtn.IsEnabled = Historie.BackBtnEnabled;
             //forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
             //hridel.NotifyPropertyChanged("SchemaHridele");
-            //Table.Focus();            
+            //ShaftDataGrid.Focus();            
         }
         private void forwardBtn_Click(object sender, RoutedEventArgs e)
         {
             //Historie.Forward();
             //backBtn.IsEnabled = Historie.BackBtnEnabled;
             //forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
-            //Table.Items.Refresh();
+            //ShaftDataGrid.Items.Refresh();
             //hridel.NotifyPropertyChanged("SchemaHridele");
-            //Table.Focus();
+            //ShaftDataGrid.Focus();
         }
 
         private void deleteAllBtn_Click(object sender, RoutedEventArgs e)
@@ -540,7 +540,7 @@ namespace Kritik
             //backBtn.IsEnabled = Historie.BackBtnEnabled;
             //forwardBtn.IsEnabled = Historie.ForwardBtnEnabled;
             //hridel.NotifyPropertyChanged("SchemaHridele");
-            //Table.Focus();
+            //ShaftDataGrid.Focus();
         }
 
         private void plotView1_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -578,7 +578,7 @@ namespace Kritik
             //if (hridel.TvaryKmitu != null && c > 1) { cisloKritOtZobrazitTextBox.Text = (c - 1).ToString(); VykreslitKmity(); VytvorPopisekVypoctu(); }
         }
 
-        private void Table_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        private void ShaftDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
             //hridel.NotifyPropertyChanged("SchemaHridele");
         }
@@ -588,7 +588,7 @@ namespace Kritik
             //hridel.NotifyPropertyChanged("SchemaHridele");
         }
 
-        private void Table_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ShaftDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
         }
@@ -620,8 +620,8 @@ namespace Kritik
             //if (i >= 0 && (Math.Abs(pozice.Y) < Math.Abs(hridel.PrvkyHrideleTab[i].De / 2) 
             //    || (hridel.PrvkyHrideleTab[i].Typ == Hridel.rigidKeyword && Math.Abs(pozice.Y) < Math.Abs(Plot.dTuhy / 2))))
             //{
-            //    Table.SelectedItem = hridel.PrvkyHrideleTab[i];
-            //    Table.ScrollIntoView(Table.SelectedItem);
+            //    ShaftDataGrid.SelectedItem = hridel.PrvkyHrideleTab[i];
+            //    ShaftDataGrid.ScrollIntoView(ShaftDataGrid.SelectedItem);
             //}
         }
 
@@ -629,8 +629,8 @@ namespace Kritik
         {
             //OxyPlot.Series.LineSeries line = (OxyPlot.Series.LineSeries)s;
             //int i = (int)line.Tag;
-            //Table.SelectedItem = hridel.PrvkyHrideleTab[i];
-            //Table.ScrollIntoView(Table.SelectedItem);
+            //ShaftDataGrid.SelectedItem = hridel.PrvkyHrideleTab[i];
+            //ShaftDataGrid.ScrollIntoView(ShaftDataGrid.SelectedItem);
         }
 
         public void VytvorPopisekVypoctu()
@@ -793,9 +793,9 @@ namespace Kritik
             //    BitmapImage image = new BitmapImage(uri);
             //    ImageBrush ib = new ImageBrush();
             //    ib.ImageSource = image;
-            //    Table.Background = ib;
-            //    Table.RowBackground = Brushes.Transparent;
-            //    Table.AlternatingRowBackground = Brushes.Transparent;
+            //    ShaftDataGrid.Background = ib;
+            //    ShaftDataGrid.RowBackground = Brushes.Transparent;
+            //    ShaftDataGrid.AlternatingRowBackground = Brushes.Transparent;
             //}
         }
 
@@ -933,11 +933,11 @@ namespace Kritik
                 };
             }
         }
-        private void Table_AddingNewItem(object sender, AddingNewItemEventArgs e)
+        private void ShaftDataGrid_AddingNewItem(object sender, AddingNewItemEventArgs e)
         {
-            _ = Table.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
+            _ = ShaftDataGrid.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
         }
-        void Table_LoadingRow(object sender, DataGridRowEventArgs e)
+        void ShaftDataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
         {
             e.Row.Header = (e.Row.GetIndex() + 1).ToString();
         }
@@ -967,7 +967,7 @@ namespace Kritik
         }
 
         /// <summary>
-        /// Funkce pro rozbalení Comboboxu v datgridu hned po kliknutí
+        /// Method for opening the ComboBox in DataGrid right after Mouse Click
         /// </summary>
         private void GridColumnFastEdit(object sender, MouseButtonEventArgs e)
         {
@@ -975,23 +975,20 @@ namespace Kritik
             if (cell == null || cell.IsEditing || cell.IsReadOnly)
                 return;
 
-            var dataGrid = Table;
+            var dataGrid = ShaftDataGrid;
             if (dataGrid == null)
                 return;
 
             if (!cell.IsFocused)
             {
-                cell.Focus();
+                _ = cell.Focus();
             }
 
             var cb = cell.Content as ComboBox;
             if (cb == null) return;
-            Table.BeginEdit(e);
+            ShaftDataGrid.BeginEdit(e);
             cell.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
             cb.IsDropDownOpen = true;
         }
-
-
-
     }
 }
