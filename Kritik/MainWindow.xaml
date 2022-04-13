@@ -234,6 +234,8 @@
                                             <ComboBox
                                                   ItemsSource="{Binding BeamPlusComboBoxItems, Mode=OneWay}" 
                                                   SelectedValue="{Binding BeamPlusComboBoxSelectedItem}"
+                                                  IsEnabled="{Binding BeamPlusComboBoxIsNotEmpty}"
+                                                  DropDownClosed="BeamPlusIndexComboBox_DropDownClosed"
                                                   Width="40" Margin="5, 0, 0, 0"/>
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
@@ -306,10 +308,10 @@
                             </Grid.RowDefinitions>
 
                             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
-                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Přidat prvek (Ctrl+'+')" Command="{Binding AddItemCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Přidat prvek (Insert)" Command="{Binding AddItemCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}">
                                     <Image Source="/icons/Add_16x.png" />
                                 </Button>
-                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Smazat prvek (Ctrl+'-')" Command="{Binding RemoveItemCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Smazat prvek (Delete)" Command="{Binding RemoveItemCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}">
                                     <Image Source="/icons/Remove_16x.png" />
                                 </Button>
                                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0, 0, 5, 0" Stroke="Black" />
@@ -323,7 +325,7 @@
                                 <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Zrcadlit hřídel (Ctrl+M)" Command="{Binding MirrorShaftCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}">
                                     <Image Source="/icons/Mirror.png" />
                                 </Button>
-                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Smazat vše (Ctrl+Shift+'-')" Command="{Binding RemoveAllItemsCommand}">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Smazat vše (Ctrl+Delete)" Command="{Binding RemoveAllItemsCommand}">
                                     <Image Source="/icons/DeleteAllRows_16x.png" />
                                 </Button>
                                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0, 0, 5, 0" Stroke="Black" />
@@ -344,6 +346,7 @@
                                       CanUserSortColumns="False"
                                       CanUserResizeRows="False"
                                       CanUserDeleteRows="False"
+                                      PreviewKeyDown="ShaftDataGrid_PreviewKeyDown"
                                       LoadingRow="ShaftDataGrid_LoadingRow"
                                       AddingNewItem="ShaftDataGrid_AddingNewItem"
                                       Grid.Row="1"
@@ -821,12 +824,12 @@
         <KeyBinding Command="{Binding OpenFileCommand}" Key="O" Modifiers="Ctrl"/>
         <KeyBinding Command="{Binding SaveFileCommand}" Key="S" Modifiers="Ctrl"/>
         <KeyBinding Command="{Binding SaveFileAsCommand}" Key="S" Modifiers="Ctrl+Shift"/>
-        <KeyBinding Command="{Binding AddItemCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}" Key="Add" Modifiers="Ctrl"/>
-        <KeyBinding Command="{Binding RemoveItemCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}" Key="Subtract" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding AddItemCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}" Key="Insert"/>
+        <KeyBinding Command="{Binding RemoveItemCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}" Key="Delete"/>
         <KeyBinding Command="{Binding MoveItemUpCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}" Key="Up" Modifiers="Ctrl"/>
         <KeyBinding Command="{Binding MoveItemDownCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}" Key="Down" Modifiers="Ctrl"/>
         <KeyBinding Command="{Binding MirrorShaftCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}" Key="M" Modifiers="Ctrl"/>
-        <KeyBinding Command="{Binding RemoveAllItemsCommand}" Key="Subtract" Modifiers="Ctrl+Shift"/>
+        <KeyBinding Command="{Binding RemoveAllItemsCommand}" Key="Delete" Modifiers="Ctrl"/>
         <KeyBinding Command="{Binding HistoryBackCommand}" Key="Z" Modifiers="Ctrl"/>
         <KeyBinding Command="{Binding HistoryForwardCommand}" Key="Y" Modifiers="Ctrl"/>
         <KeyBinding Command="{Binding KritikCalculateCommand}" Key="F5"/>

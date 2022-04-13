@@ -11,6 +11,7 @@ using OxyPlot;
 using System.Windows;
 using Microsoft.Win32;
 using System.Diagnostics;
+using System.Windows.Controls;
 
 namespace Kritik
 {
@@ -53,7 +54,7 @@ namespace Kritik
         }
         #endregion
 
-        #region Properties for Calculation Data
+        #region Model Properties
 
         private CalculationProperties calculationProperties;
         public CalculationProperties CalculationProperties
@@ -103,9 +104,10 @@ namespace Kritik
         }
         public PlotModel ShaftScheme { get; set; }
         public CollectionHistory<ShaftElementForDataGrid> History { get; set; }
+        public Strings Strings { get; set; }
         #endregion
 
-        #region Application View Properties
+        #region View Properties
         public string WindowTitle
         {
             get
@@ -125,7 +127,6 @@ namespace Kritik
                 return title;
             }
         }
-        public Strings Strings { get; set; }
         private string fileName;
         public string FileName
         {
@@ -178,6 +179,7 @@ namespace Kritik
         /// True if <see cref="ShaftElementSelected"/> in datagrid is <see cref="ElementType.beamPlus"/>
         /// </summary>
         public bool BeamPlusElementIsSelected => ShaftElementSelected?.Type == ElementType.beamPlus;
+        public bool BeamPlusComboBoxIsNotEmpty => BeamPlusComboBoxItems.Count > 0;
         /// <summary>
         /// Array of beamPlus elements numbers - 1-based indexing
         /// </summary>
@@ -281,35 +283,38 @@ namespace Kritik
         #region DataGrid Controls Commands
         private ICommand addItemCommand;
         public ICommand AddItemCommand => addItemCommand ??= new RelayCommand<object>(
-            (o) => { ShaftElementSelected = Shaft.AddElement(ShaftElementSelected); History.Add(); DataGridRefresh(o); }, 
-            (o) => true);
+            (obj) => { ShaftElementSelected = Shaft.AddElement(ShaftElementSelected); CommonBtnActions(obj); }, 
+            (obj) => true);
         private ICommand removeItemCommand;
         public ICommand RemoveItemCommand => removeItemCommand ??= new RelayCommand<object>(
-            (o) => { ShaftElementSelected = Shaft.RemoveSelectedElement(ShaftElementSelected); History.Add(); DataGridRefresh(o); }, 
-            (o) => { return Shaft.Elements.Count > 0; });
+            (obj) => { ShaftElementSelected = Shaft.RemoveSelectedElement(ShaftElementSelected); CommonBtnActions(obj); }, 
+            (obj) => { return Shaft.Elements.Count > 0; });
         private ICommand moveItemUpCommand;
         public ICommand MoveItemUpCommand => moveItemUpCommand ??= new RelayCommand<object>(
-            (o) => { Shaft.MoveElementUp(ShaftElementSelected); History.Add(); DataGridRefresh(o); },
-            (o) => { return Shaft.Elements.IndexOf(ShaftElementSelected) > 0; });
+            (obj) => { Shaft.MoveElementUp(ShaftElementSelected); CommonBtnActions(obj); },
+            (obj) => { return Shaft.Elements.IndexOf(ShaftElementSelected) > 0; });
         private ICommand moveItemDownCommand;
         public ICommand MoveItemDownCommand => moveItemDownCommand ??= new RelayCommand<object>(
-            (o) => { Shaft.MoveElementDown(ShaftElementSelected); History.Add(); DataGridRefresh(o); },
-            (o) => { int i = Shaft.Elements.IndexOf(ShaftElementSelected); return i < Shaft.Elements.Count - 1 && i >= 0; });
+            (obj) => { Shaft.MoveElementDown(ShaftElementSelected); CommonBtnActions(obj); },
+            (obj) => { int i = Shaft.Elements.IndexOf(ShaftElementSelected); 
+                return i < Shaft.Elements.Count - 1 && i >= 0; });
         private ICommand mirrorShaftCommand;
         public ICommand MirrorShaftCommand => mirrorShaftCommand ??= new RelayCommand<object>(
-            (o) => { if (History.Count == 0) { History.Add(); } ShaftElementSelected = Shaft.Mirror(); History.Add(); DataGridRefresh(o); },
-            (o) => { return Shaft.Elements.Count > 0; });
+            (obj) => { if (History.Count == 0) { History.Add(); } ShaftElementSelected = Shaft.Mirror(); CommonBtnActions(obj); },
+            (obj) => { return Shaft.Elements.Count > 0; });
         private ICommand removeAllItemsCommand;
         public ICommand RemoveAllItemsCommand => removeAllItemsCommand ??= new CommandHandler(
-            () => { Shaft.RemoveAllElements(); History.Add(); },
+            () => { Shaft.RemoveAllElements(); History.Add(); BeamPlusControlsUpdate(); },
             () => { return Shaft.Elements.Count > 0; });
         private ICommand historyBackCommand;
         public ICommand HistoryBackCommand => historyBackCommand ??= new CommandHandler(
-            () => { Shaft.Elements = History.Back(); History.SetCollection(Shaft.Elements); }, 
+            () => { Shaft.Elements = History.Back();
+                History.SetCollection(Shaft.Elements); BeamPlusControlsUpdate(); }, 
             () => History.CanGoBack());
         private ICommand historyForwardCommand;
         public ICommand HistoryForwardCommand => historyForwardCommand ??= new CommandHandler(
-            () => { Shaft.Elements = History.Forward(); History.SetCollection(Shaft.Elements); }, 
+            () => { Shaft.Elements = History.Forward(); 
+                History.SetCollection(Shaft.Elements); BeamPlusControlsUpdate(); }, 
             () => History.CanGoForward());
         #endregion
 
@@ -429,6 +434,7 @@ namespace Kritik
                 NotifyPropertyChanged(nameof(BeamPlusComboBoxItems));
 
             NotifyPropertyChanged(nameof(BeamPlusComboBoxSelectedItem));
+            NotifyPropertyChanged(nameof(BeamPlusComboBoxIsNotEmpty));
             NotifyPropertyChanged(nameof(BeamPlusElementIsSelected));
             NotifyPropertyChanged(nameof(BeamPlusComboBoxSelectedItem));
             NotifyPropertyChanged(nameof(BeamPlusDivision));
@@ -436,15 +442,38 @@ namespace Kritik
             NotifyPropertyChanged(nameof(BeamPlusIdNValue));
             NotifyPropertyChanged(nameof(BeamPlusText));
         }
+        /// <summary>
+        /// Batch call of: <see cref="History"/>.Add(), <see cref="DataGridRefresh(object)"/> and <see cref="BeamPlusControlsUpdate(string)"/>
+        /// </summary>
+        /// <param name="obj"></param>
+        private void CommonBtnActions(object obj)
+        {
+            History.Add(); 
+            DataGridRefresh(obj);
+            BeamPlusControlsUpdate();
+        }
+
+        /// <summary>
+        /// Refreshes DataGrid and ensures that the DataGrid selected row stays focused
+        /// </summary>
+        /// <param name="sender"><see cref="DataGrid"/> object</param>
         private void DataGridRefresh(object sender)
         {
-            if (sender is System.Windows.Controls.DataGrid grid)
+            if (sender is DataGrid grid)
             {
-                grid.Focus();
+                grid.CommitEdit();
+                grid.CommitEdit();
                 grid.Items.Refresh();
-                grid.SelectedIndex = Shaft.Elements.IndexOf(ShaftElementSelected);
+                grid.UpdateLayout();                
+                grid.ScrollIntoView(ShaftElementSelected);
+                int index = Shaft.Elements.IndexOf(ShaftElementSelected);
+                if (index < 0) 
+                    index = Shaft.Elements.Count - 1;
+                DataGridRow row = (DataGridRow)grid.ItemContainerGenerator.ContainerFromIndex(index);
+                _ = row.MoveFocus(new TraversalRequest(FocusNavigationDirection.Up));
             }
         }
+
         #endregion
     }
 }

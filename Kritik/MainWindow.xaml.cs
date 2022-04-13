@@ -27,6 +27,7 @@ using OxyPlot.Wpf;
 using System.Drawing;
 using Brushes = System.Windows.Media.Brushes;
 using Microsoft.Xaml.Behaviors;
+using System.Windows.Controls.Primitives;
 
 namespace Kritik
 {
@@ -971,7 +972,7 @@ namespace Kritik
         /// </summary>
         private void GridColumnFastEdit(object sender, MouseButtonEventArgs e)
         {
-            DataGridCell cell = (DataGridCell)sender;
+            DataGridCell cell = sender as DataGridCell;
             if (cell == null || cell.IsEditing || cell.IsReadOnly)
                 return;
 
@@ -989,6 +990,40 @@ namespace Kritik
             ShaftDataGrid.BeginEdit(e);
             cell.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
             cb.IsDropDownOpen = true;
+        }
+
+        /// <summary>
+        /// Disables default DataGrid KeyEvents defined in keysToOverride so custom KeyBindings can be handled
+        /// </summary>
+        private void ShaftDataGrid_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            DataGrid dataGrid = sender as DataGrid;
+            if (dataGrid is null) 
+                return;
+
+            bool[] keysToOverride =
+                {
+                    e.Key == Key.Up && e.KeyboardDevice.Modifiers == ModifierKeys.Control,
+                    e.Key == Key.Down && e.KeyboardDevice.Modifiers == ModifierKeys.Control,
+                    e.Key == Key.Right && e.KeyboardDevice.Modifiers == ModifierKeys.Control,
+                    e.Key == Key.Delete
+                };
+
+            if (keysToOverride.Any((key) => key))
+            {
+                dataGrid.CommitEdit();
+                dataGrid.CommitEdit();
+                e.Handled = true;
+                RaiseEvent(new KeyEventArgs(e.KeyboardDevice, PresentationSource.FromVisual(this), 0, e.Key)
+                { 
+                    RoutedEvent = Keyboard.KeyDownEvent                 
+                });
+            }
+        }
+
+        private void BeamPlusIndexComboBox_DropDownClosed(object sender, EventArgs e)
+        {
+            ShaftDataGrid.ScrollIntoView(ShaftDataGrid.SelectedItem);
         }
     }
 }
