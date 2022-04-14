@@ -140,7 +140,7 @@ namespace Kritik
     /// <summary>
     /// Converts Enum to string and vice versa using Enum Description
     /// </summary>
-    public class EnumConverter : IValueConverter
+    public class EnumToStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -156,6 +156,37 @@ namespace Kritik
                     return enumValue;
             }
             return null;
+        }
+    }
+
+    /// <summary>
+    /// Converts Enum to bool and vice versa based on number set in parameter
+    /// </summary>
+    public class EnumToBoolConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool parsed = Int32.TryParse(parameter as string, out int index);
+            if (!parsed)
+                throw new ArgumentException("Parameter could not be converted to Int32", nameof(parameter));
+            
+            string[] enumNames = value.GetType().GetEnumNames();
+
+            return enumNames[index] == value.ToString();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (!(bool)value)
+                return Binding.DoNothing;
+
+            bool parsed = Int32.TryParse(parameter as string, out int index);
+            if (!parsed)
+                throw new ArgumentException("Parameter could not be converted to Int32", nameof(parameter));
+
+            var enumValues = Type.GetType(targetType.FullName).GetEnumValues();
+
+            return enumValues.GetValue(index);
         }
     }
 

@@ -85,6 +85,7 @@ namespace Kritik
             {nameof(VLIVGYROSNENIUVAZOVAN), "VLIV GYROSKOPICKÝCH ÚČINKŮ NENÍ UVAŽOVÁN" },
             {nameof(SOUBEZNAPRECESE), "SOUBĚŽNÁ PRECESE" },
             {nameof(PROTIBEZNAPRECESE), "PROTIBĚŽNÁ PRECESE" },
+            {nameof(PROZADANEOTACKY), "PRO ZADANÉ OTÁČKY" },
             {nameof(ProvozniOtackyHrideleDT), "Provozní otáčky hřídele:" },
             {nameof(PrubezneOtackyHrideleDT), "Průběžné otáčky hřídele:" },
             {nameof(PoznamkyKVypoctuDT), "Poznámky k výpočtu:" },
@@ -134,6 +135,7 @@ namespace Kritik
             {nameof(VLIVGYROSNENIUVAZOVAN), "THE INFLUENCE OF GYROSCOPIC EFFECTS IS NOT CONSIDERED" },
             {nameof(SOUBEZNAPRECESE), "FORWARD PRECESSION" },
             {nameof(PROTIBEZNAPRECESE), "BACKWARD PRECESSION" },
+            {nameof(PROZADANEOTACKY), "FOR THE SPECIFIED SPEED OF" },
             {nameof(ProvozniOtackyHrideleDT), "Operating shaft speed:" },
             {nameof(PrubezneOtackyHrideleDT), "Runaway shaft speed:" },
             {nameof(PoznamkyKVypoctuDT), "Notes:" },
@@ -181,6 +183,7 @@ namespace Kritik
         public string VLIVGYROSNENIUVAZOVAN => dictionary[This()];
         public string SOUBEZNAPRECESE => dictionary[This()];
         public string PROTIBEZNAPRECESE => dictionary[This()];
+        public string PROZADANEOTACKY => dictionary[This()];
         public string ProvozniOtackyHrideleDT => dictionary[This()];
         public string PrubezneOtackyHrideleDT => dictionary[This()];
         public string PoznamkyKVypoctuDT => dictionary[This()];

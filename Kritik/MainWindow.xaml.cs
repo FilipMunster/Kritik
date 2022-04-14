@@ -907,33 +907,6 @@ namespace Kritik
             s.SelectAll();
         }
 
-        private void shaftRotationInfluenceExpandButton_Click(object sender, RoutedEventArgs e)
-        {
-            Button s = (Button)sender;
-            System.Windows.ThicknessConverter thickness = new System.Windows.ThicknessConverter();
-            if ((string)s.Tag == "hidden")
-            {
-                s.Tag = "visible";
-                s.Content = new System.Windows.Controls.Image
-                {
-                    Source = new BitmapImage(new Uri("pack://application:,,,/icons/StepBackArrow_16x.png")),
-                    Width = 10,
-                    HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
-                    Margin = (Thickness)thickness.ConvertFromString("0, 8, 0, 0")
-                };
-            }
-            else
-            {
-                s.Tag = "hidden";
-                s.Content = new System.Windows.Controls.Image
-                {
-                    Source = new BitmapImage(new Uri("pack://application:,,,/icons/StepOverArrow_16x.png")),
-                    Width = 10,
-                    HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
-                    Margin = (Thickness)thickness.ConvertFromString("0, 8, 0, 0")
-                };
-            }
-        }
         private void ShaftDataGrid_AddingNewItem(object sender, AddingNewItemEventArgs e)
         {
             _ = ShaftDataGrid.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
@@ -945,7 +918,7 @@ namespace Kritik
         /// <summary>
         /// Method for skipping non-editable cells
         /// </summary>
-        private void DataGridCell_PreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        private void DataGridCell_SkipNonEditable(object sender, KeyboardFocusChangedEventArgs e)
         {
             if (e.OldFocus is DataGridCell oldCell && sender is DataGridCell newCell)
             {
@@ -1011,8 +984,8 @@ namespace Kritik
 
             if (keysToOverride.Any((key) => key))
             {
-                dataGrid.CommitEdit();
-                dataGrid.CommitEdit();
+                dataGrid.CommitEdit(); // Commiting edit so the datagrid items can be refreshed afterwards.
+                dataGrid.CommitEdit(); // Must be called 2 times to work.
                 e.Handled = true;
                 RaiseEvent(new KeyEventArgs(e.KeyboardDevice, PresentationSource.FromVisual(this), 0, e.Key)
                 { 

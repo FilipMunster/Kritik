@@ -11,6 +11,9 @@ using System.Text;
 
 namespace Kritik
 {
+    /// <summary>
+    /// Provides methods for loading and saving Kritik data from / to .xlsx file
+    /// </summary>
     public static class DataLoadSave
     {
         // keywords used in input file
@@ -32,6 +35,8 @@ namespace Kritik
         private const string rhoKeyword = "rho";
         private const string otackyProvozniKeyword = "n";
         private const string otackyPrubezneKeyword = "nr";
+        private const string vlivOtacekKeyword = "vliv";
+        private const string otackyHrideleKeyword = "ni";
         private const string nKritMaxKeyword = "nKritMax";
         private const string poznamkaKeyword = "Poznamka";
         private const string diskKeyword = "disk";
@@ -42,7 +47,7 @@ namespace Kritik
         private const string magnetKeyword = "magnet";
         private const int youngModulusOrder = 9; // Young Modulus is given in GPa
         private const int lengthOrder = -3; // Lengths are given in mm
-        private const string excelListZadani = "KRITIK_zadani";
+        private const string excelSheetZadani = "KRITIK_zadani";
         private const string excelListVysledky = "KRITIK_vypocet";
 
         private static Dictionary<string, BoundaryCondition> boundaryConditionStringToEnum = new Dictionary<string, BoundaryCondition>()
@@ -120,11 +125,12 @@ namespace Kritik
                 using (ExcelPackage package = new ExcelPackage(fileInfo))
                 {
                     ExcelWorksheet excel;
-                    excel = package.Workbook.Worksheets[excelListZadani];
+                    excel = package.Workbook.Worksheets[excelSheetZadani];
 
+                    // if WorskSheet named excelSheetZadani was not found, try to load the FirstOrDefault()
                     if (excel == null) { excel = package.Workbook.Worksheets.FirstOrDefault(); }
 
-                    int numRows;
+                    int numRows; // number of rows in excel sheet
 
                     if ((excel != null) && (excel.Dimension != null))
                     {
@@ -188,6 +194,14 @@ namespace Kritik
                                 case otackyPrubezneKeyword:
                                     if (Double.TryParse(value, out double nRA))
                                         shaftProperties.RunawaySpeed = nRA;
+                                    break;
+                                case vlivOtacekKeyword:
+                                    if (Boolean.TryParse(value, out bool nInfluence))
+                                        shaftProperties.ShaftRotationInfluence = nInfluence;
+                                    break;
+                                case otackyHrideleKeyword:
+                                    if (Double.TryParse(value, out double ni))
+                                        shaftProperties.ShaftRPM = ni;
                                     break;
                                 case nKritMaxKeyword:
                                     if (Double.TryParse(value, out double nMax))
@@ -272,11 +286,11 @@ namespace Kritik
             {
                 using (ExcelPackage p = new ExcelPackage(fileInfo))
                 {
-                    if (p.Workbook.Worksheets[excelListZadani] is not null)
+                    if (p.Workbook.Worksheets[excelSheetZadani] is not null)
                     {
-                        p.Workbook.Worksheets.Delete(excelListZadani);
+                        p.Workbook.Worksheets.Delete(excelSheetZadani);
                     }
-                    ExcelWorksheet ws = p.Workbook.Worksheets.Add(excelListZadani);
+                    ExcelWorksheet ws = p.Workbook.Worksheets.Add(excelSheetZadani);
 
                     ws.Cells.Style.Font.Bold = false;
                     ws.Cells.Style.Font.Color.SetColor(Color.Black);
@@ -318,20 +332,25 @@ namespace Kritik
                     ws.Cells[21, 1].Value = otackyPrubezneKeyword;
                     ws.Cells[21, 2].Value = shaftProperties.RunawaySpeed;
                     ws.Cells[21, 3].Value = "rpm";
-                    ws.Cells[22, 1].Value = nKritMaxKeyword;
-                    ws.Cells[22, 2].Value = shaftProperties.MaxCriticalSpeed;
-                    ws.Cells[22, 3].Value = "rpm";
-                    ws.Cells[24, 1].Value = "Poznámky k výpočtu:";
-                    ws.Cells[25, 1].Value = poznamkaKeyword;
-                    ws.Cells[25, 2].Value = calculationProperties.Notes;
-                    ws.Cells[27, 1].Value = "Data článků:";
-                    ws.Cells[27, 3].Value = "(L, De, Di - [mm]; m - [kg]; Io, Id - [kg.m2]; k, Cm - [N/m]; Deleni - [-])";
+                    ws.Cells[22, 1].Value = vlivOtacekKeyword;
+                    ws.Cells[22, 2].Value = shaftProperties.ShaftRotationInfluence.ToString();
+                    ws.Cells[23, 1].Value = otackyHrideleKeyword;
+                    ws.Cells[23, 2].Value = shaftProperties.ShaftRPM;
+                    ws.Cells[23, 3].Value = "rpm";
+                    ws.Cells[24, 1].Value = nKritMaxKeyword;
+                    ws.Cells[24, 2].Value = shaftProperties.MaxCriticalSpeed;
+                    ws.Cells[24, 3].Value = "rpm";
+                    ws.Cells[26, 1].Value = "Poznámky k výpočtu:";
+                    ws.Cells[27, 1].Value = poznamkaKeyword;
+                    ws.Cells[27, 2].Value = calculationProperties.Notes;
+                    ws.Cells[29, 1].Value = "Data článků:";
+                    ws.Cells[29, 3].Value = "(L, De, Di - [mm]; m - [kg]; Io, Id - [kg.m2]; k, Cm - [N/m]; Deleni - [-])";
                     for (int i = 0; i < colNames.Length; i++)
                     {
-                        ws.Cells[28, i + 1].Value = colNames[i];
+                        ws.Cells[30, i + 1].Value = colNames[i];
                     }
 
-                    int row = 29; // první řádek dat prvků
+                    int row = 31; // první řádek dat prvků
                     if (shaftElements != null)
                     {
                         foreach (var element in shaftElements)
@@ -440,10 +459,10 @@ namespace Kritik
                     ws.Cells[8, 1].Value = strings.OkrajovePodminkyDT;
                     ws.Cells[9, 2].Value = strings.LEVYKonecRotoru;
                     ws.Cells[9, 4].Value = opVypsatDict[shaftProperties.BCLeft];
-                    ws.Cells[9, 4].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                    ws.Cells[9, 4].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                     ws.Cells[10, 2].Value = strings.PRAVYKonecRotoru;
                     ws.Cells[10, 4].Value = opVypsatDict[shaftProperties.BCRight];
-                    ws.Cells[10, 4].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                    ws.Cells[10, 4].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                     ws.Cells[11, 1].Value = strings.ModulPruznostiVTahuHrideleDT;
                     ws.Cells[11, 4].Value = shaftProperties.YoungModulus * Math.Pow(10, -1 * youngModulusOrder);
                     ws.Cells[11, 5].Value = "GPa";
@@ -451,6 +470,16 @@ namespace Kritik
                     ws.Cells[12, 4].Value = shaftProperties.MaterialDensity;
                     ws.Cells[12, 5].Value = "kg.m⁻³";
                     ws.Cells[14, 1].Value = gyrosVypsatDict[shaftProperties.Gyros];
+
+                    if (shaftProperties.ShaftRotationInfluence)
+                    {
+                        ws.Cells[14, 1].Value = ws.Cells[14, 1].Value + " " + strings.PROZADANEOTACKY;
+                        int niCol = 5;
+                        if (strings.SelectedLanguage == Strings.Language.en) niCol = 6;
+                        ws.Cells[14, niCol].Value = shaftProperties.ShaftRPM;
+                        ws.Cells[14, niCol + 1].Value = "min⁻¹";
+                    }
+
                     int row = 15;
                     if (shaftProperties.OperatingSpeed > 0)
                     {

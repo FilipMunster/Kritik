@@ -141,6 +141,7 @@ namespace Kritik
         public string[] GyroscopicEffectsItems => Enums.GetNames<GyroscopicEffect>();
 
         #region Shaft rotation influence controls
+        public string ShaftRotationInfluenceButtonSource => shaftRotationInfluenceControlsAreVisible ? "/icons/StepBackArrow_16x.png" : "/icons/StepOverArrow_16x.png";
         public string ShaftRotationInfluenceVisibility => shaftRotationInfluenceControlsAreVisible ? "visible" : "collapsed";
         public ShaftRotationInfluenceOption ShaftRotationInfluenceSelectedOption { get; set; }
 
@@ -266,17 +267,20 @@ namespace Kritik
         #region Rotation Influence Commands
         private ICommand shaftRotationInfluenceCheckBoxCommand;
         public ICommand ShaftRotationInfluenceCheckBoxCommand => shaftRotationInfluenceCheckBoxCommand ??=
-            new CommandHandler(() => ShaftRPMUpdate(), () => Shaft.Properties.Gyros != GyroscopicEffect.none);
+            new CommandHandler(
+                () => ShaftRPMUpdate(), 
+                () => Shaft.Properties.Gyros != GyroscopicEffect.none);
         private ICommand shaftRotationOptionChangedCommand;
         public ICommand ShaftRotationOptionChangedCommand => shaftRotationOptionChangedCommand ??=
-            new RelayCommand<ShaftRotationInfluenceOption>(
-                (e) => { ShaftRotationInfluenceSelectedOption = e; ShaftRPMUpdate(); },
-                (e) => Shaft.Properties.ShaftRotationInfluence);
+            new CommandHandler(
+                () => ShaftRPMUpdate(),
+                () => Shaft.Properties.ShaftRotationInfluence);
 
         private ICommand shaftRotationInfluenceVisibilityCommand;
         public ICommand ShaftRotationInfluenceVisibilityCommand => shaftRotationInfluenceVisibilityCommand ??=
             new CommandHandler(
-                () => { shaftRotationInfluenceControlsAreVisible = !shaftRotationInfluenceControlsAreVisible; NotifyPropertyChanged(nameof(ShaftRotationInfluenceVisibility)); }, 
+                () => { shaftRotationInfluenceControlsAreVisible = !shaftRotationInfluenceControlsAreVisible; 
+                    NotifyPropertyChanged(nameof(ShaftRotationInfluenceVisibility)); NotifyPropertyChanged(nameof(ShaftRotationInfluenceButtonSource)); }, 
                 () => true);
         #endregion
 
@@ -373,6 +377,7 @@ namespace Kritik
             FileName = fileName;
             NotifyPropertyChanged(nameof(ShaftOperatingSpeed));
             NotifyPropertyChanged(nameof(ShaftRunawaySpeed));
+            ShaftRotationInfluenceLoading();
             AnyPropertyChanged = false;
         }
 
@@ -422,6 +427,29 @@ namespace Kritik
                     break;
             }
         }
+        private void ShaftRotationInfluenceLoading()
+        {
+            if (Shaft.Properties.ShaftRPM == Shaft.Properties.OperatingSpeed)
+                ShaftRotationInfluenceSelectedOption = ShaftRotationInfluenceOption.operatingSpeed;
+            else if (Shaft.Properties.ShaftRPM == Shaft.Properties.RunawaySpeed)
+                ShaftRotationInfluenceSelectedOption = ShaftRotationInfluenceOption.runawaySpeed;
+            else
+            {
+                ShaftRotationInfluenceSelectedOption = ShaftRotationInfluenceOption.custom;
+                ShaftRotationInfluenceCustomValue = Shaft.Properties.ShaftRPM;
+            }
+                
+
+            if (Shaft.Properties.ShaftRotationInfluence)
+                shaftRotationInfluenceControlsAreVisible = true;
+            else
+                shaftRotationInfluenceControlsAreVisible = false;
+
+            NotifyPropertyChanged(nameof(ShaftRotationInfluenceVisibility));
+            NotifyPropertyChanged(nameof(ShaftRotationInfluenceButtonSource));
+            NotifyPropertyChanged(nameof(ShaftRotationInfluenceSelectedOption));
+            NotifyPropertyChanged(nameof(ShaftRotationInfluenceCustomValue));
+        }
         private void CellEditEnding()
         {
             if (ShaftElementSelected?.Type == ElementType.beamPlus)
@@ -445,7 +473,7 @@ namespace Kritik
         /// <summary>
         /// Batch call of: <see cref="History"/>.Add(), <see cref="DataGridRefresh(object)"/> and <see cref="BeamPlusControlsUpdate(string)"/>
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="obj"><see cref="DataGrid"/> object</param>
         private void CommonBtnActions(object obj)
         {
             History.Add(); 
