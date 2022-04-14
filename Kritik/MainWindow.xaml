@@ -328,10 +328,10 @@
                                     <Image Source="/icons/DeleteAllRows_16x.png" />
                                 </Button>
                                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0, 0, 5, 0" Stroke="Black" />
-                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Zpět (Ctrl+Z)" Command="{Binding HistoryBackCommand}">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Zpět (Ctrl+Z)" Command="{Binding HistoryBackCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}">
                                     <Image Source="/icons/StepBackwards_16x.png" />
                                 </Button>
-                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Vpřed (Ctrl+Y)" Command="{Binding HistoryForwardCommand}">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Vpřed (Ctrl+Y)" Command="{Binding HistoryForwardCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}">
                                     <Image Source="/icons/StepForward_16x.png" />
                                 </Button>
                             </StackPanel>
@@ -829,8 +829,8 @@
         <KeyBinding Command="{Binding MoveItemDownCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}" Key="Down" Modifiers="Ctrl"/>
         <KeyBinding Command="{Binding MirrorShaftCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}" Key="M" Modifiers="Ctrl"/>
         <KeyBinding Command="{Binding RemoveAllItemsCommand}" Key="Delete" Modifiers="Ctrl"/>
-        <KeyBinding Command="{Binding HistoryBackCommand}" Key="Z" Modifiers="Ctrl"/>
-        <KeyBinding Command="{Binding HistoryForwardCommand}" Key="Y" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding HistoryBackCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}" Key="Z" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding HistoryForwardCommand}" CommandParameter="{Binding ElementName=ShaftDataGrid}" Key="Y" Modifiers="Ctrl"/>
         <KeyBinding Command="{Binding KritikCalculateCommand}" Key="F5"/>
     </Window.InputBindings>
 </Window>

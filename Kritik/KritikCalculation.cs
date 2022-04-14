@@ -58,7 +58,7 @@ namespace Kritik
         public double[] CriticalSpeeds { get; private set; }
         public OscillationShape[] OscillationShapes { get; private set; }
 
-        public string GetCriticalSpeedText()
+        private string GetCriticalSpeedText()
         {
             string text = "";
 
@@ -77,7 +77,7 @@ namespace Kritik
             }
             return text;
         }
-        public string GetFirstCriticalSpeedRatioText()
+        private string GetFirstCriticalSpeedRatioText()
         {
             string text = "";
             if (CriticalSpeeds is null || CriticalSpeeds.Count() == 0)

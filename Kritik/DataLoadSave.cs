@@ -48,7 +48,7 @@ namespace Kritik
         private const int youngModulusOrder = 9; // Young Modulus is given in GPa
         private const int lengthOrder = -3; // Lengths are given in mm
         private const string excelSheetZadani = "KRITIK_zadani";
-        private const string excelListVysledky = "KRITIK_vypocet";
+        private const string excelSheetResultsName = "KRITIK_vypocet";
 
         private static Dictionary<string, BoundaryCondition> boundaryConditionStringToEnum = new Dictionary<string, BoundaryCondition>()
         {
@@ -274,12 +274,14 @@ namespace Kritik
         /// Saves shaft and calculation data into xlsx file
         /// </summary>
         /// <param name="fileName">Full path to output file</param>
-        /// <param name="shaftProperties">Shaft properties</param>
+        /// <param name="shaft">Shaft</param>
         /// <param name="calculationProperties">Calculation properties</param>
-        /// <param name="shaftElements">List of Shaft Elements</param>
         /// <returns>true if file saved successfully</returns>
-        public static bool SaveData(string fileName, ShaftProperties shaftProperties, CalculationProperties calculationProperties, List<ShaftElement> shaftElements)
+        public static bool SaveData(string fileName, Shaft shaft, CalculationProperties calculationProperties)
         {
+            ShaftProperties shaftProperties = shaft.Properties;
+            List<ShaftElement> shaftElements = new List<ShaftElement>(shaft.Elements);
+
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             FileInfo fileInfo = new FileInfo(fileName);
             try
@@ -376,12 +378,14 @@ namespace Kritik
                     }
                     catch
                     {
-                        Debug.WriteLine("Chyba při ukládání dat hřídele do souboru: {0}", fileName);
                         return false;
                     }
                 }
-            } catch { return false; }
-            Debug.WriteLine("Soubor {0} byl uložen.", fileName);
+            } 
+            catch 
+            { 
+                return false;
+            }
             return true;
         }
 
@@ -389,21 +393,28 @@ namespace Kritik
         /// Saves results of critical speed calculation
         /// </summary>
         /// <param name="fileName">Full path to output file</param>
-        /// <param name="shaftProperties">Shaft properties</param>
-        /// <param name="calculationProperties">Calculation properties</param>
-        /// <param name="shaftElements">List of Shaft Elements</param>
-        /// <param name="results">Kritik results</param>
-        /// <param name="strings">Instance of strings class</param>
+        /// <param name="calculation">KritikCalculation with results</param>
+        /// <param name="strings">Instance of Strings class</param>
         /// <returns></returns>
-        public static bool SaveResults(string fileName, ShaftProperties shaftProperties, CalculationProperties calculationProperties, List<ShaftElement> shaftElements, KritikCalculation results, Strings strings)
+        public static bool SaveResults(string fileName, KritikCalculation calculation, Strings strings)
         {
-            Dictionary<BoundaryCondition, string> opVypsatDict = new()
+            if (calculation.Shaft is null || calculation.CalculationProperties is null)
+            {
+                calculation = new KritikCalculation(new Shaft(), new CalculationProperties());
+            }
+            
+            ShaftProperties shaftProperties = calculation.Shaft.Properties;
+            CalculationProperties calculationProperties = calculation.CalculationProperties;
+            List<ShaftElement> shaftElements = new List<ShaftElement>(calculation.Shaft.Elements);
+            double[] criticalSpeeds = calculation.CriticalSpeeds;
+
+            Dictionary<BoundaryCondition, string> bcToStringDict = new()
             {
                 { BoundaryCondition.free, strings.VOLNY },
                 { BoundaryCondition.joint, strings.KLOUB },
                 { BoundaryCondition.fix, strings.VETKNUTI }
             };
-            Dictionary<GyroscopicEffect, string> gyrosVypsatDict = new()
+            Dictionary<GyroscopicEffect, string> gyrosToStringDict = new()
             {
                 { GyroscopicEffect.none, strings.VLIVGYROSNENIUVAZOVAN },
                 { GyroscopicEffect.forward, strings.SOUBEZNAPRECESE },
@@ -412,15 +423,16 @@ namespace Kritik
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             FileInfo fileInfo = new FileInfo(fileName);
+
             try
             {
                 using (ExcelPackage p = new ExcelPackage(fileInfo))
                 {
-                    if (p.Workbook.Worksheets[excelListVysledky] is not null)
+                    if (p.Workbook.Worksheets[excelSheetResultsName] is not null)
                     {
-                        p.Workbook.Worksheets.Delete(excelListVysledky);
+                        p.Workbook.Worksheets.Delete(excelSheetResultsName);
                     }
-                    ExcelWorksheet ws = p.Workbook.Worksheets.Add(excelListVysledky);
+                    ExcelWorksheet ws = p.Workbook.Worksheets.Add(excelSheetResultsName);
 
                     ws.Cells.Style.Font.Bold = false;
                     ws.Cells.Style.Font.Color.SetColor(Color.Black);
@@ -432,18 +444,17 @@ namespace Kritik
                     ws.Cells[1, 1].Value = strings.KritickeOtackykrouzivehoKmitani;
                     ws.Cells[1, 1].Style.Font.Bold = true;
 
-                    // If calculation was not done yet (-> results.CriticalSpeeds == null):
-                    if (results.CriticalSpeeds == null)
+                    // If calculation has not been done yet (<- criticalSpeeds == null):
+                    if (criticalSpeeds is null)
                     {
+                        ws.Cells[2, 1].Value = strings.VypocetNebylDosudProveden;
                         try
                         {
-                            ws.Cells[2, 1].Value = strings.VypocetNebylDosudProveden;
                             p.Save();
                             return true;
                         }
                         catch
                         {
-                            Debug.WriteLine("Chyba při ukládání výsledků do souboru: {0}", fileName);
                             return false;
                         }
                     }
@@ -458,10 +469,10 @@ namespace Kritik
                     ws.Cells[6, 2].Value = calculationProperties.Date;
                     ws.Cells[8, 1].Value = strings.OkrajovePodminkyDT;
                     ws.Cells[9, 2].Value = strings.LEVYKonecRotoru;
-                    ws.Cells[9, 4].Value = opVypsatDict[shaftProperties.BCLeft];
+                    ws.Cells[9, 4].Value = bcToStringDict[shaftProperties.BCLeft];
                     ws.Cells[9, 4].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                     ws.Cells[10, 2].Value = strings.PRAVYKonecRotoru;
-                    ws.Cells[10, 4].Value = opVypsatDict[shaftProperties.BCRight];
+                    ws.Cells[10, 4].Value = bcToStringDict[shaftProperties.BCRight];
                     ws.Cells[10, 4].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                     ws.Cells[11, 1].Value = strings.ModulPruznostiVTahuHrideleDT;
                     ws.Cells[11, 4].Value = shaftProperties.YoungModulus * Math.Pow(10, -1 * youngModulusOrder);
@@ -469,7 +480,7 @@ namespace Kritik
                     ws.Cells[12, 1].Value = strings.HustotaMaterialuHrideleDT;
                     ws.Cells[12, 4].Value = shaftProperties.MaterialDensity;
                     ws.Cells[12, 5].Value = "kg.m⁻³";
-                    ws.Cells[14, 1].Value = gyrosVypsatDict[shaftProperties.Gyros];
+                    ws.Cells[14, 1].Value = gyrosToStringDict[shaftProperties.Gyros];
 
                     if (shaftProperties.ShaftRotationInfluence)
                     {
@@ -505,31 +516,31 @@ namespace Kritik
                     row = shaftProperties.OperatingSpeed > 0 || shaftProperties.RunawaySpeed > 0 || calculationProperties.Notes != "" ? row + 1 : row;
                     ws.Cells[++row, 1].Value = strings.VypocteneHodnotyDT;
                     ws.Cells[row, 1].Style.Font.Bold = true;
-                    for (int i = 0; i < results.CriticalSpeeds.Length; i++)
+                    for (int i = 0; i < criticalSpeeds.Length; i++)
                     {
                         ws.Cells[++row, 2].Value = strings.OrdinalNumber(i + 1) + " " + strings.kritickeOtacky;
-                        ws.Cells[row, 4].Value = results.CriticalSpeeds[i];
+                        ws.Cells[row, 4].Value = criticalSpeeds[i];
                         ws.Cells[row, 5].Value = "min⁻¹";
-                        ws.Cells[row, 6].Value = results.CriticalSpeeds[i] / 60.0;
+                        ws.Cells[row, 6].Value = criticalSpeeds[i] / 60.0;
                         ws.Cells[row, 6].Style.Numberformat.Format = "(0.0##)";
                         ws.Cells[row, 7].Value = "Hz";
                     }
-                    if (results.CriticalSpeeds.Length == 0) { ws.Cells[++row, 2].Value = strings.NebylyVypoctenyZadneKritickeOtacky; }
+                    if (criticalSpeeds.Length == 0) { ws.Cells[++row, 2].Value = strings.NebylyVypoctenyZadneKritickeOtacky; }
 
-                    if ((shaftProperties.OperatingSpeed > 0 || shaftProperties.RunawaySpeed > 0) && results.CriticalSpeeds.Length > 0)
+                    if ((shaftProperties.OperatingSpeed > 0 || shaftProperties.RunawaySpeed > 0) && criticalSpeeds.Length > 0)
                     {
                         row += 2;
                         ws.Cells[row, 2].Value = strings.OrdinalNumber(1) + " " + strings.kritickeOtacky + " " + strings.odpovidajiDT;
                     }
-                    if (shaftProperties.OperatingSpeed > 0 && results.CriticalSpeeds.Length > 0)
+                    if (shaftProperties.OperatingSpeed > 0 && criticalSpeeds.Length > 0)
                     {
-                        ws.Cells[++row, 2].Value = results.CriticalSpeeds[0] / shaftProperties.OperatingSpeed * 100;
+                        ws.Cells[++row, 2].Value = criticalSpeeds[0] / shaftProperties.OperatingSpeed * 100;
                         ws.Cells[row, 2].Style.Numberformat.Format = "0.0##";
                         ws.Cells[row, 3].Value = "% " + strings.provoznichOtacek;
                     }
-                    if (shaftProperties.RunawaySpeed > 0 && results.CriticalSpeeds.Length > 0)
+                    if (shaftProperties.RunawaySpeed > 0 && criticalSpeeds.Length > 0)
                     {
-                        ws.Cells[++row, 2].Value = results.CriticalSpeeds[0] / shaftProperties.RunawaySpeed * 100;
+                        ws.Cells[++row, 2].Value = criticalSpeeds[0] / shaftProperties.RunawaySpeed * 100;
                         ws.Cells[row, 2].Style.Numberformat.Format = "0.0##";
                         ws.Cells[row, 3].Value = "% " + strings.prubeznychOtacek;
                     }
@@ -541,8 +552,8 @@ namespace Kritik
 
                     if (shaftElements is not null)
                     {
-                        var alignLeft = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
-                        var alignRight = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                        var alignLeft = ExcelHorizontalAlignment.Left;
+                        var alignRight = ExcelHorizontalAlignment.Right;
                         string formatNum = "0.0#####";
 
                         int i = 0;
@@ -671,17 +682,20 @@ namespace Kritik
                     }
                     catch
                     {
-                        Debug.WriteLine("Chyba při ukládání výsledků do souboru: {0}", fileName);
                         return false;
                     }
                 }
-            } catch { return false; }
-            Debug.WriteLine("Soubor {0} byl uložen.", fileName);
+            }
+            catch
+            {
+                return false;
+            }
+            
             return true;
         }
 
         /// <summary>
-        /// Metoda pro nastavení výšky excelovské buňky podle délky textu.
+        /// Computes aproximate cell height for given text.
         /// </summary>
         /// <param name="text"></param>
         /// <param name="font"></param>
@@ -689,23 +703,26 @@ namespace Kritik
         /// <returns></returns>
         private static double MeasureTextHeight(string text, ExcelFont font, double width)
         {
-            if (text is null or "") { return 0.0; }
+            if (text is null or "") return 0.0;
+            
+            Graphics g = Graphics.FromHwnd(IntPtr.Zero);
+            int dpi = (int)g.DpiX;
 
-            var bitmap = new Bitmap(1, 1);
-            var graphics = Graphics.FromImage(bitmap);
+            Bitmap bitmap = new Bitmap(1, 1);
+            Graphics graphics = Graphics.FromImage(bitmap);
 
-            var pixelWidth = Convert.ToInt32(width * 7);  //7 pixels per excel column width
-            var fontSize = font.Size * 0.82f;
-            var drawingFont = new Font(font.Name, fontSize);
-            var size = graphics.MeasureString(text, drawingFont, pixelWidth, new StringFormat { FormatFlags = StringFormatFlags.MeasureTrailingSpaces });
+            int pixelWidth = Convert.ToInt32(width * 7);  //7 pixels per excel column width
+            Single fontSize = font.Size * 1.01f;
+            Font drawingFont = new Font(font.Name, fontSize);
+            SizeF size = graphics.MeasureString(text, drawingFont, pixelWidth, new StringFormat { FormatFlags = StringFormatFlags.MeasureTrailingSpaces });
 
+            g.Dispose();
             bitmap.Dispose();
             graphics.Dispose();
 
-            //72 DPI and 96 points per inch.  Excel height in points with max of 409 per Excel requirements.
-            double vysledek = Math.Min(Convert.ToDouble(size.Height) * 72 / 96, 409);
-            vysledek = vysledek < 15 ? 15 : vysledek;
-            return vysledek;
+            //72 DPI and dpi (96) points per inch.  Excel height in points with max of 409 per Excel requirements.
+            double result = Math.Min(Convert.ToDouble(size.Height) * 72 / dpi, 409);
+            return result;
         }
     }
 }

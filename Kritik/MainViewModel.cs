@@ -23,6 +23,7 @@ namespace Kritik
         {
             InitializeNewCalculation();
             Strings = new Strings(Strings.Language.cs);
+
         }
 
         #region PropertyChanged Implementation
@@ -311,15 +312,15 @@ namespace Kritik
             () => { Shaft.RemoveAllElements(); History.Add(); BeamPlusControlsUpdate(); },
             () => { return Shaft.Elements.Count > 0; });
         private ICommand historyBackCommand;
-        public ICommand HistoryBackCommand => historyBackCommand ??= new CommandHandler(
-            () => { Shaft.Elements = History.Back();
-                History.SetCollection(Shaft.Elements); BeamPlusControlsUpdate(); }, 
-            () => History.CanGoBack());
+        public ICommand HistoryBackCommand => historyBackCommand ??= new RelayCommand<object>(
+            (obj) => { Shaft.Elements = History.Back(); History.SetCollection(Shaft.Elements);
+                ShaftElementSelected = Shaft.Elements.FirstOrDefault(); CommonBtnActions(obj, false); }, 
+            (obj) => History.CanGoBack());
         private ICommand historyForwardCommand;
-        public ICommand HistoryForwardCommand => historyForwardCommand ??= new CommandHandler(
-            () => { Shaft.Elements = History.Forward(); 
-                History.SetCollection(Shaft.Elements); BeamPlusControlsUpdate(); }, 
-            () => History.CanGoForward());
+        public ICommand HistoryForwardCommand => historyForwardCommand ??= new RelayCommand<object>(
+            (obj) => { Shaft.Elements = History.Forward(); History.SetCollection(Shaft.Elements);
+                ShaftElementSelected = Shaft.Elements.FirstOrDefault(); CommonBtnActions(obj, false); },
+            (obj) => History.CanGoForward());
         #endregion
 
         private ICommand cellEditEndingCommand;
@@ -396,10 +397,10 @@ namespace Kritik
                     return;
                 FileName = saveFileDialog.FileName;
             }
-
-            List<ShaftElement> shaftElements = new List<ShaftElement>(Shaft.Elements);
-            bool saveResultsSuccess = DataLoadSave.SaveResults(FileName, Shaft.Properties, CalculationProperties, shaftElements, KritikCalculation, Strings);
-            bool saveDataSuccess = DataLoadSave.SaveData(FileName, Shaft.Properties, CalculationProperties, shaftElements);
+            // Saving results, shaft and calculation properties stored in KritikCalculation
+            bool saveResultsSuccess = DataLoadSave.SaveResults(FileName, KritikCalculation, Strings);
+            // Saving data stored in Shaft and CalculationProperties
+            bool saveDataSuccess = DataLoadSave.SaveData(FileName, Shaft, CalculationProperties);
 
             if (saveResultsSuccess && saveDataSuccess)
                 AnyPropertyChanged = false;
@@ -452,9 +453,7 @@ namespace Kritik
         }
         private void CellEditEnding()
         {
-            if (ShaftElementSelected?.Type == ElementType.beamPlus)
-                BeamPlusControlsUpdate();
-
+            BeamPlusControlsUpdate();
         }
         private void BeamPlusControlsUpdate([CallerMemberName] string caller = "")
         {
@@ -474,9 +473,9 @@ namespace Kritik
         /// Batch call of: <see cref="History"/>.Add(), <see cref="DataGridRefresh(object)"/> and <see cref="BeamPlusControlsUpdate(string)"/>
         /// </summary>
         /// <param name="obj"><see cref="DataGrid"/> object</param>
-        private void CommonBtnActions(object obj)
+        private void CommonBtnActions(object obj, bool addToHistory = true)
         {
-            History.Add(); 
+            if (addToHistory) History.Add(); 
             DataGridRefresh(obj);
             BeamPlusControlsUpdate();
         }
@@ -492,16 +491,19 @@ namespace Kritik
                 grid.CommitEdit();
                 grid.CommitEdit();
                 grid.Items.Refresh();
-                grid.UpdateLayout();                
-                grid.ScrollIntoView(ShaftElementSelected);
+                grid.UpdateLayout();  
+                if (ShaftElementSelected is not null)
+                    grid.ScrollIntoView(ShaftElementSelected);
                 int index = Shaft.Elements.IndexOf(ShaftElementSelected);
-                if (index < 0) 
+                if (index < 0)
                     index = Shaft.Elements.Count - 1;
+
+                if (index < 0) index = 0;
+
                 DataGridRow row = (DataGridRow)grid.ItemContainerGenerator.ContainerFromIndex(index);
                 _ = row.MoveFocus(new TraversalRequest(FocusNavigationDirection.Up));
             }
         }
-
         #endregion
     }
 }

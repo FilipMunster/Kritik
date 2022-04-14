@@ -59,6 +59,7 @@ namespace Kritik
         public MainWindow()
         {
             InitializeComponent();
+
             return;
 
 

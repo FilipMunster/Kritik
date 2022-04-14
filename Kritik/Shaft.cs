@@ -130,7 +130,6 @@ namespace Kritik
         /// <summary>
         /// Mirrors the shaft
         /// </summary>
-        /// <param name="selectedElement">Selected element of shaft</param>
         /// <returns>New selected element</returns>
         public ShaftElementForDataGrid Mirror()
         {
