@@ -25,8 +25,8 @@ namespace Kritik
                 NotifyPropertyChanged();
             }
         }
-        private OscillationShape[] oscillationShapes;
-        public OscillationShape[] OscillationShapes
+        private OscillationShapes[] oscillationShapes;
+        public OscillationShapes[] OscillationShapes
         {
             get => oscillationShapes;
             set

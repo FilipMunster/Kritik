@@ -34,7 +34,8 @@ namespace Kritik
             get => selectedLanguage;
             set
             {
-                selectedLanguage = value;
+                selectedLanguage = value; 
+                Properties.Settings.Default.lang = (int)value;
                 switch (value)
                 {
                     case Language.cs:
@@ -212,18 +213,29 @@ namespace Kritik
         /// <returns></returns>
         public string OrdinalNumber(int number)
         {
-            if (selectedLanguage == Language.en)
+            int num = Math.Abs(number) % 100;
+
+            switch (selectedLanguage)
             {
-                // Ordinal numbers are used only for number of critical speed. I assume that >20 will not appear.
-                switch (number)
-                {
-                    case 1: return number + "st";
-                    case 2: return number + "nd";
-                    case 3: return number + "rd";
-                    default: return number + "th";
-                }
+                case Language.en:
+                    {
+                        if (num > 10 && num < 20)
+                            return number + "th";
+
+                        switch (num % 10)
+                        {
+                            case 1: return number + "st";
+                            case 2: return number + "nd";
+                            case 3: return number + "rd";
+                            default: return number + "th";
+                        }
+                    }
+                case Language.cs:
+                default:
+                    {
+                        return number + ".";
+                    }
             }
-            else { return number + "."; }
         }
         #endregion
     }

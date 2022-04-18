@@ -56,7 +56,11 @@ namespace Kritik
         }
         public bool IsCalculationInProgress { get; private set; }
         public double[] CriticalSpeeds { get; private set; }
-        public OscillationShape[] OscillationShapes { get; private set; }
+        public OscillationShapes[] OscillationShapes { get; private set; }
+        /// <summary>
+        /// True if all necessary properties are set
+        /// </summary>
+        public bool IsReady => Shaft is not null && CalculationProperties is not null;
 
         private string GetCriticalSpeedText()
         {
@@ -90,7 +94,7 @@ namespace Kritik
             return text;
         }
 
-        public async Task CalculateAsync()
+        public async Task CalculateCriticalSpeedsAsync()
         {
             if (Shaft is null || CalculationProperties is null)
                 throw new ArgumentNullException();
@@ -99,16 +103,26 @@ namespace Kritik
             IsCalculationInProgress = true;
 
             CalculationMethods calculation = new CalculationMethods();
-            List<ShaftElementWithMatrix> elementsWithMatrix = Shaft.GetElementsWithMatrix();
 
-            CriticalSpeeds = await Task.Run(() => calculation.CriticalSpeed(elementsWithMatrix,
+            CriticalSpeeds = await Task.Run(() => calculation.CriticalSpeed(Shaft.GetElementsWithMatrix(),
                 Shaft.Properties.BCLeft, Shaft.Properties.BCRight, Shaft.Properties.MaxCriticalSpeed));
-
-            OscillationShapes = await Task.Run(() => calculation.OscillationShapes(
-                elementsWithMatrix, Shaft.Properties.BCLeft, Shaft.Properties.BCRight, CriticalSpeeds));
 
             CriticalSpeedsText = GetCriticalSpeedText();
             FirstCriticalSpeedRatioText = GetFirstCriticalSpeedRatioText();
+            IsCalculationInProgress = false;
+        }
+        public async Task CalculateOscillationShapesAsync()
+        {
+            if (Shaft is null || CalculationProperties is null)
+                throw new ArgumentNullException();
+
+            if (CriticalSpeeds is null)
+                await Task.Run(() => CalculateCriticalSpeedsAsync());
+
+            IsCalculationInProgress = true;
+            CalculationMethods calculation = new CalculationMethods();
+            OscillationShapes = await Task.Run(() => calculation.OscillationShapes(Shaft.GetElementsWithMatrix(),
+                Shaft.Properties.BCLeft, Shaft.Properties.BCRight, CriticalSpeeds));
             IsCalculationInProgress = false;
         }
     }

@@ -54,10 +54,10 @@ namespace Kritik
             /// Calculates Shaft oscillation shapes for given critical speeds
             /// </summary>
             /// <returns>Array of oscillation shapes</returns>
-            public OscillationShape[] OscillationShapes(List<ShaftElementWithMatrix> shaftElements,
+            public OscillationShapes[] OscillationShapes(List<ShaftElementWithMatrix> shaftElements,
                 BoundaryCondition bCLeft, BoundaryCondition bCRight, double[] criticalSpeeds)
             {
-                OscillationShape[] shapes = new OscillationShape[criticalSpeeds.Length];
+                OscillationShapes[] shapes = new OscillationShapes[criticalSpeeds.Length];
 
                 const int shaftDivision = 1000;
                 double shaftLength = 0;
@@ -70,12 +70,11 @@ namespace Kritik
 
                 for (int i = 0; i < criticalSpeeds.Length; i++)
                 {
-                    shapes[i] = new OscillationShape();
-                    shapes[i].Rpm = criticalSpeeds[i];
+                    shapes[i] = new OscillationShapes(criticalSpeeds[i]);
 
                     Matrix<double> uc = Matrix<double>.Build.DenseIdentity(4); // Identity matrix 4x4
                     
-                    // Set RPM to all elements and multiply matrices
+                    // Set RPM to all elements and multiply the matrices
                     foreach (var element in shaftElements)
                     {
                         element.Rpm = shapes[i].Rpm;
@@ -84,16 +83,16 @@ namespace Kritik
                     uc = GetMatrix2x2(uc, bCLeft, bCRight); // celková přenosová matice pro dané kritické otáčky
 
                     // Solution according to Pilkey: FORMULAS FOR STRESS, STRAIN, AND STRUCTURAL MATRICES, pages 1426 - 1428
-                    double ucRatio = -uc[1, 0] / uc[1, 1]; // poměr hodnot mezi dvěma neznámými hodnotami na levém konci
+                    double ucRatio = -uc[1, 0] / uc[1, 1]; // ratio between two unknown values at the left shaft end
 
-                    // Tvary kmitů v uzlech
+                    // Oscillation shapes in nodes
                     List<double> wNodes = new(shaftElements.Count + 1);
                     List<double> phiNodes = new(shaftElements.Count + 1);
                     List<double> mNodes = new(shaftElements.Count + 1);
                     List<double> tNodes = new(shaftElements.Count + 1);
                     List<double> xNodes = new(shaftElements.Count + 1);
 
-                    // Tvary kmitů po celé délce hřídele
+                    // Oscillation shapes through whole shaft length
                     List<double> w = new(shaftElements.Count + shaftDivision);
                     List<double> phi = new(shaftElements.Count + shaftDivision);
                     List<double> m = new(shaftElements.Count + shaftDivision);
@@ -154,8 +153,9 @@ namespace Kritik
                             element.L = lengthOriginal;
                         }
 
-                        // tvar na konci prvku (v uzlu)
+                        // shape at the end of the element (in node)
                         Vector<double> vNext = element.Matrix.Multiply(v);
+
                         wNodes.Add(vNext[0]);
                         phiNodes.Add(vNext[1]);
                         mNodes.Add(vNext[2]);
@@ -169,17 +169,10 @@ namespace Kritik
                         x.Add(xNodes.Last());
                     }
 
-                    shapes[i].wNodes = wNodes.ToArray();
-                    shapes[i].phiNodes = phiNodes.ToArray();
-                    shapes[i].mNodes = mNodes.ToArray();
-                    shapes[i].tNodes = tNodes.ToArray();
-                    shapes[i].xNodes = xNodes.ToArray();
-
-                    shapes[i].w = w.ToArray();
-                    shapes[i].phi = phi.ToArray();
-                    shapes[i].m = m.ToArray();
-                    shapes[i].t = t.ToArray();
-                    shapes[i].x = x.ToArray();
+                    shapes[i].W = new OscillationShapes.Shape(x, w, xNodes, wNodes);
+                    shapes[i].Phi = new OscillationShapes.Shape(x, phi, xNodes, phiNodes);
+                    shapes[i].M = new OscillationShapes.Shape(x, m, xNodes, mNodes);
+                    shapes[i].T = new OscillationShapes.Shape(x, t, xNodes, tNodes);
                 }
                 return shapes;
             }

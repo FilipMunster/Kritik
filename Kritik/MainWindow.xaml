@@ -683,14 +683,12 @@
                         <oxy:PlotView x:Name="schemaHridele" DefaultTrackerTemplate="{x:Null}" Model="{Binding SchemaHridele}" 
                                       PreviewMouseDown="schemaHridele_PreviewMouseDown"/>
                     </Border>
-
-
                 </Grid>
 
             </TabItem>
-            <TabItem Name="tvaryKmituTabItem">
+            <TabItem IsEnabled="{Binding OscillationShapesTabIsEnabled}">
                 <TabItem.Header>
-                    <Label Content="Tvary kmitů" MouseLeftButtonUp="TabItem1_MouseLeftButtonUp"/>
+                    <Label Content="Tvary kmitů"/>
                 </TabItem.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -703,29 +701,32 @@
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="Číslo kritických otáček:" Margin="0, 0, 7, 0"/>
                                     <StackPanel Orientation="Horizontal" Height="20" VerticalAlignment="Center">
-                                        <TextBox Width="20" Text="1" Focusable="False" Name="cisloKritOtZobrazitTextBox"/>
+                                        <TextBox Width="20" Text="{Binding OscillationShapesViewModel.ShapeNumber, Mode=OneWay}" Focusable="False"/>
                                         <StackPanel Orientation="Vertical">
-                                            <Button Content="▲" FontSize="7" Padding="0,-1, 0, 0" Width="15" Height="10" Click="CisloKritOtUpButton_Click"/>
-                                            <Button Content="▼" FontSize="7" Padding="0,-1, 0, 0" Width="15" Height="10" Click="CisloKritOtDownButton_Click"/>
+                                            <Button Content="▲" FontSize="7" Padding="0,-1, 0, 0" Width="15" Height="10" 
+                                                    Command="{Binding OscillationShapesViewModel.IncreaseShapeNumberCommand}"/>
+                                            <Button Content="▼" FontSize="7" Padding="0,-1, 0, 0" Width="15" Height="10"
+                                                    Command="{Binding OscillationShapesViewModel.DecreaseShapeNumberCommand}"/>
                                         </StackPanel>
                                     </StackPanel>
                                 </StackPanel>
                                 <Separator Margin="0, 5, 0, 5"/>
-                                <TextBlock x:Name="popisVypoctuTextBlock"/>
+                                <TextBlock Text="{Binding OscillationShapesViewModel.Description}"/>
                                 <Separator Margin="0, 5, 0, 5"/>
                                 <TextBlock Text="Zobrazení:"/>
                                 <Grid Margin="15, 2, 0, 0">
                                     <StackPanel Orientation="Vertical">
-                                        <CheckBox Content="vykreslit uzly" IsChecked="True" Name="vykreslitUzlyCheckBox" Click="vykreslitUzlyCheckBox_Click"/>
+                                        <CheckBox Content="vykreslit uzly" 
+                                                  IsChecked="{Binding OscillationShapesViewModel.ShowNodesIsChecked}"/>
                                     </StackPanel>
                                 </Grid>
                                 <Separator Margin="0, 5, 0, 5"/>
                                 <TextBlock Text="Uložení tvar kmitu:"/>
                                 <Grid Margin="15, 2, 0, 0">
                                     <StackPanel Orientation="Vertical">
-                                        <CheckBox Content="schéma hřídele" IsChecked="True" Name="vykreslitSchemaCheckBox" Click="vykreslitSchemaCheckBox_Click"/>
-                                        <CheckBox Content="tvar kmitu" IsChecked="True" Name="vykreslitGrafCheckBox" Click="vykreslitGrafCheckBox_Click"/>
-                                        <CheckBox Content="textový popisek" IsChecked="True" Name="vykreslitPopisekCheckBox" Click="vykreslitPopisekCheckBox_Click"/>
+                                        <CheckBox Content="schéma hřídele" IsChecked="{Binding OscillationShapesViewModel.SaveSchemeIsChecked}"/>
+                                        <CheckBox Content="tvar kmitu" IsChecked="{Binding OscillationShapesViewModel.SaveShapeIsChecked}"/>
+                                        <CheckBox Content="textový popisek" IsChecked="{Binding OscillationShapesViewModel.SaveDescriptionIsChecked}"/>
                                     </StackPanel>
                                 </Grid>
                                 <Button Height="25" Width="150" Margin="0, 5, 0, 5" Name="ulozitTvarKmituButton" Padding="3" Click="ulozitTvarKmituButton_Click">
@@ -734,8 +735,6 @@
                                         <TextBlock Text="Uložit tvar kmitu" VerticalAlignment="Center" Margin="5, 0, 0, 0"/>
                                     </StackPanel>
                                 </Button>
-
-
                             </StackPanel>
                         </Border>
                     </Grid>
@@ -754,7 +753,7 @@
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
                                 <oxy:PlotView x:Name="schemaHridele2" DefaultTrackerTemplate="{x:Null}" Grid.Row="0" Margin="4, 2, 4, 2"/>
-                                <oxy:PlotView x:Name="hlavniPlot" DefaultTrackerTemplate="{x:Null}" Grid.Row="1" Margin="4, 2, 4, 4"/>
+                                <oxy:PlotView Model="{Binding OscillationShapesViewModel.MainPlot}" DefaultTrackerTemplate="{x:Null}" Grid.Row="1" Margin="4, 2, 4, 4"/>
                             </Grid>
                         </Border>
                         <Grid Grid.Row="1">
@@ -764,57 +763,82 @@
                                 <ColumnDefinition/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <Border BorderThickness="1" CornerRadius="1" Grid.Column="0" Name="plot1Border">
+                            <Border BorderThickness="1" CornerRadius="1" Grid.Column="0" BorderBrush="{Binding OscillationShapesViewModel.ThumbnailPlotWBrush}">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="18"/>
                                         <RowDefinition Height="*"/>
                                     </Grid.RowDefinitions>
+                                    <b:Interaction.Triggers>
+                                        <b:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                            <b:InvokeCommandAction Command="{Binding OscillationShapesViewModel.ChangeMainPlotCommand}" CommandParameter="0"/>
+                                        </b:EventTrigger>
+                                    </b:Interaction.Triggers>
                                     <TextBlock Grid.Row="0" Text="Průhyb hřídele w" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 2, 0, 0"/>
-                                    <oxy:PlotView x:Name="plotView1" DefaultTrackerTemplate="{x:Null}" PreviewMouseLeftButtonUp="plotView1_PreviewMouseLeftButtonUp" Grid.Row="1"/>
+                                    <oxy:PlotView Model="{Binding OscillationShapesViewModel.ThumbnailPlotW}" DefaultTrackerTemplate="{x:Null}" Grid.Row="1"/>
                                 </Grid>
                             </Border>
-                            <Border BorderThickness="1" CornerRadius="1" Grid.Column="1" Name="plot2Border">
+                            <Border BorderThickness="1" CornerRadius="1" Grid.Column="1" BorderBrush="{Binding OscillationShapesViewModel.ThumbnailPlotPhiBrush}">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="18"/>
                                         <RowDefinition Height="*"/>
                                     </Grid.RowDefinitions>
+                                    <b:Interaction.Triggers>
+                                        <b:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                            <b:InvokeCommandAction Command="{Binding OscillationShapesViewModel.ChangeMainPlotCommand}" CommandParameter="1"/>
+                                        </b:EventTrigger>
+                                    </b:Interaction.Triggers>
                                     <TextBlock Grid.Row="0" Text="Natočení hřídele φ" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 2, 0, 0"/>
-                                    <oxy:PlotView Grid.Row="1" x:Name="plotView2" DefaultTrackerTemplate="{x:Null}" PreviewMouseLeftButtonUp="plotView2_PreviewMouseLeftButtonUp"/>
+                                    <oxy:PlotView Model="{Binding OscillationShapesViewModel.ThumbnailPlotPhi}" DefaultTrackerTemplate="{x:Null}" Grid.Row="1"/>
                                 </Grid>
                             </Border>
-                            <Border BorderThickness="1" CornerRadius="1" Grid.Column="2" Name="plot3Border">
+                            <Border BorderThickness="1" CornerRadius="1" Grid.Column="2" BorderBrush="{Binding OscillationShapesViewModel.ThumbnailPlotMBrush}">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="18"/>
                                         <RowDefinition Height="*"/>
                                     </Grid.RowDefinitions>
+                                    <b:Interaction.Triggers>
+                                        <b:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                            <b:InvokeCommandAction Command="{Binding OscillationShapesViewModel.ChangeMainPlotCommand}" CommandParameter="2"/>
+                                        </b:EventTrigger>
+                                    </b:Interaction.Triggers>
                                     <TextBlock Grid.Row="0" Text="Ohybový moment M" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 2, 0, 0"/>
-                                    <oxy:PlotView Grid.Row="1" x:Name="plotView3" DefaultTrackerTemplate="{x:Null}" PreviewMouseLeftButtonUp="plotView3_PreviewMouseLeftButtonUp"/>
+                                    <oxy:PlotView Model="{Binding OscillationShapesViewModel.ThumbnailPlotM}" DefaultTrackerTemplate="{x:Null}" Grid.Row="1"/>
                                 </Grid>
                             </Border>
-                            <Border BorderThickness="1" CornerRadius="1" Grid.Column="3" Name="plot4Border">
+                            <Border BorderThickness="1" CornerRadius="1" Grid.Column="3" BorderBrush="{Binding OscillationShapesViewModel.ThumbnailPlotTBrush}">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="18"/>
                                         <RowDefinition Height="*"/>
                                     </Grid.RowDefinitions>
+                                    <b:Interaction.Triggers>
+                                        <b:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                            <b:InvokeCommandAction Command="{Binding OscillationShapesViewModel.ChangeMainPlotCommand}" CommandParameter="3"/>
+                                        </b:EventTrigger>
+                                    </b:Interaction.Triggers>
                                     <TextBlock Grid.Row="0" Text="Posouvající síla T" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 2, 0, 0"/>
-                                    <oxy:PlotView Grid.Row="1" x:Name="plotView4" DefaultTrackerTemplate="{x:Null}" PreviewMouseLeftButtonUp="plotView4_PreviewMouseLeftButtonUp"/>
+                                    <oxy:PlotView Model="{Binding OscillationShapesViewModel.ThumbnailPlotT}" DefaultTrackerTemplate="{x:Null}" Grid.Row="1"/>
                                 </Grid>
                             </Border>
                         </Grid>
                     </Grid>
-
-
                 </Grid>
 
             </TabItem>
         </TabControl>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0, 5, 20, 0">
             <TextBlock Text="Jazyk výstupu:" Margin="0, 0, 5, 0" VerticalAlignment="Center"/>
-            <ComboBox Width="80" Height="23" ItemsSource="{Binding Strings.LanguageNames}" SelectedValue="{Binding Strings.SelectedLanguage, Converter={StaticResource EnumToStringConverter}}" />
+            <ComboBox Width="80" Height="23" ItemsSource="{Binding Strings.LanguageNames}" 
+                      SelectedValue="{Binding Strings.SelectedLanguage, Converter={StaticResource EnumToStringConverter}}">
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="DropDownClosed">
+                        <b:InvokeCommandAction Command="{Binding LanguageDropDownClosedCommand}"/>
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
+            </ComboBox>
         </StackPanel>
 
     </Grid>

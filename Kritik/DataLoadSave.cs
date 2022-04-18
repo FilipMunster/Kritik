@@ -398,10 +398,8 @@ namespace Kritik
         /// <returns></returns>
         public static bool SaveResults(string fileName, KritikCalculation calculation, Strings strings)
         {
-            if (calculation.Shaft is null || calculation.CalculationProperties is null)
-            {
+            if (!calculation.IsReady)
                 calculation = new KritikCalculation(new Shaft(), new CalculationProperties());
-            }
             
             ShaftProperties shaftProperties = calculation.Shaft.Properties;
             CalculationProperties calculationProperties = calculation.CalculationProperties;

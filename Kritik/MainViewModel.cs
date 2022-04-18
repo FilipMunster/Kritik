@@ -22,8 +22,7 @@ namespace Kritik
         public MainViewModel()
         {
             InitializeNewCalculation();
-            Strings = new Strings(Strings.Language.cs);
-
+            Strings = new Strings((Strings.Language)Properties.Settings.Default.lang);
         }
 
         #region PropertyChanged Implementation
@@ -103,9 +102,29 @@ namespace Kritik
                 kritikCalculation.PropertyChanged += new PropertyChangedEventHandler(NotifySenderPropertyChanged);
             }
         }
-        public PlotModel ShaftScheme { get; set; }
         public CollectionHistory<ShaftElementForDataGrid> History { get; set; }
         public Strings Strings { get; set; }
+        private OscillationShapesViewModel oscillationShapesViewModel;
+        public OscillationShapesViewModel OscillationShapesViewModel
+        {
+            get => oscillationShapesViewModel;
+            set
+            {
+                oscillationShapesViewModel = value;
+                NotifyPropertyChanged();
+            }
+        }
+        private ShaftSchemeViewModel shaftSchemeViewModel;
+        public ShaftSchemeViewModel ShaftSchemeViewModel
+        {
+            get => shaftSchemeViewModel;
+            set
+            {
+                shaftSchemeViewModel = value;
+                NotifyPropertyChanged();
+                shaftSchemeViewModel.PropertyChanged += new PropertyChangedEventHandler(NotifySenderPropertyChanged);
+            }
+        }
         #endregion
 
         #region View Properties
@@ -138,8 +157,10 @@ namespace Kritik
                 fileName = value;
             }
         }
-        public string[] BoundaryConditionsItems => Enums.GetNames<BoundaryCondition>();
-        public string[] GyroscopicEffectsItems => Enums.GetNames<GyroscopicEffect>();
+        private string[] boundaryConditionsItems;
+        public string[] BoundaryConditionsItems => boundaryConditionsItems ??= Enums.GetNames<BoundaryCondition>();
+        private string[] gyroscopicEffectsItems;
+        public string[] GyroscopicEffectsItems => gyroscopicEffectsItems ??= Enums.GetNames<GyroscopicEffect>();
 
         #region Shaft rotation influence controls
         public string ShaftRotationInfluenceButtonSource => shaftRotationInfluenceControlsAreVisible ? "/icons/StepBackArrow_16x.png" : "/icons/StepOverArrow_16x.png";
@@ -175,6 +196,7 @@ namespace Kritik
                 ShaftRPMUpdate();
             }
         }
+        public bool OscillationShapesTabIsEnabled => KritikCalculation.CriticalSpeeds?.Length > 0;
 
         #region Beam+ controls
         /// <summary>
@@ -324,13 +346,20 @@ namespace Kritik
         #endregion
 
         private ICommand cellEditEndingCommand;
-        public ICommand CellEditEndingCommand => cellEditEndingCommand ??= new CommandHandler(() => CellEditEnding(), () => true);
+        public ICommand CellEditEndingCommand => cellEditEndingCommand ??= new CommandHandler(
+            () => CellEditEnding(),
+            () => true);
+        private ICommand languageDropDownClosedCommand;
+        public ICommand LanguageDropDownClosedCommand => languageDropDownClosedCommand ??= new CommandHandler(
+            () => NotifyPropertyChanged(nameof(OscillationShapesViewModel)),
+            () => true);
         private ICommand historyAddCommand;
-        public ICommand HistoryAddCommand => historyAddCommand ??= new CommandHandler(() => History.Add(), () => true);
+        public ICommand HistoryAddCommand => historyAddCommand ??= new CommandHandler(
+            () => History.Add(), 
+            () => true);
         private ICommand kritikCalculateCommand;
-        public ICommand KritikCalculateCommand => kritikCalculateCommand ??=
-            new CommandHandler(
-                async () => { KritikCalculation = new KritikCalculation(Shaft, CalculationProperties); await KritikCalculation.CalculateAsync(); }, 
+        public ICommand KritikCalculateCommand => kritikCalculateCommand ??= new CommandHandler(
+                async () => await RunCalculationAsync(),
                 () => !KritikCalculation.IsCalculationInProgress);
         #endregion
 
@@ -341,9 +370,12 @@ namespace Kritik
             Shaft = new Shaft();
             KritikCalculation = new KritikCalculation();
             History = new CollectionHistory<ShaftElementForDataGrid>(Shaft.Elements);
+            ShaftSchemeViewModel = new ShaftSchemeViewModel(Shaft);
+            OscillationShapesViewModel = null;
             FileName = newCalculationFileName;
             NotifyPropertyChanged(nameof(ShaftOperatingSpeed));
             NotifyPropertyChanged(nameof(ShaftRunawaySpeed));
+            NotifyPropertyChanged(nameof(OscillationShapesTabIsEnabled));
             AnyPropertyChanged = false;
             ShaftRotationInfluenceSelectedOption = ShaftRotationInfluenceOption.operatingSpeed;
         }
@@ -375,9 +407,12 @@ namespace Kritik
             Shaft.Properties = loadResult?.ShaftProperties;
             KritikCalculation = new KritikCalculation();
             History = new CollectionHistory<ShaftElementForDataGrid>(Shaft.Elements);
+            ShaftSchemeViewModel = new ShaftSchemeViewModel(Shaft);
+            OscillationShapesViewModel = null;
             FileName = fileName;
             NotifyPropertyChanged(nameof(ShaftOperatingSpeed));
             NotifyPropertyChanged(nameof(ShaftRunawaySpeed));
+            NotifyPropertyChanged(nameof(OscillationShapesTabIsEnabled));
             ShaftRotationInfluenceLoading();
             AnyPropertyChanged = false;
         }
@@ -406,6 +441,16 @@ namespace Kritik
                 AnyPropertyChanged = false;
             else
                 MessageBox.Show("Soubor \"" + FileName + "\" se nepodařilo uložit.", "Chyba ukládání souboru", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        private async Task RunCalculationAsync()
+        {
+            KritikCalculation = new KritikCalculation(Shaft, CalculationProperties);
+            await KritikCalculation.CalculateCriticalSpeedsAsync();
+            await KritikCalculation.CalculateOscillationShapesAsync();
+            if (KritikCalculation.CriticalSpeeds.Length > 0)
+                OscillationShapesViewModel = new OscillationShapesViewModel(KritikCalculation, ShaftSchemeViewModel, Strings);
+
+            NotifyPropertyChanged(nameof(OscillationShapesTabIsEnabled));
         }
         #endregion
 
@@ -439,12 +484,8 @@ namespace Kritik
                 ShaftRotationInfluenceSelectedOption = ShaftRotationInfluenceOption.custom;
                 ShaftRotationInfluenceCustomValue = Shaft.Properties.ShaftRPM;
             }
-                
 
-            if (Shaft.Properties.ShaftRotationInfluence)
-                shaftRotationInfluenceControlsAreVisible = true;
-            else
-                shaftRotationInfluenceControlsAreVisible = false;
+            shaftRotationInfluenceControlsAreVisible = Shaft.Properties.ShaftRotationInfluence;
 
             NotifyPropertyChanged(nameof(ShaftRotationInfluenceVisibility));
             NotifyPropertyChanged(nameof(ShaftRotationInfluenceButtonSource));

@@ -68,16 +68,7 @@ namespace Kritik
         public CalculationProperties(bool newCalculation = false)
         {
             this.newCalculation = newCalculation;
-
-            if (Properties.Settings.Default.author is not null) 
-            {
-                Author = Properties.Settings.Default.author == "" ? Environment.UserName : Properties.Settings.Default.author;
-            }
-            else
-            {
-                Author = Environment.UserName;
-            }
-            
+            Author = Properties.Settings.Default.author == "" ? Environment.UserName : Properties.Settings.Default.author;            
             Date = DateTime.Today.ToShortDateString();
         }
 
