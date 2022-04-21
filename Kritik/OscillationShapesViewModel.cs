@@ -45,7 +45,7 @@ namespace Kritik
         private readonly OxyColor[] colorsArray = { OxyColors.Blue, OxyColors.Red, OxyColors.Tan, OxyColors.Plum };
         
         public OscillationShapesViewModel(KritikCalculation kritikCalculation,
-            ShaftSchemeViewModel shaftScheme, Strings strings)
+            ShaftScheme shaftScheme, Strings strings)
         {
             if (kritikCalculation.OscillationShapes is null || kritikCalculation.OscillationShapes.Length == 0)
                 throw new ArgumentNullException();

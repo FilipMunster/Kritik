@@ -31,12 +31,12 @@ namespace Kritik
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             AnyPropertyChanged = true;
+            Debug.WriteLine("PropertyChanged " + propertyName);
         }
         private void NotifySenderPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             NotifyPropertyChanged(sender.GetType().Name);
         }
-
         private bool anyPropertyChanged;
         /// <summary>
         /// Reflects if any property has changed since file was saved
@@ -88,6 +88,7 @@ namespace Kritik
             {
                 shaftElementSelected = value;
                 BeamPlusControlsUpdate();
+                ShaftScheme.Draw(value);
             }
         }
 
@@ -114,17 +115,17 @@ namespace Kritik
                 NotifyPropertyChanged();
             }
         }
-        private ShaftSchemeViewModel shaftSchemeViewModel;
-        public ShaftSchemeViewModel ShaftSchemeViewModel
+        private ShaftScheme shaftScheme;
+        public ShaftScheme ShaftScheme
         {
-            get => shaftSchemeViewModel;
+            get => shaftScheme;
             set
             {
-                shaftSchemeViewModel = value;
+                shaftScheme = value;
                 NotifyPropertyChanged();
-                shaftSchemeViewModel.PropertyChanged += new PropertyChangedEventHandler(NotifySenderPropertyChanged);
             }
         }
+        public ShaftScheme ShaftScheme2 => (ShaftScheme)ShaftScheme.Clone();
         #endregion
 
         #region View Properties
@@ -157,10 +158,33 @@ namespace Kritik
                 fileName = value;
             }
         }
+        public int TabControlSelectedIndex { get; set; }
         private string[] boundaryConditionsItems;
         public string[] BoundaryConditionsItems => boundaryConditionsItems ??= Enums.GetNames<BoundaryCondition>();
         private string[] gyroscopicEffectsItems;
         public string[] GyroscopicEffectsItems => gyroscopicEffectsItems ??= Enums.GetNames<GyroscopicEffect>();
+        private double shaftScheme1Width;
+        public double ShaftScheme1Width
+        {
+            get => shaftScheme1Width;
+            set
+            {
+                shaftScheme1Width = value;
+                if (ShaftScheme is not null)
+                    ShaftScheme.SchemeWidth = value;
+            }
+        }
+        private double shaftScheme2Width;
+        public double ShaftScheme2Width
+        {
+            get => shaftScheme2Width;
+            set
+            {
+                shaftScheme2Width = value;
+                if (ShaftScheme2 is not null)
+                    ShaftScheme2.SchemeWidth = value;
+            }
+        }
 
         #region Shaft rotation influence controls
         public string ShaftRotationInfluenceButtonSource => shaftRotationInfluenceControlsAreVisible ? "/icons/StepBackArrow_16x.png" : "/icons/StepOverArrow_16x.png";
@@ -276,13 +300,21 @@ namespace Kritik
 
         #region Commands
         private ICommand newCalculationCommand;
-        public ICommand NewCalculationCommand => newCalculationCommand ??= new CommandHandler(() => InitializeNewCalculation(), () => true);
+        public ICommand NewCalculationCommand => newCalculationCommand ??= new CommandHandler(
+            () => InitializeNewCalculation(),
+            () => TabControlSelectedIndex == 0);
         private ICommand openFileCommand;
-        public ICommand OpenFileCommand => openFileCommand ??= new CommandHandler(() => OpenFile(), () => true);
+        public ICommand OpenFileCommand => openFileCommand ??= new CommandHandler(
+            () => OpenFile(), 
+            () => TabControlSelectedIndex == 0);
         private ICommand saveFileCommand;
-        public ICommand SaveFileCommand => saveFileCommand ??= new CommandHandler(() => SaveFile(false), () => AnyPropertyChanged);
+        public ICommand SaveFileCommand => saveFileCommand ??= new CommandHandler(
+            () => SaveFile(false), 
+            () => AnyPropertyChanged && TabControlSelectedIndex == 0);
         private ICommand saveFileAsCommand;
-        public ICommand SaveFileAsCommand => saveFileAsCommand ??= new CommandHandler(() => SaveFile(true), () => true);
+        public ICommand SaveFileAsCommand => saveFileAsCommand ??= new CommandHandler(
+            () => SaveFile(true), 
+            () => TabControlSelectedIndex == 0);
         private ICommand fillTodayCommand;
         public ICommand FillTodayCommand => fillTodayCommand ??=
             new CommandHandler(() => CalculationProperties.Date = DateTime.Today.ToShortDateString(), () => true);
@@ -311,38 +343,42 @@ namespace Kritik
         private ICommand addItemCommand;
         public ICommand AddItemCommand => addItemCommand ??= new RelayCommand<object>(
             (obj) => { ShaftElementSelected = Shaft.AddElement(ShaftElementSelected); CommonBtnActions(obj); }, 
-            (obj) => true);
+            (obj) => TabControlSelectedIndex == 0);
         private ICommand removeItemCommand;
         public ICommand RemoveItemCommand => removeItemCommand ??= new RelayCommand<object>(
             (obj) => { ShaftElementSelected = Shaft.RemoveSelectedElement(ShaftElementSelected); CommonBtnActions(obj); }, 
-            (obj) => { return Shaft.Elements.Count > 0; });
+            (obj) => Shaft.Elements.Count > 0 && TabControlSelectedIndex == 0);
         private ICommand moveItemUpCommand;
         public ICommand MoveItemUpCommand => moveItemUpCommand ??= new RelayCommand<object>(
             (obj) => { Shaft.MoveElementUp(ShaftElementSelected); CommonBtnActions(obj); },
-            (obj) => { return Shaft.Elements.IndexOf(ShaftElementSelected) > 0; });
+            (obj) => Shaft.Elements.IndexOf(ShaftElementSelected) > 0 && TabControlSelectedIndex == 0);
         private ICommand moveItemDownCommand;
         public ICommand MoveItemDownCommand => moveItemDownCommand ??= new RelayCommand<object>(
             (obj) => { Shaft.MoveElementDown(ShaftElementSelected); CommonBtnActions(obj); },
             (obj) => { int i = Shaft.Elements.IndexOf(ShaftElementSelected); 
-                return i < Shaft.Elements.Count - 1 && i >= 0; });
+                return i < Shaft.Elements.Count - 1 && i >= 0 && TabControlSelectedIndex == 0; });
         private ICommand mirrorShaftCommand;
         public ICommand MirrorShaftCommand => mirrorShaftCommand ??= new RelayCommand<object>(
             (obj) => { if (History.Count == 0) { History.Add(); } ShaftElementSelected = Shaft.Mirror(); CommonBtnActions(obj); },
-            (obj) => { return Shaft.Elements.Count > 0; });
+            (obj) => Shaft.Elements.Count > 0 && TabControlSelectedIndex == 0);
         private ICommand removeAllItemsCommand;
         public ICommand RemoveAllItemsCommand => removeAllItemsCommand ??= new CommandHandler(
             () => { Shaft.RemoveAllElements(); History.Add(); BeamPlusControlsUpdate(); },
-            () => { return Shaft.Elements.Count > 0; });
+            () => Shaft.Elements.Count > 0 && TabControlSelectedIndex == 0);
         private ICommand historyBackCommand;
         public ICommand HistoryBackCommand => historyBackCommand ??= new RelayCommand<object>(
             (obj) => { Shaft.Elements = History.Back(); History.SetCollection(Shaft.Elements);
-                ShaftElementSelected = Shaft.Elements.FirstOrDefault(); CommonBtnActions(obj, false); }, 
-            (obj) => History.CanGoBack());
+                ShaftElementSelected = Shaft.Elements.FirstOrDefault();
+                ShaftScheme.SetShaft(Shaft, ShaftElementSelected);                
+                CommonBtnActions(obj, false); }, 
+            (obj) => History.CanGoBack() && TabControlSelectedIndex == 0);
         private ICommand historyForwardCommand;
         public ICommand HistoryForwardCommand => historyForwardCommand ??= new RelayCommand<object>(
             (obj) => { Shaft.Elements = History.Forward(); History.SetCollection(Shaft.Elements);
-                ShaftElementSelected = Shaft.Elements.FirstOrDefault(); CommonBtnActions(obj, false); },
-            (obj) => History.CanGoForward());
+                ShaftElementSelected = Shaft.Elements.FirstOrDefault();
+                ShaftScheme.SetShaft(Shaft, ShaftElementSelected); 
+                CommonBtnActions(obj, false); },
+            (obj) => History.CanGoForward() && TabControlSelectedIndex == 0);
         #endregion
 
         private ICommand cellEditEndingCommand;
@@ -355,12 +391,12 @@ namespace Kritik
             () => true);
         private ICommand historyAddCommand;
         public ICommand HistoryAddCommand => historyAddCommand ??= new CommandHandler(
-            () => History.Add(), 
+            () => { History.Add(); ShaftScheme?.NotifyPropertyChanged(nameof(ShaftScheme.Scheme)); },
             () => true);
         private ICommand kritikCalculateCommand;
         public ICommand KritikCalculateCommand => kritikCalculateCommand ??= new CommandHandler(
                 async () => await RunCalculationAsync(),
-                () => !KritikCalculation.IsCalculationInProgress);
+                () => !KritikCalculation.IsCalculationInProgress && TabControlSelectedIndex == 0);
         #endregion
 
         #region Button actions methods
@@ -370,7 +406,7 @@ namespace Kritik
             Shaft = new Shaft();
             KritikCalculation = new KritikCalculation();
             History = new CollectionHistory<ShaftElementForDataGrid>(Shaft.Elements);
-            ShaftSchemeViewModel = new ShaftSchemeViewModel(Shaft);
+            ShaftScheme = new ShaftScheme(Shaft, ShaftScheme1Width);
             OscillationShapesViewModel = null;
             FileName = newCalculationFileName;
             NotifyPropertyChanged(nameof(ShaftOperatingSpeed));
@@ -407,7 +443,7 @@ namespace Kritik
             Shaft.Properties = loadResult?.ShaftProperties;
             KritikCalculation = new KritikCalculation();
             History = new CollectionHistory<ShaftElementForDataGrid>(Shaft.Elements);
-            ShaftSchemeViewModel = new ShaftSchemeViewModel(Shaft);
+            ShaftScheme = new ShaftScheme(Shaft, ShaftScheme1Width);
             OscillationShapesViewModel = null;
             FileName = fileName;
             NotifyPropertyChanged(nameof(ShaftOperatingSpeed));
@@ -448,9 +484,10 @@ namespace Kritik
             await KritikCalculation.CalculateCriticalSpeedsAsync();
             await KritikCalculation.CalculateOscillationShapesAsync();
             if (KritikCalculation.CriticalSpeeds.Length > 0)
-                OscillationShapesViewModel = new OscillationShapesViewModel(KritikCalculation, ShaftSchemeViewModel, Strings);
+                OscillationShapesViewModel = new OscillationShapesViewModel(KritikCalculation, ShaftScheme, Strings);
 
             NotifyPropertyChanged(nameof(OscillationShapesTabIsEnabled));
+            NotifyPropertyChanged(nameof(ShaftScheme2));
         }
         #endregion
 
@@ -495,6 +532,7 @@ namespace Kritik
         private void CellEditEnding()
         {
             BeamPlusControlsUpdate();
+            ShaftScheme?.NotifyPropertyChanged(nameof(ShaftScheme.Scheme));
         }
         private void BeamPlusControlsUpdate([CallerMemberName] string caller = "")
         {

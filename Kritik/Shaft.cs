@@ -31,6 +31,7 @@ namespace Kritik
             {
                 elements = value;
                 NotifyPropertyChanged();
+
             }
         }
 

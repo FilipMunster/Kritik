@@ -6,6 +6,7 @@
         xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:Kritik"
+        xmlns:dp="clr-namespace:DataPiping"
         xmlns:Data="clr-namespace:System.Data;assembly=System.Data.Common"
         x:Class="Kritik.MainWindow"
         mc:Ignorable="d"
@@ -34,7 +35,7 @@
         <Binding Path="WindowTitle"/>
     </Window.Title>
     <Grid Name="MainGrid">
-        <TabControl SelectedIndex="0">
+        <TabControl SelectedIndex="{Binding TabControlSelectedIndex}">
             <TabItem Header="Výpočet" Name="vypocetTabItem">
                 <TabItem.Background>
                     <LinearGradientBrush EndPoint="0,1">
@@ -680,8 +681,15 @@
                     </Grid>
 
                     <Border Grid.Row="1" Grid.Column="1" Height="150" Margin="0, 0, 0, 10" BorderThickness="1" BorderBrush="Gray" Padding="5" CornerRadius="3" VerticalAlignment="Bottom">
-                        <oxy:PlotView x:Name="schemaHridele" DefaultTrackerTemplate="{x:Null}" Model="{Binding SchemaHridele}" 
-                                      PreviewMouseDown="schemaHridele_PreviewMouseDown"/>
+                        <oxy:PlotView Model="{Binding ShaftScheme.Scheme}" DefaultTrackerTemplate="{x:Null}"  
+                                      PreviewMouseDown="schemaHridele_PreviewMouseDown">
+                            <dp:DataPiping.DataPipes>
+                                <dp:DataPipeCollection>
+                                    <dp:DataPipe Source="{Binding RelativeSource={RelativeSource AncestorType={x:Type oxy:PlotView}}, Path=ActualWidth}"
+                                                 Target="{Binding ShaftScheme1Width, Mode=OneWayToSource}"/>
+                                </dp:DataPipeCollection>
+                            </dp:DataPiping.DataPipes>
+                        </oxy:PlotView>
                     </Border>
                 </Grid>
 
@@ -752,7 +760,15 @@
                                     <RowDefinition Height="160"/>
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
-                                <oxy:PlotView x:Name="schemaHridele2" DefaultTrackerTemplate="{x:Null}" Grid.Row="0" Margin="4, 2, 4, 2"/>
+                                <oxy:PlotView Model="{Binding ShaftScheme2.Scheme}" DefaultTrackerTemplate="{x:Null}"  
+                                      PreviewMouseDown="schemaHridele_PreviewMouseDown">
+                                    <dp:DataPiping.DataPipes>
+                                        <dp:DataPipeCollection>
+                                            <dp:DataPipe Source="{Binding RelativeSource={RelativeSource AncestorType={x:Type oxy:PlotView}}, Path=ActualWidth}"
+                                                 Target="{Binding ShaftScheme2Width, Mode=OneWayToSource}"/>
+                                        </dp:DataPipeCollection>
+                                    </dp:DataPiping.DataPipes>
+                                </oxy:PlotView>
                                 <oxy:PlotView Model="{Binding OscillationShapesViewModel.MainPlot}" DefaultTrackerTemplate="{x:Null}" Grid.Row="1" Margin="4, 2, 4, 4"/>
                             </Grid>
                         </Border>
