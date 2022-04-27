@@ -3,17 +3,25 @@ using OxyPlot.Series;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kritik
 {
     public partial class ShaftScheme : INotifyPropertyChanged, ICloneable
     {
+        /// <summary>
+        /// Last selected shaft element
+        /// </summary>
         private ShaftElementForDataGrid lastSelectedElement;
+        /// <summary>
+        /// X-Coordinates of nodes between elements
+        /// </summary>
+        private List<double> xCoordinates;
+        /// <summary>
+        /// Diameter of rigid element drawn
+        /// </summary>
+        private double rigidDiameter;
         public ShaftScheme(Shaft shaft, double schemeWidth)
         {
             Shaft = shaft;
@@ -33,9 +41,9 @@ namespace Kritik
         }
         public object Clone()
         {
-            ShaftScheme shaftScheme = new ShaftScheme((Shaft)Shaft.Clone(), 0);
-            shaftScheme.XMin = XMin;
-            shaftScheme.XMax = XMax;
+            ShaftScheme shaftScheme = (ShaftScheme)this.MemberwiseClone();
+            shaftScheme.lastSelectedElement = null;
+            shaftScheme.SetShaft((Shaft)Shaft.Clone(), null);
             return shaftScheme;
         }
 
@@ -82,31 +90,33 @@ namespace Kritik
             Scheme.Padding = new OxyThickness(0);
             Scheme.PlotAreaBorderThickness = new OxyThickness(0);
             Scheme.Background = OxyColors.White;
+            Scheme.MouseDown += Scheme_MouseDown;
 
-            if (shaft?.Elements?.Count == 0)
+            if (Shaft?.Elements?.Count == 0)
                 return;
 
             if (selectedElement is null)
                 selectedElement = this.lastSelectedElement;
-            this.lastSelectedElement = selectedElement;
+            else
+                this.lastSelectedElement = selectedElement;
 
             double maxD = Shaft.Elements.Max(x => x.De);
             double maxM = Shaft.Elements.Max(x => x.M);
-            double rigidDiameter = maxD > 0 ? maxD * 0.25 : 500;
+            rigidDiameter = maxD > 0 ? maxD * 0.25 : 500;
 
             LineSeries selectedItemLine = new LineSeries();
 
-            List<double> xCoordinates = new List<double> { 0 };
-            foreach (ShaftElement element in Shaft.Elements) 
+            xCoordinates = new List<double> { 0 };
+            foreach (ShaftElement element in Shaft.Elements)
             {
-                xCoordinates.Add(xCoordinates.Last() + element.L); 
+                xCoordinates.Add(xCoordinates.Last() + element.L);
             }
 
             double xMin = 0;
             double xMax = xCoordinates.Last();
             LineSeries selectedElementLine = new();
 
-            Scheme.Series.Add(Lines.GetAxisLine(new double[] { 0, xCoordinates.Last()} ));
+            Scheme.Series.Add(Lines.GetAxisLine(new double[] { 0, xCoordinates.Last() }));
 
             for (int i = 0; i < Shaft.Elements.Count; i++)
             {
@@ -135,10 +145,12 @@ namespace Kritik
                         break;
                     case ElementType.disc:
                         line = Lines.GetDisk(x, element.M, maxM, maxD);
+                        line.MouseDown += Line_MouseUp;
                         Scheme.Series.Add(Lines.GetDiskBorder(x, maxD, ref xMin, ref xMax));
                         break;
                     case ElementType.support:
                         line = Lines.GetSupport(x, Shaft.Elements, i, rigidDiameter);
+                        line.MouseDown += Line_MouseUp;
                         Scheme.Series.Add(Lines.GetSupportBorder(x, shaft.Elements, i, rigidDiameter, maxD, ref xMin, ref xMax));
                         break;
                     case ElementType.magnet:
@@ -167,5 +179,18 @@ namespace Kritik
             XMax = xMax;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Scheme)));
         }
+
+        private void Scheme_MouseDown(object sender, OxyMouseDownEventArgs e)
+        {
+            // TODO: Select element in Datagrid by clickcing on shaft scheme
+            return;
+        }
+
+        private void Line_MouseUp(object sender, OxyMouseEventArgs e)
+        {
+            // TODO: Select element in Datagrid by clickcing on shaft scheme
+            return;
+        }
+
     }
 }

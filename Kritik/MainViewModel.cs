@@ -1,17 +1,14 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Collections.ObjectModel;
-using System.Windows.Input;
-using OxyPlot;
-using System.Windows;
-using Microsoft.Win32;
 using System.Diagnostics;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Kritik
 {
@@ -31,17 +28,14 @@ namespace Kritik
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             AnyPropertyChanged = true;
-            Debug.WriteLine("PropertyChanged " + propertyName);
         }
-        private void NotifySenderPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            NotifyPropertyChanged(sender.GetType().Name);
-        }
+
         private bool anyPropertyChanged;
         /// <summary>
         /// Reflects if any property has changed since file was saved
         /// </summary>
-        public bool AnyPropertyChanged {
+        public bool AnyPropertyChanged
+        {
             get => anyPropertyChanged;
             set
             {
@@ -64,7 +58,6 @@ namespace Kritik
             {
                 calculationProperties = value;
                 NotifyPropertyChanged();
-                calculationProperties.PropertyChanged += new PropertyChangedEventHandler(NotifySenderPropertyChanged);
             }
         }
 
@@ -72,11 +65,10 @@ namespace Kritik
         public Shaft Shaft
         {
             get => shaft;
-            set 
+            set
             {
-                shaft = value; 
+                shaft = value;
                 NotifyPropertyChanged();
-                shaft.PropertyChanged += new PropertyChangedEventHandler(NotifySenderPropertyChanged);
                 BeamPlusControlsUpdate();
             }
         }
@@ -96,11 +88,10 @@ namespace Kritik
         public KritikCalculation KritikCalculation
         {
             get => kritikCalculation;
-            set 
+            set
             {
-                kritikCalculation = value; 
+                kritikCalculation = value;
                 NotifyPropertyChanged();
-                kritikCalculation.PropertyChanged += new PropertyChangedEventHandler(NotifySenderPropertyChanged);
             }
         }
         public CollectionHistory<ShaftElementForDataGrid> History { get; set; }
@@ -305,15 +296,15 @@ namespace Kritik
             () => TabControlSelectedIndex == 0);
         private ICommand openFileCommand;
         public ICommand OpenFileCommand => openFileCommand ??= new CommandHandler(
-            () => OpenFile(), 
+            () => OpenFile(),
             () => TabControlSelectedIndex == 0);
         private ICommand saveFileCommand;
         public ICommand SaveFileCommand => saveFileCommand ??= new CommandHandler(
-            () => SaveFile(false), 
+            () => SaveFile(false),
             () => AnyPropertyChanged && TabControlSelectedIndex == 0);
         private ICommand saveFileAsCommand;
         public ICommand SaveFileAsCommand => saveFileAsCommand ??= new CommandHandler(
-            () => SaveFile(true), 
+            () => SaveFile(true),
             () => TabControlSelectedIndex == 0);
         private ICommand fillTodayCommand;
         public ICommand FillTodayCommand => fillTodayCommand ??=
@@ -323,7 +314,7 @@ namespace Kritik
         private ICommand shaftRotationInfluenceCheckBoxCommand;
         public ICommand ShaftRotationInfluenceCheckBoxCommand => shaftRotationInfluenceCheckBoxCommand ??=
             new CommandHandler(
-                () => ShaftRPMUpdate(), 
+                () => ShaftRPMUpdate(),
                 () => Shaft.Properties.Gyros != GyroscopicEffect.none);
         private ICommand shaftRotationOptionChangedCommand;
         public ICommand ShaftRotationOptionChangedCommand => shaftRotationOptionChangedCommand ??=
@@ -334,19 +325,22 @@ namespace Kritik
         private ICommand shaftRotationInfluenceVisibilityCommand;
         public ICommand ShaftRotationInfluenceVisibilityCommand => shaftRotationInfluenceVisibilityCommand ??=
             new CommandHandler(
-                () => { shaftRotationInfluenceControlsAreVisible = !shaftRotationInfluenceControlsAreVisible; 
-                    NotifyPropertyChanged(nameof(ShaftRotationInfluenceVisibility)); NotifyPropertyChanged(nameof(ShaftRotationInfluenceButtonSource)); }, 
+                () =>
+                {
+                    shaftRotationInfluenceControlsAreVisible = !shaftRotationInfluenceControlsAreVisible;
+                    NotifyPropertyChanged(nameof(ShaftRotationInfluenceVisibility)); NotifyPropertyChanged(nameof(ShaftRotationInfluenceButtonSource));
+                },
                 () => true);
         #endregion
 
         #region DataGrid Controls Commands
         private ICommand addItemCommand;
         public ICommand AddItemCommand => addItemCommand ??= new RelayCommand<object>(
-            (obj) => { ShaftElementSelected = Shaft.AddElement(ShaftElementSelected); CommonBtnActions(obj); }, 
+            (obj) => { ShaftElementSelected = Shaft.AddElement(ShaftElementSelected); CommonBtnActions(obj); },
             (obj) => TabControlSelectedIndex == 0);
         private ICommand removeItemCommand;
         public ICommand RemoveItemCommand => removeItemCommand ??= new RelayCommand<object>(
-            (obj) => { ShaftElementSelected = Shaft.RemoveSelectedElement(ShaftElementSelected); CommonBtnActions(obj); }, 
+            (obj) => { ShaftElementSelected = Shaft.RemoveSelectedElement(ShaftElementSelected); CommonBtnActions(obj); },
             (obj) => Shaft.Elements.Count > 0 && TabControlSelectedIndex == 0);
         private ICommand moveItemUpCommand;
         public ICommand MoveItemUpCommand => moveItemUpCommand ??= new RelayCommand<object>(
@@ -355,8 +349,11 @@ namespace Kritik
         private ICommand moveItemDownCommand;
         public ICommand MoveItemDownCommand => moveItemDownCommand ??= new RelayCommand<object>(
             (obj) => { Shaft.MoveElementDown(ShaftElementSelected); CommonBtnActions(obj); },
-            (obj) => { int i = Shaft.Elements.IndexOf(ShaftElementSelected); 
-                return i < Shaft.Elements.Count - 1 && i >= 0 && TabControlSelectedIndex == 0; });
+            (obj) =>
+            {
+                int i = Shaft.Elements.IndexOf(ShaftElementSelected);
+                return i < Shaft.Elements.Count - 1 && i >= 0 && TabControlSelectedIndex == 0;
+            });
         private ICommand mirrorShaftCommand;
         public ICommand MirrorShaftCommand => mirrorShaftCommand ??= new RelayCommand<object>(
             (obj) => { if (History.Count == 0) { History.Add(); } ShaftElementSelected = Shaft.Mirror(); CommonBtnActions(obj); },
@@ -367,17 +364,23 @@ namespace Kritik
             () => Shaft.Elements.Count > 0 && TabControlSelectedIndex == 0);
         private ICommand historyBackCommand;
         public ICommand HistoryBackCommand => historyBackCommand ??= new RelayCommand<object>(
-            (obj) => { Shaft.Elements = History.Back(); History.SetCollection(Shaft.Elements);
+            (obj) =>
+            {
+                Shaft.Elements = History.Back(); History.SetCollection(Shaft.Elements);
                 ShaftElementSelected = Shaft.Elements.FirstOrDefault();
-                ShaftScheme.SetShaft(Shaft, ShaftElementSelected);                
-                CommonBtnActions(obj, false); }, 
+                ShaftScheme.SetShaft(Shaft, ShaftElementSelected);
+                CommonBtnActions(obj, false);
+            },
             (obj) => History.CanGoBack() && TabControlSelectedIndex == 0);
         private ICommand historyForwardCommand;
         public ICommand HistoryForwardCommand => historyForwardCommand ??= new RelayCommand<object>(
-            (obj) => { Shaft.Elements = History.Forward(); History.SetCollection(Shaft.Elements);
+            (obj) =>
+            {
+                Shaft.Elements = History.Forward(); History.SetCollection(Shaft.Elements);
                 ShaftElementSelected = Shaft.Elements.FirstOrDefault();
-                ShaftScheme.SetShaft(Shaft, ShaftElementSelected); 
-                CommonBtnActions(obj, false); },
+                ShaftScheme.SetShaft(Shaft, ShaftElementSelected);
+                CommonBtnActions(obj, false);
+            },
             (obj) => History.CanGoForward() && TabControlSelectedIndex == 0);
         #endregion
 
@@ -415,6 +418,7 @@ namespace Kritik
             AnyPropertyChanged = false;
             ShaftRotationInfluenceSelectedOption = ShaftRotationInfluenceOption.operatingSpeed;
         }
+
         /// <summary>
         /// Loads Kritik input .xlsx file and stores its data in <see cref="this.ShaftProperties"/>, <see cref="this.CalculationProperties"/> and <see cref="this.Shaft.Elements"/>
         /// </summary>
@@ -433,7 +437,7 @@ namespace Kritik
 
             if (loadResult is null)
             {
-                MessageBox.Show("Soubor \"" + fileName + "\" se nepodařilo načíst.", "Chyba načítání souboru", 
+                MessageBox.Show("Soubor \"" + fileName + "\" se nepodařilo načíst.", "Chyba načítání souboru",
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
@@ -484,7 +488,7 @@ namespace Kritik
             await KritikCalculation.CalculateCriticalSpeedsAsync();
             await KritikCalculation.CalculateOscillationShapesAsync();
             if (KritikCalculation.CriticalSpeeds.Length > 0)
-                OscillationShapesViewModel = new OscillationShapesViewModel(KritikCalculation, ShaftScheme, Strings);
+                OscillationShapesViewModel = new OscillationShapesViewModel(KritikCalculation, ShaftScheme2, Strings);
 
             NotifyPropertyChanged(nameof(OscillationShapesTabIsEnabled));
             NotifyPropertyChanged(nameof(ShaftScheme2));
@@ -554,7 +558,7 @@ namespace Kritik
         /// <param name="obj"><see cref="DataGrid"/> object</param>
         private void CommonBtnActions(object obj, bool addToHistory = true)
         {
-            if (addToHistory) History.Add(); 
+            if (addToHistory) History.Add();
             DataGridRefresh(obj);
             BeamPlusControlsUpdate();
         }
@@ -570,7 +574,7 @@ namespace Kritik
                 grid.CommitEdit();
                 grid.CommitEdit();
                 grid.Items.Refresh();
-                grid.UpdateLayout();  
+                grid.UpdateLayout();
                 if (ShaftElementSelected is not null)
                     grid.ScrollIntoView(ShaftElementSelected);
                 int index = Shaft.Elements.IndexOf(ShaftElementSelected);

@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kritik
 {
@@ -18,10 +14,6 @@ namespace Kritik
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        private void NotifySenderPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            NotifyPropertyChanged(sender.GetType().Name);
-        }
 
         private ObservableCollection<ShaftElementForDataGrid> elements;
         public ObservableCollection<ShaftElementForDataGrid> Elements
@@ -31,7 +23,6 @@ namespace Kritik
             {
                 elements = value;
                 NotifyPropertyChanged();
-
             }
         }
 
@@ -43,7 +34,6 @@ namespace Kritik
             {
                 properties = value;
                 NotifyPropertyChanged();
-                properties.PropertyChanged += new PropertyChangedEventHandler(NotifySenderPropertyChanged);
             }
         }
 
@@ -80,7 +70,7 @@ namespace Kritik
                 Elements.Add(new ShaftElementForDataGrid());
                 return Elements.Last();
             }
-            
+
             Elements.Insert(index, new ShaftElementForDataGrid());
             return Elements[index];
         }
@@ -96,7 +86,7 @@ namespace Kritik
 
             int index = Elements.IndexOf(selectedElement);
             Elements.Remove(selectedElement);
-            if (index == Elements.Count) 
+            if (index == Elements.Count)
                 index--;
             return index >= 0 ? Elements[index] : null;
         }
@@ -133,8 +123,8 @@ namespace Kritik
         public ShaftElementForDataGrid Mirror()
         {
             int count = Elements.Count;
-            
-            for (int i = count - 1; i >=0; i--)
+
+            for (int i = count - 1; i >= 0; i--)
             {
                 Elements.Add((ShaftElementForDataGrid)Elements[i].Clone());
             }

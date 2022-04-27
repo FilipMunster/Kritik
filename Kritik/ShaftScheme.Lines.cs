@@ -4,8 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kritik
 {
@@ -41,8 +39,8 @@ namespace Kritik
                 {
                     LineSeries lineInner = GetBeam(x, L, Di, 0);
                     foreach (DataPoint p in lineInner.Points)
-                    { 
-                        line.Points.Add(p); 
+                    {
+                        line.Points.Add(p);
                     }
                 }
                 return line;
@@ -158,13 +156,13 @@ namespace Kritik
                 double xPlus = x + (xMax * 0.02);
                 line.Points.Add(new DataPoint(xMinus, -D / 2));
 
-                if (elements.Any(x => x.Type == ElementType.disc)) 
+                if (elements.Any(x => x.Type == ElementType.disc))
                 {
-                    line.Points.Add(new DataPoint(xPlus, -D / 2 - maxD * 0.28)); 
+                    line.Points.Add(new DataPoint(xPlus, -D / 2 - maxD * 0.28));
                 }
                 else
-                { 
-                    line.Points.Add(new DataPoint(xPlus, -D / 2 - maxD * 0.18)); 
+                {
+                    line.Points.Add(new DataPoint(xPlus, -D / 2 - maxD * 0.18));
                 }
 
                 line.Color = OxyColors.Transparent;

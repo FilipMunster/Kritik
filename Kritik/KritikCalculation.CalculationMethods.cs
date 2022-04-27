@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kritik
 {
@@ -73,7 +71,7 @@ namespace Kritik
                     shapes[i] = new OscillationShapes(criticalSpeeds[i]);
 
                     Matrix<double> uc = Matrix<double>.Build.DenseIdentity(4); // Identity matrix 4x4
-                    
+
                     // Set RPM to all elements and multiply the matrices
                     foreach (var element in shaftElements)
                     {

@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Data;
 
 namespace Kritik
@@ -15,7 +10,7 @@ namespace Kritik
         private static char[] chars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ',', 'e', 'E' };
         public static string GON(string input)
         {
-            
+
             return new string(input.Where(c => chars.Contains(c)).ToArray());
         }
     }
@@ -50,7 +45,7 @@ namespace Kritik
             return value;
         }
     }
-    
+
     public class FormatDefaultConverter : IValueConverter
     {
         /// <summary>
@@ -91,11 +86,11 @@ namespace Kritik
             v = v.Replace(",", ".");
             v = v.TrimStart('-');
             v = GetOnlyNumbers.GON(v);
-            
+
             if (parameter is not null)
             {
                 double val;
-                int exponent;                
+                int exponent;
                 if (Double.TryParse(v, out val) && Int32.TryParse(parameter as string, out exponent))
                     return val * Math.Pow(10, exponent);
             }
@@ -103,7 +98,9 @@ namespace Kritik
             return v;
         }
     }
-
+    /// <summary>
+    /// Converts string representation of number to integer, replaces ',' with '.' and deletes '-' -> stores absolute value of number
+    /// </summary>
     public class FormatToIntConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -169,7 +166,7 @@ namespace Kritik
             bool parsed = Int32.TryParse(parameter as string, out int index);
             if (!parsed)
                 throw new ArgumentException("Parameter could not be converted to Int32", nameof(parameter));
-            
+
             string[] enumNames = value.GetType().GetEnumNames();
 
             return enumNames[index] == value.ToString();
@@ -199,7 +196,7 @@ namespace Kritik
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (targetType == typeof(ShaftElementForDataGrid)  && value?.GetType().Name == "NamedObject")
+            if (targetType == typeof(ShaftElementForDataGrid) && value?.GetType().Name == "NamedObject")
                 return new ShaftElementForDataGrid();
             return value;
         }

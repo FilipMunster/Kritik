@@ -2,7 +2,6 @@
 using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -260,14 +259,15 @@ namespace Kritik
                         return null;
                     }
                     Debug.WriteLine("Soubor {0} byl načten.", fileName);
-                    
+
                     LoadResult loadResult = new LoadResult();
                     loadResult.ShaftProperties = shaftProperties;
                     loadResult.CalculationProperties = calculationProperties;
                     loadResult.ShaftElements = shaftElements;
                     return loadResult;
                 }
-            } catch { return null; }
+            }
+            catch { return null; }
         }
 
         /// <summary>
@@ -381,9 +381,9 @@ namespace Kritik
                         return false;
                     }
                 }
-            } 
-            catch 
-            { 
+            }
+            catch
+            {
                 return false;
             }
             return true;
@@ -400,7 +400,7 @@ namespace Kritik
         {
             if (!calculation.IsReady)
                 calculation = new KritikCalculation(new Shaft(), new CalculationProperties());
-            
+
             ShaftProperties shaftProperties = calculation.Shaft.Properties;
             CalculationProperties calculationProperties = calculation.CalculationProperties;
             List<ShaftElement> shaftElements = new List<ShaftElement>(calculation.Shaft.Elements);
@@ -596,8 +596,8 @@ namespace Kritik
                                     ws.Cells[row, 8].Value = element.Di * Math.Pow(10, -1 * lengthOrder);
                                     ws.Cells[row, 8].Style.HorizontalAlignment = alignLeft;
                                     ws.Cells[row, 8].Style.Numberformat.Format = formatNum;
-                                    ws.Cells[++row, 2].Value = strings.HridelJeRozdelenaNa + " " + (element.Division + 1) + " " 
-                                        + strings.castiODelce + " " + String.Format("{0:#.###}", element.L * Math.Pow(10, -1 * lengthOrder) / (element.Division + 1)) + " mm, " 
+                                    ws.Cells[++row, 2].Value = strings.HridelJeRozdelenaNa + " " + (element.Division + 1) + " "
+                                        + strings.castiODelce + " " + String.Format("{0:#.###}", element.L * Math.Pow(10, -1 * lengthOrder) / (element.Division + 1)) + " mm, "
                                         + strings.meziKterymiJsouUmistenyPrvkyDT;
                                     if (element.M > 0)
                                     {
@@ -688,7 +688,7 @@ namespace Kritik
             {
                 return false;
             }
-            
+
             return true;
         }
 
@@ -702,7 +702,7 @@ namespace Kritik
         private static double MeasureTextHeight(string text, ExcelFont font, double width)
         {
             if (text is null or "") return 0.0;
-            
+
             Graphics g = Graphics.FromHwnd(IntPtr.Zero);
             int dpi = (int)g.DpiX;
 
@@ -718,7 +718,7 @@ namespace Kritik
             bitmap.Dispose();
             graphics.Dispose();
 
-            //72 DPI and dpi (96) points per inch.  Excel height in points with max of 409 per Excel requirements.
+            //72 DPI and dpi (default 96) points per inch.  Excel height in points with max of 409 per Excel requirements.
             double result = Math.Min(Convert.ToDouble(size.Height) * 72 / dpi, 409);
             return result;
         }

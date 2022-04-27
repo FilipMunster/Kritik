@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kritik
 {
@@ -38,10 +34,11 @@ namespace Kritik
         }
 
         private string author;
-        public string Author {
+        public string Author
+        {
             get => author;
-            set 
-            { 
+            set
+            {
                 author = value;
                 if (newCalculation)
                     Properties.Settings.Default.author = value;
@@ -68,7 +65,7 @@ namespace Kritik
         public CalculationProperties(bool newCalculation = false)
         {
             this.newCalculation = newCalculation;
-            Author = Properties.Settings.Default.author == "" ? Environment.UserName : Properties.Settings.Default.author;            
+            Author = Properties.Settings.Default.author == "" ? Environment.UserName : Properties.Settings.Default.author;
             Date = DateTime.Today.ToShortDateString();
         }
 

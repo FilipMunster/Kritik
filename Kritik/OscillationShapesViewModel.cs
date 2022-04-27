@@ -1,12 +1,7 @@
 ﻿using OxyPlot;
-using OxyPlot.Series;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -18,7 +13,7 @@ namespace Kritik
         /// Array of computed OscillationShapes
         /// </summary>
         private readonly OscillationShapes[] oscillationShapes;
-        
+
         private readonly CalculationProperties calculationProperties;
         private readonly Shaft shaft;
 
@@ -26,24 +21,24 @@ namespace Kritik
         /// Oscillation shape plotted in MainPlot
         /// </summary>
         private OscillationShapeType mainPlotShape = OscillationShapeType.w;
-        
+
         /// <summary>
         /// Minimal x-value drawn in the shaft scheme.
         /// </summary>
         private readonly double xMin;
-        
+
         /// <summary>
         /// Maximal x-value drawn in the shaft scheme.
         /// </summary>
         private readonly double xMax;
-        
+
         private readonly Strings strings;
-        
+
         /// <summary>
         /// Array of line colors used by thumbnail plots
         /// </summary>
         private readonly OxyColor[] colorsArray = { OxyColors.Blue, OxyColors.Red, OxyColors.Tan, OxyColors.Plum };
-        
+
         public OscillationShapesViewModel(KritikCalculation kritikCalculation,
             ShaftScheme shaftScheme, Strings strings)
         {
@@ -205,6 +200,10 @@ namespace Kritik
         public ICommand ChangeMainPlotCommand => changeMainPlotCommand ??= new RelayCommand<string>(
             (i) => ChangeMainPlot((OscillationShapeType)int.Parse(i)),
             (i) => true);
+        private ICommand saveToPNGCommand;
+        public ICommand SaveToPNGCommand => saveToPNGCommand ??= new CommandHandler(
+            () => SaveToPNG(),
+            () => true);
         #endregion
 
         private PlotModel GetMainPlot()
@@ -220,17 +219,17 @@ namespace Kritik
                 model.Series.Add(Plotter.NewCircleLine(shape.XNodes, shape.YNodes));
 
             model.Series.Add(Plotter.NewLine(shape.X, shape.Y));
-            
+
             return model;
         }
         private PlotModel GetThumbnailPlot(OscillationShapeType shapeType)
         {
-            PlotModel model = Plotter.GetThumbnailPlotModel();            
+            PlotModel model = Plotter.GetThumbnailPlotModel();
             OscillationShapes.Shape shape = GetShapeByType(shapeType);
             OxyColor color = colorsArray[(int)shapeType];
 
             model.Series.Add(Plotter.NewAxisLine(shape.X));
-            model.Series.Add(Plotter.NewLine(shape.X, shape.Y, color));            
+            model.Series.Add(Plotter.NewLine(shape.X, shape.Y, color));
 
             return model;
         }
@@ -320,6 +319,11 @@ namespace Kritik
             ThumbnailPlotBorderUpdate();
             NotifyPropertyChanged(nameof(Description));
             NotifyPropertyChanged(nameof(MainPlot));
+        }
+        private void SaveToPNG()
+        {
+            // TODO: Saves Oscillation shape, shaft scheme and Description into PNG file
+            return;
         }
     }
 }

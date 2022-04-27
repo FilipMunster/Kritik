@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Kritik
@@ -56,7 +51,7 @@ namespace Kritik
             PropertyInfo[] thisProperties = this.GetType().GetProperties();
             foreach (var parentProperty in parentProperties)
             {
-                foreach(var thisProperty in thisProperties)
+                foreach (var thisProperty in thisProperties)
                 {
                     if (thisProperty.Name == parentProperty.Name && thisProperty.PropertyType == parentProperty.PropertyType)
                     {
@@ -91,7 +86,7 @@ namespace Kritik
             {
                 if (value < 1)
                 {
-                    MessageBox.Show("Hodnota dělení nesmí být menší než 1.", "Špatně zadaná hodnota", 
+                    MessageBox.Show("Hodnota dělení nesmí být menší než 1.", "Špatně zadaná hodnota",
                         MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }

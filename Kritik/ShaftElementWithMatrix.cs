@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using MathNet.Numerics.LinearAlgebra;
+using System;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using MathNet.Numerics.LinearAlgebra;
 
 namespace Kritik
 {
@@ -109,7 +105,7 @@ namespace Kritik
                     throw new ArgumentNullException("Element type was not set.");
             }
         }
-        public ShaftElementWithMatrix(ElementType elementType = ElementType.beam) : base(elementType) 
+        public ShaftElementWithMatrix(ElementType elementType = ElementType.beam) : base(elementType)
         {
             Type = elementType;
         }

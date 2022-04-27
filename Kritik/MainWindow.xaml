@@ -343,7 +343,6 @@
                                       SelectionMode="Single"
                                       SelectedItem="{Binding ShaftElementSelected, Mode=TwoWay, Converter={StaticResource NewDataGridItemConverter}}"
                                       CanUserReorderColumns="False"
-                                      CanUserSortColumns="False"
                                       CanUserResizeRows="False"
                                       CanUserDeleteRows="False"
                                       PreviewKeyDown="ShaftDataGrid_PreviewKeyDown"
@@ -681,8 +680,7 @@
                     </Grid>
 
                     <Border Grid.Row="1" Grid.Column="1" Height="150" Margin="0, 0, 0, 10" BorderThickness="1" BorderBrush="Gray" Padding="5" CornerRadius="3" VerticalAlignment="Bottom">
-                        <oxy:PlotView Model="{Binding ShaftScheme.Scheme}" DefaultTrackerTemplate="{x:Null}"  
-                                      PreviewMouseDown="schemaHridele_PreviewMouseDown">
+                        <oxy:PlotView Model="{Binding ShaftScheme.Scheme}" DefaultTrackerTemplate="{x:Null}" x:Name="ShaftSchemePlotView">
                             <dp:DataPiping.DataPipes>
                                 <dp:DataPipeCollection>
                                     <dp:DataPipe Source="{Binding RelativeSource={RelativeSource AncestorType={x:Type oxy:PlotView}}, Path=ActualWidth}"
@@ -737,7 +735,7 @@
                                         <CheckBox Content="textový popisek" IsChecked="{Binding OscillationShapesViewModel.SaveDescriptionIsChecked}"/>
                                     </StackPanel>
                                 </Grid>
-                                <Button Height="25" Width="150" Margin="0, 5, 0, 5" Name="ulozitTvarKmituButton" Padding="3" Click="ulozitTvarKmituButton_Click">
+                                <Button Height="25" Width="150" Margin="0, 5, 0, 5" Padding="3" Command="{Binding OscillationShapesViewModel.SaveToPNGCommand}">
                                     <StackPanel Orientation="Horizontal">
                                         <Image Source="/icons/Save_16x.png"/>
                                         <TextBlock Text="Uložit tvar kmitu" VerticalAlignment="Center" Margin="5, 0, 0, 0"/>
@@ -760,8 +758,7 @@
                                     <RowDefinition Height="160"/>
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
-                                <oxy:PlotView Model="{Binding ShaftScheme2.Scheme}" DefaultTrackerTemplate="{x:Null}"  
-                                      PreviewMouseDown="schemaHridele_PreviewMouseDown">
+                                <oxy:PlotView Model="{Binding ShaftScheme2.Scheme}" DefaultTrackerTemplate="{x:Null}">
                                     <dp:DataPiping.DataPipes>
                                         <dp:DataPipeCollection>
                                             <dp:DataPipe Source="{Binding RelativeSource={RelativeSource AncestorType={x:Type oxy:PlotView}}, Path=ActualWidth}"
@@ -769,7 +766,7 @@
                                         </dp:DataPipeCollection>
                                     </dp:DataPiping.DataPipes>
                                 </oxy:PlotView>
-                                <oxy:PlotView Model="{Binding OscillationShapesViewModel.MainPlot}" DefaultTrackerTemplate="{x:Null}" Grid.Row="1" Margin="4, 2, 4, 4"/>
+                                <oxy:PlotView Model="{Binding OscillationShapesViewModel.MainPlot}" DefaultTrackerTemplate="{x:Null}" Grid.Row="1" Margin="0, 2, 0, 4"/>
                             </Grid>
                         </Border>
                         <Grid Grid.Row="1">

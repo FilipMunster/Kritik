@@ -2,3 +2,6 @@
 
 # CA1305: Specify IFormatProvider
 dotnet_diagnostic.CA1305.severity = none
+
+# CS0618: 'Element.MouseDown' is obsolete: 'Will be removed in v4.0 (#111)'
+dotnet_diagnostic.CS0618.severity = none

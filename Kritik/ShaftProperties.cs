@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kritik
 {
@@ -37,7 +33,7 @@ namespace Kritik
             }
         }
         private GyroscopicEffect gyros;
-        public GyroscopicEffect Gyros 
+        public GyroscopicEffect Gyros
         {
             get => gyros;
             set
@@ -71,7 +67,7 @@ namespace Kritik
         private double youngModulus;
         public double YoungModulus
         {
-            get => youngModulus; 
+            get => youngModulus;
             set
             {
                 youngModulus = value;

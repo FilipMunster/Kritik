@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Kritik
@@ -73,7 +71,7 @@ namespace Kritik
             {
                 text += "Pro zadaný rotor nebyly\nvypočteny žádné kritické otáčky.";
                 return text;
-            }                
+            }
 
             for (int i = 0; i < CriticalSpeeds.Count(); i++)
             {
@@ -86,8 +84,8 @@ namespace Kritik
             string text = "";
             if (CriticalSpeeds is null || CriticalSpeeds.Count() == 0)
                 return text;
-            
-            if (Shaft.Properties.OperatingSpeed > 0) 
+
+            if (Shaft.Properties.OperatingSpeed > 0)
                 text += String.Format("{0:0.000}", CriticalSpeeds[0] / Shaft.Properties.OperatingSpeed * 100) + " % provozních otáček\n";
             if (Shaft.Properties.RunawaySpeed > 0)
                 text += String.Format("{0:0.000}", CriticalSpeeds[0] / Shaft.Properties.RunawaySpeed * 100) + " % provozních otáček";

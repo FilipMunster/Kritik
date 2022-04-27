@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kritik
 {
@@ -26,7 +23,7 @@ namespace Kritik
             [Description("angličtina")]
             en
         }
-        
+
         public string[] LanguageNames => Enums.GetNames<Language>();
         private Language selectedLanguage;
         public Language SelectedLanguage
@@ -34,7 +31,7 @@ namespace Kritik
             get => selectedLanguage;
             set
             {
-                selectedLanguage = value; 
+                selectedLanguage = value;
                 Properties.Settings.Default.lang = (int)value;
                 switch (value)
                 {
@@ -55,7 +52,7 @@ namespace Kritik
         /// <returns></returns>
         private string This([CallerMemberName] string memberName = "")
         {
-            return memberName; 
+            return memberName;
         }
         #endregion
 
