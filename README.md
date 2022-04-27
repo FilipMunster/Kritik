@@ -4,7 +4,7 @@ Data hřídele i výsledky jsou ukládány jako listy do zvoleného sešitu .xls
 
 Poznámka: Od release 0.1.2 je kód kompletně přepisován, aby byl respektován návrhový vzor MVVM a zlepšila se udržitelnost kódu.
 
-# Screenshots
+# Snímky obrazovky
 ![Kritik_screenshot_1](https://user-images.githubusercontent.com/93245222/165526877-b7837726-cb79-4b24-a92e-42a55b3a2c1a.png)
 
 ![Kritik_screenshot_2](https://user-images.githubusercontent.com/93245222/165527163-05ef4eaa-1d96-41c2-b628-cb4ec0f5101a.png)
