@@ -16,6 +16,20 @@ namespace Kritik
         public MainWindow()
         {
             InitializeComponent();
+            ((MainViewModel)this.DataContext).SelectedElementChanged += OnSelectedElementChanged;
+        }
+
+        private void OnSelectedElementChanged(object sender, int elementId)
+        {
+            ShaftDataGrid.CommitEdit();
+            ShaftDataGrid.CommitEdit();
+            ShaftDataGrid.Items.Refresh();
+            ShaftDataGrid.UpdateLayout();
+            if (elementId >= 0)
+                ShaftDataGrid.ScrollIntoView(ShaftDataGrid.Items.GetItemAt(elementId));
+
+            DataGridRow row = (DataGridRow)ShaftDataGrid.ItemContainerGenerator.ContainerFromIndex(elementId);
+            _ = row.MoveFocus(new TraversalRequest(FocusNavigationDirection.Up));
         }
 
         private void KritikMainWindow_Drop(object sender, DragEventArgs e)

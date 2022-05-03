@@ -28,6 +28,10 @@ namespace Kritik
             SchemeWidth = schemeWidth;
             Draw(null);
         }
+
+        public delegate void SchemeMouseDownEventHandler(object sender, int elementId);
+        public event SchemeMouseDownEventHandler SchemeMouseDown;
+
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
@@ -146,11 +150,13 @@ namespace Kritik
                     case ElementType.disc:
                         line = Lines.GetDisk(x, element.M, maxM, maxD);
                         line.MouseDown += Line_MouseUp;
+                        line.Tag = i;
                         Scheme.Series.Add(Lines.GetDiskBorder(x, maxD, ref xMin, ref xMax));
                         break;
                     case ElementType.support:
                         line = Lines.GetSupport(x, Shaft.Elements, i, rigidDiameter);
                         line.MouseDown += Line_MouseUp;
+                        line.Tag = i;
                         Scheme.Series.Add(Lines.GetSupportBorder(x, shaft.Elements, i, rigidDiameter, maxD, ref xMin, ref xMax));
                         break;
                     case ElementType.magnet:
@@ -182,15 +188,39 @@ namespace Kritik
 
         private void Scheme_MouseDown(object sender, OxyMouseDownEventArgs e)
         {
-            // TODO: Select element in Datagrid by clickcing on shaft scheme
-            return;
+            if (Shaft.Elements.Count == 0)
+                return;
+            
+            OxyPlot.ElementCollection<OxyPlot.Axes.Axis> axisList = Scheme.Axes;
+            OxyPlot.Axes.Axis xAxis = axisList.FirstOrDefault(ax => ax.Position == OxyPlot.Axes.AxisPosition.Bottom);
+            OxyPlot.Axes.Axis yAxis = axisList.FirstOrDefault(ax => ax.Position == OxyPlot.Axes.AxisPosition.Left);
+
+            DataPoint position = OxyPlot.Axes.Axis.InverseTransform(e.Position, xAxis, yAxis);
+
+            int elementId = -1;
+            for (int i = 0; i < (xCoordinates.Count - 1); i++)
+            {
+                if (position.X > xCoordinates[i] && position.X < xCoordinates[i + 1])
+                {
+                    elementId = i;
+                    break;
+                }
+            }
+
+            if (elementId < 0)
+                return;
+
+            double elementDe = Shaft.Elements[elementId].Type == ElementType.rigid ? rigidDiameter : Shaft.Elements[elementId].De;
+            if (Math.Abs(position.Y) <= (elementDe / 2.0))
+            {
+                SchemeMouseDown?.Invoke(this, elementId);
+            }
         }
 
         private void Line_MouseUp(object sender, OxyMouseEventArgs e)
         {
-            // TODO: Select element in Datagrid by clickcing on shaft scheme
-            return;
+            if (((Series)sender).Tag is int elementId)
+                SchemeMouseDown?.Invoke(this, elementId);
         }
-
     }
 }

@@ -88,7 +88,7 @@ namespace Kritik
             if (Shaft.Properties.OperatingSpeed > 0)
                 text += String.Format("{0:0.000}", CriticalSpeeds[0] / Shaft.Properties.OperatingSpeed * 100) + " % provozních otáček\n";
             if (Shaft.Properties.RunawaySpeed > 0)
-                text += String.Format("{0:0.000}", CriticalSpeeds[0] / Shaft.Properties.RunawaySpeed * 100) + " % provozních otáček";
+                text += String.Format("{0:0.000}", CriticalSpeeds[0] / Shaft.Properties.RunawaySpeed * 100) + " % průběžných otáček";
             return text;
         }
 
