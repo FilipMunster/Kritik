@@ -724,10 +724,12 @@
                                     <StackPanel Orientation="Vertical">
                                         <CheckBox Content="vykreslit uzly" 
                                                   IsChecked="{Binding OscillationShapesViewModel.ShowNodesIsChecked}"/>
+                                        <CheckBox Content="vykreslit mřížku" 
+                                                  IsChecked="{Binding OscillationShapesViewModel.ShowGridIsChecked}"/>
                                     </StackPanel>
                                 </Grid>
                                 <Separator Margin="0, 5, 0, 5"/>
-                                <TextBlock Text="Uložení tvar kmitu:"/>
+                                <TextBlock Text="Uložení tvaru kmitu:"/>
                                 <Grid Margin="15, 2, 0, 0">
                                     <StackPanel Orientation="Vertical">
                                         <CheckBox Content="schéma hřídele" IsChecked="{Binding OscillationShapesViewModel.SaveSchemeIsChecked}"/>
@@ -758,14 +760,7 @@
                                     <RowDefinition Height="160"/>
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
-                                <oxy:PlotView Model="{Binding ShaftScheme2.Scheme}" DefaultTrackerTemplate="{x:Null}">
-                                    <dp:DataPiping.DataPipes>
-                                        <dp:DataPipeCollection>
-                                            <dp:DataPipe Source="{Binding RelativeSource={RelativeSource AncestorType={x:Type oxy:PlotView}}, Path=ActualWidth}"
-                                                 Target="{Binding ShaftScheme2Width, Mode=OneWayToSource}"/>
-                                        </dp:DataPipeCollection>
-                                    </dp:DataPiping.DataPipes>
-                                </oxy:PlotView>
+                                <oxy:PlotView Model="{Binding ShaftScheme2.Scheme}" DefaultTrackerTemplate="{x:Null}"/>
                                 <oxy:PlotView Model="{Binding OscillationShapesViewModel.MainPlot}" DefaultTrackerTemplate="{x:Null}" Grid.Row="1" Margin="0, 2, 0, 4"/>
                             </Grid>
                         </Border>

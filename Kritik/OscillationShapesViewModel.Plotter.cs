@@ -13,7 +13,6 @@ namespace Kritik
                 model.Axes.Add(new OxyPlot.Axes.LinearAxis
                 {
                     Position = OxyPlot.Axes.AxisPosition.Bottom,
-                    MajorGridlineStyle = LineStyle.Dot,
                     IsZoomEnabled = false,
                     IsPanEnabled = false,
                     Title = "x [m]"

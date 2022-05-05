@@ -119,6 +119,7 @@ namespace Kritik
                 NotifyPropertyChanged();
             }
         }
+
         public ShaftScheme ShaftScheme2 => (ShaftScheme)ShaftScheme.Clone();
         #endregion
 
@@ -150,6 +151,7 @@ namespace Kritik
             {
                 NotifyPropertyChanged(nameof(WindowTitle));
                 fileName = value;
+                CalculationProperties.FileName = value;
             }
         }
         public int TabControlSelectedIndex { get; set; }
@@ -166,17 +168,6 @@ namespace Kritik
                 shaftScheme1Width = value;
                 if (ShaftScheme is not null)
                     ShaftScheme.SchemeWidth = value;
-            }
-        }
-        private double shaftScheme2Width;
-        public double ShaftScheme2Width
-        {
-            get => shaftScheme2Width;
-            set
-            {
-                shaftScheme2Width = value;
-                if (ShaftScheme2 is not null)
-                    ShaftScheme2.SchemeWidth = value;
             }
         }
 

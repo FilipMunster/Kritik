@@ -14,10 +14,7 @@ namespace Kritik
         /// Last selected shaft element
         /// </summary>
         private ShaftElementForDataGrid lastSelectedElement;
-        /// <summary>
-        /// X-Coordinates of nodes between elements
-        /// </summary>
-        private List<double> xCoordinates;
+
         /// <summary>
         /// Diameter of rigid element drawn
         /// </summary>
@@ -64,6 +61,9 @@ namespace Kritik
         public PlotModel Scheme { get; private set; }
 
         private double schemeWidth;
+        /// <summary>
+        /// Value of scheme PlotModel PlotView.ActualWidth. Needs to be updated from viewmodel.
+        /// </summary>
         public double SchemeWidth
         {
             get => schemeWidth;
@@ -76,6 +76,16 @@ namespace Kritik
 
         public double XMin { get; private set; }
         public double XMax { get; private set; }
+
+        private List<double> xCoordinates;
+        /// <summary>
+        /// X-Coordinates of nodes between elements
+        /// </summary>
+        public List<double> XCoordinates
+        {
+            get => xCoordinates;
+            private set => xCoordinates = value;
+        }
 
         /// <summary>
         /// Set new reference to <see cref="Kritik.Shaft"/> object
@@ -110,21 +120,21 @@ namespace Kritik
 
             LineSeries selectedItemLine = new LineSeries();
 
-            xCoordinates = new List<double> { 0 };
+            XCoordinates = new List<double> { 0 };
             foreach (ShaftElement element in Shaft.Elements)
             {
-                xCoordinates.Add(xCoordinates.Last() + element.L);
+                XCoordinates.Add(XCoordinates.Last() + element.L);
             }
 
             double xMin = 0;
-            double xMax = xCoordinates.Last();
+            double xMax = XCoordinates.Last();
             LineSeries selectedElementLine = new();
 
-            Scheme.Series.Add(Lines.GetAxisLine(new double[] { 0, xCoordinates.Last() }));
+            Scheme.Series.Add(Lines.GetAxisLine(new double[] { 0, XCoordinates.Last() }));
 
             for (int i = 0; i < Shaft.Elements.Count; i++)
             {
-                double x = xCoordinates[i];
+                double x = XCoordinates[i];
                 ShaftElementForDataGrid element = Shaft.Elements[i];
 
                 LineSeries line = new LineSeries();
@@ -198,9 +208,9 @@ namespace Kritik
             DataPoint position = OxyPlot.Axes.Axis.InverseTransform(e.Position, xAxis, yAxis);
 
             int elementId = -1;
-            for (int i = 0; i < (xCoordinates.Count - 1); i++)
+            for (int i = 0; i < (XCoordinates.Count - 1); i++)
             {
-                if (position.X > xCoordinates[i] && position.X < xCoordinates[i + 1])
+                if (position.X > XCoordinates[i] && position.X < XCoordinates[i + 1])
                 {
                     elementId = i;
                     break;

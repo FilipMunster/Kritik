@@ -58,6 +58,12 @@ namespace Kritik
             get => notes;
             set { notes = value; NotifyPropertyChanged(); }
         }
+
+        /// <summary>
+        /// Full path to current file
+        /// </summary>
+        public string FileName { get; set; }
+        
         /// <summary>
         /// Create new instance of <see cref="CalculationProperties"/>
         /// </summary>

@@ -1,5 +1,7 @@
-﻿using OxyPlot;
+﻿using Microsoft.Win32;
+using OxyPlot;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
@@ -22,15 +24,7 @@ namespace Kritik
         /// </summary>
         private OscillationShapeType mainPlotShape = OscillationShapeType.w;
 
-        /// <summary>
-        /// Minimal x-value drawn in the shaft scheme.
-        /// </summary>
-        private readonly double xMin;
-
-        /// <summary>
-        /// Maximal x-value drawn in the shaft scheme.
-        /// </summary>
-        private readonly double xMax;
+        private ShaftScheme shaftScheme;
 
         private readonly Strings strings;
 
@@ -48,12 +42,12 @@ namespace Kritik
             this.oscillationShapes = kritikCalculation.OscillationShapes;
             this.calculationProperties = kritikCalculation.CalculationProperties;
             this.shaft = kritikCalculation.Shaft;
-            this.xMin = shaftScheme.XMin;
-            this.xMax = shaftScheme.XMax;
+            this.shaftScheme = shaftScheme;
             this.strings = strings;
 
             ShapeNumber = 1;
             ShowNodesIsChecked = Properties.Settings.Default.drawNodes;
+            ShowGridIsChecked = Properties.Settings.Default.drawGrid;
             SaveSchemeIsChecked = Properties.Settings.Default.drawScheme;
             SaveShapeIsChecked = Properties.Settings.Default.drawShape;
             SaveDescriptionIsChecked = Properties.Settings.Default.drawDescription;
@@ -95,6 +89,7 @@ namespace Kritik
                 NotifyPropertyChanged(nameof(MainPlot));
             }
         }
+
         private bool showNodesIsChecked;
         /// <summary>
         /// Indicates if Nodes are plotted
@@ -109,6 +104,22 @@ namespace Kritik
                 NotifyPropertyChanged(nameof(MainPlot));
             }
         }
+
+        private bool showGridIsChecked;
+        /// <summary>
+        /// Indicates if Grid are plotted
+        /// </summary>
+        public bool ShowGridIsChecked
+        {
+            get => showGridIsChecked;
+            set
+            {
+                showGridIsChecked = value;
+                Properties.Settings.Default.drawGrid = value;
+                NotifyPropertyChanged(nameof(MainPlot));
+            }
+        }
+
         private bool saveSchemeIsChecked;
         public bool SaveSchemeIsChecked
         {
@@ -203,7 +214,7 @@ namespace Kritik
         private ICommand saveToPNGCommand;
         public ICommand SaveToPNGCommand => saveToPNGCommand ??= new CommandHandler(
             () => SaveToPNG(),
-            () => true);
+            () => SaveShapeIsChecked || SaveSchemeIsChecked);
         #endregion
 
         private PlotModel GetMainPlot()
@@ -212,13 +223,20 @@ namespace Kritik
             OscillationShapes.Shape shape = GetShapeByType(mainPlotShape);
 
             // Adding transparent line covering full x-range of Shaft Scheme, so the two plots are horizontally aligned
-            model.Series.Add(Plotter.NewLine(new double[] { xMin, xMax }, new double[] { 0, 0 }, OxyColors.Transparent));
+            model.Series.Add(Plotter.NewLine(new double[] { shaftScheme.XMin, shaftScheme.XMax }, new double[] { 0, 0 }, OxyColors.Transparent));
 
             model.Series.Add(Plotter.NewAxisLine(shape.X));
             if (ShowNodesIsChecked)
                 model.Series.Add(Plotter.NewCircleLine(shape.XNodes, shape.YNodes));
 
             model.Series.Add(Plotter.NewLine(shape.X, shape.Y));
+            
+            if (ShowGridIsChecked)
+            {
+                model.Axes[0].ExtraGridlines = shaftScheme.XCoordinates.ToArray();
+                model.Axes[0].ExtraGridlineStyle = LineStyle.Dot;
+                model.Axes[0].ExtraGridlineColor = OxyColors.Gray;
+            }
 
             return model;
         }
@@ -322,8 +340,37 @@ namespace Kritik
         }
         private void SaveToPNG()
         {
-            // TODO: Saves Oscillation shape, shaft scheme and Description into PNG file
-            return;
+            string path = System.IO.Path.GetDirectoryName(calculationProperties.FileName);
+            string fileName = System.IO.Path.GetFileNameWithoutExtension(calculationProperties.FileName);
+            string shape = mainPlotShape.ToString();
+            if (mainPlotShape == OscillationShapeType.m || mainPlotShape == OscillationShapeType.t)
+                shape = shape.ToUpper();
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog()
+            {
+                Filter = "Obrázek PNG (*.png)|*.png",
+                FileName = System.IO.Path.GetFileName(path + "\\" + fileName + "_" + shape + ".png")
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                int resolution = 200;
+                int imageWidth = Convert.ToInt32(Math.Round(resolution * 9.6));
+                int schemeHeight = Convert.ToInt32(Math.Round(0.22 * imageWidth));
+                int shapeHeight = Convert.ToInt32(Math.Round(0.4 * imageWidth));
+                int descriptionHeight = Convert.ToInt32(Math.Round(0.125 * imageWidth));
+
+                OxyModelToPng modelToPng = new OxyModelToPng(resolution, imageWidth, imageWidth / 100);
+
+                if (SaveSchemeIsChecked)
+                    modelToPng.AddModel(shaftScheme.Scheme, schemeHeight);
+                if (SaveShapeIsChecked)
+                    modelToPng.AddModel(MainPlot, shapeHeight);
+                if (SaveDescriptionIsChecked)
+                    modelToPng.AddModel(GetDescriptionPlot(), descriptionHeight);
+
+                modelToPng.SaveToFile(saveFileDialog.FileName);
+            }
         }
     }
 }
