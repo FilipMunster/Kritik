@@ -47,7 +47,7 @@ namespace Kritik
         private const int youngModulusOrder = 9; // Young Modulus is given in GPa
         private const int lengthOrder = -3; // Lengths are given in mm
         private const string excelSheetZadani = "KRITIK_zadani";
-        private const string excelSheetResultsName = "KRITIK_vypocet";
+        private const string resultsSheetNameDefault = "KRITIK_vypocet";
 
         private static Dictionary<string, BoundaryCondition> boundaryConditionStringToEnum = new Dictionary<string, BoundaryCondition>()
         {
@@ -396,7 +396,7 @@ namespace Kritik
         /// <param name="calculation">KritikCalculation with results</param>
         /// <param name="strings">Instance of Strings class</param>
         /// <returns></returns>
-        public static bool SaveResults(string fileName, KritikCalculation calculation, Strings strings)
+        public static bool SaveResults(string fileName, KritikCalculation calculation, Strings strings, string customResultsSheetName = "")
         {
             if (!calculation.IsReady)
                 calculation = new KritikCalculation(new Shaft(), new CalculationProperties());
@@ -422,15 +422,17 @@ namespace Kritik
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             FileInfo fileInfo = new FileInfo(fileName);
 
+            string resultsSheetName = customResultsSheetName == "" ? resultsSheetNameDefault : customResultsSheetName;
+
             try
             {
                 using (ExcelPackage p = new ExcelPackage(fileInfo))
                 {
-                    if (p.Workbook.Worksheets[excelSheetResultsName] is not null)
+                    if (p.Workbook.Worksheets[resultsSheetName] is not null)
                     {
-                        p.Workbook.Worksheets.Delete(excelSheetResultsName);
+                        p.Workbook.Worksheets.Delete(resultsSheetName);
                     }
-                    ExcelWorksheet ws = p.Workbook.Worksheets.Add(excelSheetResultsName);
+                    ExcelWorksheet ws = p.Workbook.Worksheets.Add(resultsSheetName);
 
                     ws.Cells.Style.Font.Bold = false;
                     ws.Cells.Style.Font.Color.SetColor(Color.Black);

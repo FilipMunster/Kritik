@@ -16,6 +16,7 @@ namespace Kritik
     {
         private const string newCalculationFileName = "Nový výpočet.xlsx";
         private bool shaftRotationInfluenceControlsAreVisible;
+        private string customSheetName = String.Empty;
         public MainViewModel()
         {
             InitializeNewCalculation();
@@ -300,6 +301,10 @@ namespace Kritik
         public ICommand SaveFileAsCommand => saveFileAsCommand ??= new CommandHandler(
             () => SaveFile(true),
             () => TabControlSelectedIndex == 0);
+        private ICommand saveToCustomSheetCommand;
+        public ICommand SaveToCustomSheetCommand => saveToCustomSheetCommand ??= new CommandHandler(
+            () => { SaveToCustomSheet(); },
+            () => TabControlSelectedIndex == 0);
         private ICommand fillTodayCommand;
         public ICommand FillTodayCommand => fillTodayCommand ??=
             new CommandHandler(() => CalculationProperties.Date = DateTime.Today.ToShortDateString(), () => true);
@@ -458,7 +463,7 @@ namespace Kritik
         /// Saves data from <see cref="ShaftProperties"/>, <see cref="CalculationProperties"/>, <see cref="Shaft.Elements"/> and <see cref="KritikCalculation"/> into .xlsx file
         /// </summary>
         /// <param name="saveAs">opens save file dialog when true</param>
-        private void SaveFile(bool saveAs)
+        private void SaveFile(bool saveAs, string resultsSheetName = "")
         {
             if (saveAs || FileName == newCalculationFileName)
             {
@@ -470,7 +475,7 @@ namespace Kritik
                 FileName = saveFileDialog.FileName;
             }
             // Saving results, shaft and calculation properties stored in KritikCalculation
-            bool saveResultsSuccess = DataLoadSave.SaveResults(FileName, KritikCalculation, Strings);
+            bool saveResultsSuccess = DataLoadSave.SaveResults(FileName, KritikCalculation, Strings, resultsSheetName);
             // Saving data stored in Shaft and CalculationProperties
             bool saveDataSuccess = DataLoadSave.SaveData(FileName, Shaft, CalculationProperties);
 
@@ -573,6 +578,18 @@ namespace Kritik
             SelectedElementChanged?.Invoke(this, elementId);
         }
 
+        private void SaveToCustomSheet()
+        {
+            CustomSheetDialogWindow window = new CustomSheetDialogWindow();
+            window.Owner = Application.Current.MainWindow;
+            window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            window.CustomSheetName = customSheetName;
+            if (window.ShowDialog() == true)
+            {
+                customSheetName = window.CustomSheetName;
+                SaveFile(true, customSheetName);
+            }
+        }
         #endregion
     }
 }

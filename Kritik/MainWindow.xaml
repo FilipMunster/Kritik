@@ -96,14 +96,19 @@
                                         <Button Name="newFileButton" Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Nový výpočet (Ctrl+N)" Command="{Binding NewCalculationCommand}">
                                             <Image Source="/icons/NewFile_16x.png" />
                                         </Button>
-                                        <Button Name="openFileButton"  Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Otevřít výpočet (Ctrl+O)" Command="{Binding OpenFileCommand}">
+                                        <Button Name="openFileButton"  Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Otevřít výpočet... (Ctrl+O)" Command="{Binding OpenFileCommand}">
                                             <Image Source="/icons/OpenFolder_16x.png" />
                                         </Button>
                                         <Button Name="saveFileButton"  Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Uložit výpočet (Ctrl+S)" Command="{Binding SaveFileCommand}">
                                             <Image Source="/icons/Save_16x.png" />
                                         </Button>
-                                        <Button Name="saveAsFileButton"  Height="20" Width="20" Margin="0, 0, 0, 0" ToolTip="Uložit výpočet jako... (Ctrl+Shift+S)" Command="{Binding SaveFileAsCommand}">
+                                        <Button Name="saveAsFileButton"  Height="20" Width="20" Margin="0, 0, 0, 0" ToolTip="Uložit výpočet jako... (Ctrl+Shift+S)&#x0a;Pravým tlačítkem: Uložit na vlastní list..." Command="{Binding SaveFileAsCommand}">
                                             <Image Source="/icons/SaveAs_16x.png" />
+                                            <Button.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="Uložit na vlastní list" Command="{Binding SaveToCustomSheetCommand}"/>
+                                                </ContextMenu>
+                                            </Button.ContextMenu>
                                         </Button>
                                     </StackPanel>
                                     <Separator Grid.Row="3" Grid.ColumnSpan="2" Margin="0, 5, 0, 5"/>
@@ -156,6 +161,7 @@
                                                   Width="84" Margin="5, 0, 0, 5" VerticalAlignment="Center" />
                                         <Button x:Name="shaftRotationInfluenceExpandButton" 
                                                 Command="{Binding ShaftRotationInfluenceVisibilityCommand}"
+                                                ToolTip="Vliv otáček rotoru..."
                                                 Width="10" Height="22" VerticalAlignment="Center" Margin="2, 0, 0, 5">
                                             <Image Source="{Binding ShaftRotationInfluenceButtonSource}" Width="10" HorizontalAlignment="Center" Margin="0, 8, 0, 0"/>
                                         </Button>
@@ -345,6 +351,7 @@
                                       CanUserReorderColumns="False"
                                       CanUserResizeRows="False"
                                       CanUserDeleteRows="False"
+                                      CanUserSortColumns="False"
                                       PreviewKeyDown="ShaftDataGrid_PreviewKeyDown"
                                       LoadingRow="ShaftDataGrid_LoadingRow"
                                       AddingNewItem="ShaftDataGrid_AddingNewItem"
