@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -348,7 +349,7 @@ namespace Kritik
 
             SaveFileDialog saveFileDialog = new SaveFileDialog()
             {
-                Filter = "Obrázek PNG (*.png)|*.png",
+                Filter = Application.Current.Resources.MergedDictionaries[^1]["PNG_image"] + " (*.png)|*.png",
                 FileName = System.IO.Path.GetFileName(path + "\\" + fileName + "_" + shape + ".png")
             };
 

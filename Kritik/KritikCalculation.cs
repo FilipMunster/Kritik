@@ -3,23 +3,32 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Kritik
 {
     public partial class KritikCalculation : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Resource dictionary containing currently selected language
+        /// </summary>
+        public readonly ResourceDictionary resourceDictionary;
+        
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        public KritikCalculation() { }
+        public KritikCalculation() 
+        {
+            this.resourceDictionary = Application.Current.Resources.MergedDictionaries.Last();
+        }
         /// <summary>
         /// Creates <see cref="KritikCalculation"/> object using Clones of <see cref="Shaft"/> and <see cref="CalculationProperties"/>
         /// </summary>
         /// <param name="shaft">Instance of <see cref="Shaft"/> to be used for calculation</param>
         /// <param name="calculationProperties">Instance of <see cref="CalculationProperties"/> to be used for calculation</param>
-        public KritikCalculation(Shaft shaft, CalculationProperties calculationProperties)
+        public KritikCalculation(Shaft shaft, CalculationProperties calculationProperties) : this()
         {
             Shaft = (Shaft)shaft.Clone();
             CalculationProperties = (CalculationProperties)calculationProperties.Clone();
@@ -65,17 +74,18 @@ namespace Kritik
             string text = "";
 
             if (Shaft.Properties.ShaftRotationInfluence)
-                text += "Otáčky hřídele = " + Shaft.Properties.ShaftRPM + " rpm:\n";
+                text += this.resourceDictionary["Shaft_speed"] + " = " + Shaft.Properties.ShaftRPM + " rpm:\n";
 
             if (CriticalSpeeds is null || CriticalSpeeds.Count() == 0)
             {
-                text += "Pro zadaný rotor nebyly\nvypočteny žádné kritické otáčky.";
+                text += (string)this.resourceDictionary["No_critical_speeds_were_calculated"];
                 return text;
             }
 
             for (int i = 0; i < CriticalSpeeds.Count(); i++)
             {
-                text += (i + 1) + ". kritické otáčky: " + String.Format("{0:0.000}", CriticalSpeeds[i]) + " rpm\n";
+                text += OrdinalNumber(i + 1) + " " + this.resourceDictionary["critical_speed"] + ": " 
+                    + String.Format("{0:0.000}", CriticalSpeeds[i]) + " rpm\n";
             }
             return text;
         }
@@ -86,9 +96,11 @@ namespace Kritik
                 return text;
 
             if (Shaft.Properties.OperatingSpeed > 0)
-                text += String.Format("{0:0.000}", CriticalSpeeds[0] / Shaft.Properties.OperatingSpeed * 100) + " % provozních otáček\n";
+                text += String.Format("{0:0.000}", CriticalSpeeds[0] / Shaft.Properties.OperatingSpeed * 100) + 
+                    " % " + this.resourceDictionary["of_operating_speed"] + "\n";
             if (Shaft.Properties.RunawaySpeed > 0)
-                text += String.Format("{0:0.000}", CriticalSpeeds[0] / Shaft.Properties.RunawaySpeed * 100) + " % průběžných otáček";
+                text += String.Format("{0:0.000}", CriticalSpeeds[0] / Shaft.Properties.RunawaySpeed * 100) + 
+                    " % " +this.resourceDictionary["of_runaway_speed"];
             return text;
         }
 
@@ -97,7 +109,7 @@ namespace Kritik
             if (Shaft is null || CalculationProperties is null)
                 throw new ArgumentNullException();
 
-            CriticalSpeedsText = "Probíhá výpočet...";
+            CriticalSpeedsText = (string)this.resourceDictionary["Calculation_in_progress"];
             IsCalculationInProgress = true;
 
             CalculationMethods calculation = new CalculationMethods();
@@ -122,6 +134,29 @@ namespace Kritik
             OscillationShapes = await Task.Run(() => calculation.OscillationShapes(Shaft.GetElementsWithMatrix(),
                 Shaft.Properties.BCLeft, Shaft.Properties.BCRight, CriticalSpeeds));
             IsCalculationInProgress = false;
+        }
+
+        /// <summary>
+        /// Returns string with ordinal number of given int according to language set in <see cref="SelectedLanguage"/>
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        private string OrdinalNumber(int number)
+        {
+            if ((string)this.resourceDictionary["@languageName"] != "english")
+                return number + ".";
+
+            int num = Math.Abs(number) % 100;
+            if (num > 10 && num < 20)
+                return number + "th";
+
+            switch (num % 10)
+            {
+                case 1: return number + "st";
+                case 2: return number + "nd";
+                case 3: return number + "rd";
+                default: return number + "th";
+            }
         }
     }
 }

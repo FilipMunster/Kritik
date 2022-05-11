@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -13,10 +14,34 @@ namespace Kritik
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// Resource dictionary containing currently selected language
+        /// </summary>
+        public readonly ResourceDictionary resourceDictionary;
         public MainWindow()
         {
+            SetApplicationLanguage(out this.resourceDictionary);
             InitializeComponent();
             ((MainViewModel)this.DataContext).SelectedElementChanged += OnSelectedElementChanged;
+            ApplicationLanguageComboBox.SelectedValue = Properties.Settings.Default.applicationLanguage;
+        }
+
+        /// <summary>
+        /// Array of names of available languages
+        /// </summary>
+        public string[] Languages
+        {
+            get
+            {
+                List<ResourceDictionary> dictionaries = Application.Current.Resources.MergedDictionaries.ToList();
+                List<string> languages = new List<string>();
+                foreach (ResourceDictionary dictionary in dictionaries)
+                {
+                    languages.Add((string)dictionary["@languageName"]);
+                }
+                languages.Sort();
+                return languages.ToArray();
+            }
         }
 
         private void OnSelectedElementChanged(object sender, int elementId)
@@ -155,5 +180,37 @@ namespace Kritik
             ShaftDataGrid.ScrollIntoView(ShaftDataGrid.SelectedItem);
         }
 
+        private void SetApplicationLanguage(out ResourceDictionary resourceDictionary)
+        {
+            string selectedLanguage = Properties.Settings.Default.applicationLanguage;
+            List<ResourceDictionary> dictionaries = Application.Current.Resources.MergedDictionaries.ToList();
+            resourceDictionary = dictionaries.Find((dict) => (string)dict["@languageName"] == selectedLanguage);
+
+            if (resourceDictionary is not null)
+            {
+                Application.Current.Resources.MergedDictionaries.Remove(resourceDictionary);
+                Application.Current.Resources.MergedDictionaries.Add(resourceDictionary);
+            }
+            
+        }
+
+        private void ApplicationLanguageComboBox_DropDownClosed(object sender, EventArgs e)
+        {
+            string selectedLanguage = (string)((ComboBox)sender).SelectedValue;
+            if (selectedLanguage is null)
+                selectedLanguage = "english";
+
+            if (selectedLanguage == Properties.Settings.Default.applicationLanguage)
+                return;
+
+            Properties.Settings.Default.applicationLanguage = selectedLanguage;
+
+            List<ResourceDictionary> dictionaries = Application.Current.Resources.MergedDictionaries.ToList();
+            ResourceDictionary newResourceDictionary = dictionaries.Find(
+                (dict) => (string)dict["@languageName"] == selectedLanguage);
+
+            MessageBox.Show((string)newResourceDictionary["changesWillTakeEfectAfterRestart"],
+                (string)newResourceDictionary["Notice"], MessageBoxButton.OK, MessageBoxImage.Information);
+        }
     }
 }

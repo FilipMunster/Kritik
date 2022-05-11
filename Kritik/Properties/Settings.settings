@@ -23,5 +23,11 @@
     <Setting Name="drawGrid" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="applicationLanguage" Type="System.String" Scope="User">
+      <Value Profile="(Default)">english</Value>
+    </Setting>
+    <Setting Name="outputLanguage" Type="System.String" Scope="User">
+      <Value Profile="(Default)">english</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

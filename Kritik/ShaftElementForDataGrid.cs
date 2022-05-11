@@ -20,10 +20,12 @@ namespace Kritik
             nameof(IsEditableK),
             nameof(IsEditableCm)};
 
+        private static string[] elementTypesItems;
         /// <summary>
         /// List of names of <see cref="ElementType"/>
         /// </summary>
-        public static string[] ElementTypesItems => Enums.GetNames<ElementType>();
+        public static string[] ElementTypesItems => elementTypesItems ??=
+            Enums.GetNamesUsingResourceDictionary<ElementType>(Application.Current.Resources.MergedDictionaries[^1]);
 
         /// <summary>
         /// Create new <see cref="ShaftElementForDataGrid"/> with <see cref="ElementType.beam"/> 
@@ -86,7 +88,9 @@ namespace Kritik
             {
                 if (value < 1)
                 {
-                    MessageBox.Show("Hodnota dělení nesmí být menší než 1.", "Špatně zadaná hodnota",
+                    ResourceDictionary resourceDictionary = Application.Current.Resources.MergedDictionaries[^1];
+                    MessageBox.Show((string)resourceDictionary["Division_value_must_not_be_less_than_1"],
+                        (string)resourceDictionary["Incorrect_value"],
                         MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }

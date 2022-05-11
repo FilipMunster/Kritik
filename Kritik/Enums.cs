@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Windows;
 
 namespace Kritik
 {
@@ -58,6 +59,16 @@ namespace Kritik
             foreach (T item in Enum.GetValues(typeof(T)))
             {
                 names.Add(item.GetDescription());
+            }
+            return names.ToArray();
+        }
+
+        public static string[] GetNamesUsingResourceDictionary<T>(ResourceDictionary resourceDictionary) where T : Enum
+        {
+            List<string> names = new List<string>();
+            foreach (T item in Enum.GetValues(typeof(T)))
+            {
+                names.Add(item.GetNameUsingResourceDictionary(resourceDictionary));
             }
             return names.ToArray();
         }

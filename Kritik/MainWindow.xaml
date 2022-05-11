@@ -23,6 +23,7 @@
         <local:FormatSpacesConverter x:Key="FormatSpacesConverter"/>
         <local:FormatToIntConverter x:Key="FormatToIntConverter"/>
         <local:EnumToStringConverter x:Key="EnumToStringConverter"/>
+        <local:EnumToStringByResourceDictionaryConverter x:Key="EnumToStringByResourceDictionaryConverter"/>
         <local:EnumToBoolConverter x:Key="EnumToBoolConverter"/>
         <local:NewDataGridItemConverter x:Key="NewDataGridItemConverter"/>
         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="SlateGray"/>
@@ -36,7 +37,7 @@
     </Window.Title>
     <Grid Name="MainGrid">
         <TabControl SelectedIndex="{Binding TabControlSelectedIndex}">
-            <TabItem Header="Výpočet" Name="vypocetTabItem">
+            <TabItem Header="{StaticResource Calculation}" Name="vypocetTabItem">
                 <TabItem.Background>
                     <LinearGradientBrush EndPoint="0,1">
                         <GradientStop Color="#FFF0F0F0"/>
@@ -90,37 +91,37 @@
                                         <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
 
-                                    <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Text="KRITICKÉ OTÁČKY" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" FontSize="16"/>
+                                    <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Text="{StaticResource CRITICAL_SPEED}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" FontSize="16"/>
                                     <Separator Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
                                     <StackPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0, 3, 0, 0">
-                                        <Button Name="newFileButton" Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Nový výpočet (Ctrl+N)" Command="{Binding NewCalculationCommand}">
+                                        <Button Name="newFileButton" Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="{StaticResource New_calculation_CtrlN}" Command="{Binding NewCalculationCommand}">
                                             <Image Source="/icons/NewFile_16x.png" />
                                         </Button>
-                                        <Button Name="openFileButton"  Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Otevřít výpočet... (Ctrl+O)" Command="{Binding OpenFileCommand}">
+                                        <Button Name="openFileButton"  Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="{StaticResource Open_calculation_CtrlO}" Command="{Binding OpenFileCommand}">
                                             <Image Source="/icons/OpenFolder_16x.png" />
                                         </Button>
-                                        <Button Name="saveFileButton"  Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="Uložit výpočet (Ctrl+S)" Command="{Binding SaveFileCommand}">
+                                        <Button Name="saveFileButton"  Height="20" Width="20" Margin="0, 0, 10, 0" ToolTip="{StaticResource Save_calculation_CtrlS}" Command="{Binding SaveFileCommand}">
                                             <Image Source="/icons/Save_16x.png" />
                                         </Button>
-                                        <Button Name="saveAsFileButton"  Height="20" Width="20" Margin="0, 0, 0, 0" ToolTip="Uložit výpočet jako... (Ctrl+Shift+S)&#x0a;Pravým tlačítkem: Uložit na vlastní list..." Command="{Binding SaveFileAsCommand}">
+                                        <Button Name="saveAsFileButton"  Height="20" Width="20" Margin="0, 0, 0, 0" ToolTip="{StaticResource Save_calculation_as_Right_button}" Command="{Binding SaveFileAsCommand}">
                                             <Image Source="/icons/SaveAs_16x.png" />
                                             <Button.ContextMenu>
                                                 <ContextMenu>
-                                                    <MenuItem Header="Uložit na vlastní list" Command="{Binding SaveToCustomSheetCommand}"/>
+                                                    <MenuItem Header="{StaticResource Save_to_custom_sheet}" Command="{Binding SaveToCustomSheetCommand}"/>
                                                 </ContextMenu>
                                             </Button.ContextMenu>
                                         </Button>
                                     </StackPanel>
                                     <Separator Grid.Row="3" Grid.ColumnSpan="2" Margin="0, 5, 0, 5"/>
-                                    <TextBlock Text="Název:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
+                                    <TextBlock Text="{StaticResource Title}" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
                                     <TextBox Text="{Binding CalculationProperties.Title}" GotKeyboardFocus="TextBoxSelectContentByKeyboard" Grid.Row="4" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5"/>
-                                    <TextBlock Text="Popis:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
+                                    <TextBlock Text="{StaticResource Description}" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
                                     <TextBox Text="{Binding CalculationProperties.Description}" GotKeyboardFocus="TextBoxSelectContentByKeyboard" Grid.Row="5" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5" />
-                                    <TextBlock Text="Řešil:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
+                                    <TextBlock Text="{StaticResource Author}" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
                                     <TextBox Text="{Binding CalculationProperties.Author}" GotKeyboardFocus="TextBoxSelectContentByKeyboard" Grid.Row="6" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5" />
-                                    <TextBlock Text="Datum:" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
+                                    <TextBlock Text="{StaticResource Date}" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
                                     <TextBox Text="{Binding CalculationProperties.Date}" GotKeyboardFocus="TextBoxSelectContentByKeyboard" Grid.Row="7" Grid.Column="1" TextWrapping="NoWrap" Width="150" Margin="5, 0, 0, 5" />
-                                    <TextBlock Text="Dnes" Grid.Row="7" Grid.Column="1" HorizontalAlignment="Right" Margin="0, 0, 7, 0" Foreground="Gray">
+                                    <TextBlock Text="{StaticResource Today}" Grid.Row="7" Grid.Column="1" HorizontalAlignment="Right" Margin="0, 0, 7, 0" Foreground="Gray">
                                         <TextBlock.InputBindings>
                                             <MouseBinding MouseAction="LeftClick" Command="{Binding FillTodayCommand}"/>
                                         </TextBlock.InputBindings>
@@ -140,28 +141,28 @@
                                         </TextBlock.Style>
                                     </TextBlock>
                                     <Separator Grid.Row="8" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
-                                    <TextBlock Text="Okrajové podmínky:" Grid.Row="9" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
+                                    <TextBlock Text="{StaticResource Boundary_conditions}" Grid.Row="9" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
                                     <StackPanel Grid.Row="10" Grid.ColumnSpan="2" Orientation="Horizontal">
-                                        <TextBlock Text="Levý konec:" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{StaticResource Left_end}" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
                                         <ComboBox ItemsSource="{Binding BoundaryConditionsItems}" 
-                                                  SelectedValue="{Binding Shaft.Properties.BCLeft, Converter={StaticResource EnumToStringConverter}}"
+                                                  SelectedValue="{Binding Shaft.Properties.BCLeft, Converter={StaticResource EnumToStringByResourceDictionaryConverter}}"
                                                   Width="95" Margin="10, 0, 0, 5" VerticalAlignment="Center" />
                                     </StackPanel>
                                     <StackPanel Grid.Row="11" Grid.ColumnSpan="2" Orientation="Horizontal">
-                                        <TextBlock Text="Pravý konec:" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{StaticResource Right_end}" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
                                         <ComboBox ItemsSource="{Binding BoundaryConditionsItems}" 
-                                                  SelectedValue="{Binding Shaft.Properties.BCRight, Converter={StaticResource EnumToStringConverter}}"
+                                                  SelectedValue="{Binding Shaft.Properties.BCRight, Converter={StaticResource EnumToStringByResourceDictionaryConverter}}"
                                                   Width="95" Margin="5, 0, 0, 5" VerticalAlignment="Center" />
                                     </StackPanel>
                                     <Separator Grid.Row="12" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
                                     <StackPanel Grid.Row="13" Grid.ColumnSpan="2" Orientation="Horizontal">
-                                        <TextBlock Margin="0, 0, 0, 5" VerticalAlignment="Center" Text="Gyroskopické účinky"/>
+                                        <TextBlock Margin="0, 0, 0, 5" VerticalAlignment="Center" Text="{StaticResource Gyroscopic_effects}"/>
                                         <ComboBox ItemsSource="{Binding GyroscopicEffectsItems}" 
-                                                  SelectedValue="{Binding Shaft.Properties.Gyros, Converter={StaticResource EnumToStringConverter}}" 
+                                                  SelectedValue="{Binding Shaft.Properties.Gyros, Converter={StaticResource EnumToStringByResourceDictionaryConverter}}" 
                                                   Width="84" Margin="5, 0, 0, 5" VerticalAlignment="Center" />
                                         <Button x:Name="shaftRotationInfluenceExpandButton" 
                                                 Command="{Binding ShaftRotationInfluenceVisibilityCommand}"
-                                                ToolTip="Vliv otáček rotoru..."
+                                                ToolTip="{StaticResource Shaft_rotation_influence}"
                                                 Width="10" Height="22" VerticalAlignment="Center" Margin="2, 0, 0, 5">
                                             <Image Source="{Binding ShaftRotationInfluenceButtonSource}" Width="10" HorizontalAlignment="Center" Margin="0, 8, 0, 0"/>
                                         </Button>
@@ -170,21 +171,19 @@
                                                  Visibility="{Binding ShaftRotationInfluenceVisibility}">
                                         <CheckBox IsChecked="{Binding Shaft.Properties.ShaftRotationInfluence}"
                                                   Command="{Binding ShaftRotationInfluenceCheckBoxCommand}" 
-                                                  Content="s vlivem otáček rotoru"  
+                                                  Content="{StaticResource with_shaft_rotation_influence}"  
                                                   VerticalAlignment="Center" HorizontalAlignment="Left" Margin="2, 0, 2, 0"/>
                                         <StackPanel Orientation="Horizontal">
                                             <RadioButton GroupName="shaftRotationRadioButtons" 
                                                          Command="{Binding ShaftRotationOptionChangedCommand}" 
                                                          IsChecked="{Binding ShaftRotationInfluenceSelectedOption, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=0}" 
-                                                         Margin="5, 3, 0, 3">
-                                                provozní
-                                            </RadioButton>
+                                                         Margin="5, 3, 0, 3" 
+                                                         Content="{StaticResource operating}"/>
                                             <RadioButton GroupName="shaftRotationRadioButtons"
                                                          Command="{Binding ShaftRotationOptionChangedCommand}" 
                                                          IsChecked="{Binding ShaftRotationInfluenceSelectedOption, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=1}" 
-                                                         Margin="5, 3, 0, 3">
-                                                průběžné
-                                            </RadioButton>
+                                                         Margin="5, 3, 0, 3"
+                                                         Content="{StaticResource runaway}"/>
                                         </StackPanel>
                                         <RadioButton GroupName="shaftRotationRadioButtons"
                                                      Name="customRPMRadioButton" 
@@ -192,51 +191,55 @@
                                                      IsChecked="{Binding ShaftRotationInfluenceSelectedOption, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=2}" 
                                                      Margin="5, 0, 0, 0">
                                             <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="jiné: "/>
+                                                <TextBlock Text="{StaticResource other}" Margin="0, 0, 2, 0"/>
                                                 <TextBox Text="{Binding ShaftRotationInfluenceCustomValue, Converter={StaticResource FormatDefaultConverter}}"
                                                          IsEnabled="{Binding ElementName=customRPMRadioButton, Path=IsChecked}"
                                                          Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBoxSelectContentByKeyboard"/>
                                                 <TextBlock Margin="5, 0, 0, 5" VerticalAlignment="Center">
-                                            <Run Text="min&#x207B;&#x00B9;" />
+                                                <Run Text="min&#x207B;&#x00B9;" />
                                                 </TextBlock>
                                             </StackPanel>
                                         </RadioButton>
                                     </StackPanel>
 
                                     <Separator Grid.Row="15" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
-                                    <TextBlock Text="Materiál hřídele:" Grid.Row="16" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
+                                    <TextBlock Text="{StaticResource Shaft_material}" Grid.Row="16" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="0, 0, 0, 5"/>
                                     <StackPanel Grid.Row="17" Grid.ColumnSpan="2" Orientation="Horizontal">
                                         <TextBlock Text="E =" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
-                                        <TextBox Text="{Binding Shaft.Properties.YoungModulus, Converter={StaticResource FormatDefaultConverter}, ConverterParameter=9}" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBoxSelectContentByKeyboard"/>
+                                        <TextBox Text="{Binding Shaft.Properties.YoungModulus, Converter={StaticResource FormatDefaultConverter}, ConverterParameter=9}" 
+                                                 Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBoxSelectContentByKeyboard"/>
                                         <TextBlock Text="GPa" Margin="5, 0, 0, 5" VerticalAlignment="Center"/>
                                     </StackPanel>
                                     <StackPanel Grid.Row="18" Grid.ColumnSpan="2" Orientation="Horizontal">
                                         <TextBlock Text="ρ =" Margin="20, 0, 0, 5" VerticalAlignment="Center"/>
-                                        <TextBox Text="{Binding Shaft.Properties.MaterialDensity, Converter={StaticResource FormatDefaultConverter}}" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBoxSelectContentByKeyboard"/>
+                                        <TextBox Text="{Binding Shaft.Properties.MaterialDensity, Converter={StaticResource FormatDefaultConverter}}" 
+                                                 Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBoxSelectContentByKeyboard"/>
                                         <TextBlock Margin="5, 0, 0, 5" VerticalAlignment="Center">
-                                            <Run Text="kg.m&#x207B;&#x00B3;" />
+                                        <Run Text="kg.m&#x207B;&#x00B3;" />
                                         </TextBlock>
                                     </StackPanel>
                                     <Separator Grid.Row="19" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
                                     <StackPanel Grid.Row="20" Grid.ColumnSpan="2" Orientation="Horizontal">
-                                        <TextBlock Text="Provozní otáčky:" Margin="0, 0, 0, 5" VerticalAlignment="Center"/>
-                                        <TextBox Text="{Binding ShaftOperatingSpeed, Converter={StaticResource FormatDefaultConverter}}" Width="50" Margin="9, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBoxSelectContentByKeyboard"/>
+                                        <TextBlock Text="{StaticResource Operating_speed}" Margin="0, 0, 0, 5" VerticalAlignment="Center"/>
+                                        <TextBox Text="{Binding ShaftOperatingSpeed, Converter={StaticResource FormatDefaultConverter}}" 
+                                                 Width="50" Margin="9, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBoxSelectContentByKeyboard"/>
                                         <TextBlock Margin="5, 0, 0, 5" VerticalAlignment="Center">
-                                            <Run Text="min&#x207B;&#x00B9;" />
+                                        <Run Text="min&#x207B;&#x00B9;" />
                                         </TextBlock>
                                     </StackPanel>
                                     <StackPanel Grid.Row="21" Grid.ColumnSpan="2" Orientation="Horizontal">
-                                        <TextBlock Text="Průběžné otáčky:" Margin="0, 0, 0, 5" VerticalAlignment="Center"/>
-                                        <TextBox Text="{Binding ShaftRunawaySpeed, Converter={StaticResource FormatDefaultConverter}}" Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBoxSelectContentByKeyboard"/>
+                                        <TextBlock Text="{StaticResource Runaway_speed}" Margin="0, 0, 0, 5" VerticalAlignment="Center"/>
+                                        <TextBox Text="{Binding ShaftRunawaySpeed, Converter={StaticResource FormatDefaultConverter}}"
+                                                 Width="50" Margin="5, 0, 0, 5" VerticalAlignment="Center" GotKeyboardFocus="TextBoxSelectContentByKeyboard"/>
                                         <TextBlock Margin="5, 0, 0, 5" VerticalAlignment="Center">
-                                            <Run Text="min&#x207B;&#x00B9;" />
+                                        <Run Text="min&#x207B;&#x00B9;" />
                                         </TextBlock>
                                     </StackPanel>
                                     <Separator Grid.Row="23" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"/>
                                     <StackPanel Grid.Row="24" Grid.ColumnSpan="2" Margin="0, 0, 0, 5" Orientation="Vertical">
-                                        <TextBlock Text="Hřídel +" Margin="0, 0, 0, 5"/>
+                                        <TextBlock Text="{StaticResource Beam_plus}" Margin="0, 0, 0, 5"/>
                                         <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
-                                            <TextBlock Text="Prvek číslo:" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{StaticResource Element_number}" VerticalAlignment="Center"/>
                                             <ComboBox
                                                   ItemsSource="{Binding BeamPlusComboBoxItems, Mode=OneWay}" 
                                                   SelectedValue="{Binding BeamPlusComboBoxSelectedItem}"
@@ -245,7 +248,7 @@
                                                   Width="40" Margin="5, 0, 0, 0"/>
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
-                                            <TextBlock Text="Rozdělit na"/>
+                                            <TextBlock Text="{StaticResource Split_into}"/>
                                             <TextBox
                                                  Text="{Binding BeamPlusDivision, Converter={StaticResource FormatToIntConverter}, UpdateSourceTrigger=PropertyChanged}"
                                                  IsEnabled="{Binding BeamPlusElementIsSelected}"
@@ -257,15 +260,15 @@
                                                     </b:EventTrigger>
                                                 </b:Interaction.Triggers>
                                             </TextBox>
-                                            <TextBlock Text="částí."/>
+                                            <TextBlock Text="{StaticResource parts}"/>
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
-                                            <TextBlock Text="Výpočet Jd&#x1D62;" ToolTip="Způsob výpočtu momentu setrvačnosti kolmého k ose rotoru" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{StaticResource Calculation_of_Jdi}" ToolTip="{StaticResource Method_of_calculating_Jdi}" VerticalAlignment="Center"/>
                                             <ComboBox Width="65" Margin="5, 0, 5, 0" 
                                                   SelectedIndex="{Binding BeamPlusIdN}" 
                                                   IsEnabled="{Binding BeamPlusElementIsSelected}">
                                                 <ComboBoxItem Content="=Jd/n*"/>
-                                                <ComboBoxItem Content="vlastní hodnota"/>
+                                                <ComboBoxItem Content="{StaticResource custom_value}"/>
                                                 <b:Interaction.Triggers>
                                                     <b:EventTrigger EventName="LostFocus">
                                                         <b:InvokeCommandAction Command="{Binding HistoryAddCommand}"/>
@@ -314,31 +317,31 @@
                             </Grid.RowDefinitions>
 
                             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
-                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Přidat prvek (Insert)" Command="{Binding AddItemCommand}">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="{StaticResource Add_element_Insert}" Command="{Binding AddItemCommand}">
                                     <Image Source="/icons/Add_16x.png" />
                                 </Button>
-                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Smazat prvek (Delete)" Command="{Binding RemoveItemCommand}">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="{StaticResource Remove_element_Delete}" Command="{Binding RemoveItemCommand}">
                                     <Image Source="/icons/Remove_16x.png" />
                                 </Button>
                                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0, 0, 5, 0" Stroke="Black" />
-                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Posun prvku nahoru (Ctrl+↑)" Command="{Binding MoveItemUpCommand}">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="{StaticResource Move_element_up_Ctrl}" Command="{Binding MoveItemUpCommand}">
                                     <Image Source="/icons/Upload_16x.png" />
                                 </Button>
-                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Posun prvku dolů (Ctrl+↓)" Command="{Binding MoveItemDownCommand}">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="{StaticResource Move_element_down_Ctrl}" Command="{Binding MoveItemDownCommand}">
                                     <Image Source="/icons/Download_16x.png" />
                                 </Button>
                                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0, 0, 5, 0" Stroke="Black" />
-                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Zrcadlit hřídel (Ctrl+M)" Command="{Binding MirrorShaftCommand}">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="{StaticResource Mirror_shaft_Ctrl}" Command="{Binding MirrorShaftCommand}">
                                     <Image Source="/icons/Mirror.png" />
                                 </Button>
-                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Smazat vše (Ctrl+Delete)" Command="{Binding RemoveAllItemsCommand}">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="{StaticResource Remove_all_Ctrl}" Command="{Binding RemoveAllItemsCommand}">
                                     <Image Source="/icons/DeleteAllRows_16x.png" />
                                 </Button>
                                 <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0, 0, 5, 0" Stroke="Black" />
-                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Zpět (Ctrl+Z)" Command="{Binding HistoryBackCommand}">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="{StaticResource Undo_Ctrl}" Command="{Binding HistoryBackCommand}">
                                     <Image Source="/icons/StepBackwards_16x.png" />
                                 </Button>
-                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="Vpřed (Ctrl+Y)" Command="{Binding HistoryForwardCommand}">
+                                <Button Height="20" Width="20" Margin="0, 0, 5, 0" ToolTip="{StaticResource Redo_Ctrl}" Command="{Binding HistoryForwardCommand}">
                                     <Image Source="/icons/StepForward_16x.png" />
                                 </Button>
                             </StackPanel>
@@ -370,21 +373,21 @@
                                         <Setter Property="ContentTemplate">
                                             <Setter.Value>
                                                 <DataTemplate>
-                                                    <TextBlock TextWrapping="Wrap" Text="{Binding}"></TextBlock>
+                                                    <TextBlock TextWrapping="Wrap" Text="{Binding}"/>
                                                 </DataTemplate>
                                             </Setter.Value>
                                         </Setter>
-                                        <Setter Property="MaxHeight" Value="80"/>
+                                        <Setter Property="MaxHeight" Value="88"/>
                                     </Style>
                                 </DataGrid.ColumnHeaderStyle>
                                 <DataGrid.AlternatingRowBackground>
                                     <SolidColorBrush Color="#FFF4F4F4"/>
                                 </DataGrid.AlternatingRowBackground>
                                 <DataGrid.Columns>
-                                    <DataGridComboBoxColumn Header="Typ prvku"
+                                    <DataGridComboBoxColumn Header="{StaticResource Element_type}"
                                                             Width="*"
                                                             ItemsSource="{x:Static local:ShaftElementForDataGrid.ElementTypesItems}"
-                                                            SelectedItemBinding="{Binding Type, Converter={StaticResource EnumToStringConverter}, UpdateSourceTrigger=PropertyChanged}">
+                                                            SelectedItemBinding="{Binding Type, Converter={StaticResource EnumToStringByResourceDictionaryConverter}, UpdateSourceTrigger=PropertyChanged}">
                                         <DataGridComboBoxColumn.CellStyle>
                                             <Style TargetType="{x:Type DataGridCell}">
                                                 <EventSetter Event="MouseUp" Handler="GridColumnFastEdit" />
@@ -399,7 +402,7 @@
                                             </Style>
                                         </DataGridComboBoxColumn.CellStyle>
                                     </DataGridComboBoxColumn>
-                                    <DataGridTextColumn Header="Délka úseku&#x0a;L [mm]" 
+                                    <DataGridTextColumn Header="{StaticResource Section_length}" 
                                                         Binding="{Binding L, UpdateSourceTrigger=LostFocus, 
                                         Converter={StaticResource FormatDefaultConverter}, ConverterParameter=-3}" 
                                                         Width="*">
@@ -423,7 +426,7 @@
                                             </Style>
                                         </DataGridTextColumn.CellStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Vnější průměr&#x0a;De [mm]" 
+                                    <DataGridTextColumn Header="{StaticResource Outer_diameter}" 
                                                         Binding="{Binding De, UpdateSourceTrigger=LostFocus,
                                         Converter={StaticResource FormatDefaultConverter}, ConverterParameter=-3}" 
                                                         Width="*">
@@ -447,7 +450,7 @@
                                             </Style>
                                         </DataGridTextColumn.CellStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Vrtání hřídele&#x0a;Di [mm]" 
+                                    <DataGridTextColumn Header="{StaticResource Inner_diameter}" 
                                                         Binding="{Binding Di, UpdateSourceTrigger=LostFocus, 
                                         Converter={StaticResource FormatDefaultConverter}, ConverterParameter=-3}" 
                                                         Width="*">
@@ -471,7 +474,7 @@
                                             </Style>
                                         </DataGridTextColumn.CellStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Hmotnost disku&#x0a;m [kg]" Width="*">
+                                    <DataGridTextColumn Header="{StaticResource Disc_weight}" Width="*">
                                         <DataGridTextColumn.EditingElementStyle>
                                             <Style TargetType="{x:Type TextBox}">
                                                 <Setter Property="Text" 
@@ -504,7 +507,7 @@
                                             </Style>
                                         </DataGridTextColumn.CellStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Moment setrvačnosti&#x0a;k ose rotoru&#x0a;Jo [kg.m&#x00B2;]" Width="*">
+                                    <DataGridTextColumn Header="{StaticResource Moment_of_inertia_to_axis}" Width="*">
                                         <DataGridTextColumn.EditingElementStyle>
                                             <Style TargetType="{x:Type TextBox}">
                                                 <Setter Property="Text" 
@@ -537,7 +540,7 @@
                                             </Style>
                                         </DataGridTextColumn.CellStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Mom. setrv. kolmo k ose otáčení&#x0a;Jd [kg.m&#x00B2;]" Width="*">
+                                    <DataGridTextColumn Header="{StaticResource Moment_of_inertia_perp_to_axis}" Width="*">
                                         <DataGridTextColumn.EditingElementStyle>
                                             <Style TargetType="{x:Type TextBox}">
                                                 <Setter Property="Text" 
@@ -570,7 +573,7 @@
                                             </Style>
                                         </DataGridTextColumn.CellStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Radiální tuhost podpory&#x0a;k [N/m]" Width="*">
+                                    <DataGridTextColumn Header="{StaticResource Radial_support_stiffness}" Width="*">
                                         <DataGridTextColumn.EditingElementStyle>
                                             <Style TargetType="{x:Type TextBox}">
                                                 <Setter Property="Text" 
@@ -603,7 +606,7 @@
                                             </Style>
                                         </DataGridTextColumn.CellStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Magneticko elastická konstanta&#x0a;Cm [N/m]" Width="*">
+                                    <DataGridTextColumn Header="{StaticResource Magnetic_elastic_constant}" Width="*">
                                         <DataGridTextColumn.EditingElementStyle>
                                             <Style TargetType="{x:Type TextBox}">
                                                 <Setter Property="Text"
@@ -655,16 +658,20 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Grid.Row="0" Orientation="Vertical" Margin="0, 3, 0, 0">
-                                    <TextBlock Text="Vypočtené kritické otáčky:" Margin="0, 0, 0, 5"/>
-                                    <TextBox Text="{Binding KritikCalculation.CriticalSpeedsText, Mode=OneWay}" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Height="139" IsReadOnly="True" MouseDoubleClick="TextBoxSelectContentByMouse"/>
+                                    <TextBlock Text="{StaticResource Calculated_critical_speeds}" Margin="0, 0, 0, 5"/>
+                                    <TextBox Text="{Binding KritikCalculation.CriticalSpeedsText, Mode=OneWay}" 
+                                             TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Height="139" IsReadOnly="True"
+                                             MouseDoubleClick="TextBoxSelectContentByMouse"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="1" Orientation="Vertical" Margin="0, 10, 0, 0">
-                                    <TextBlock Text="1. kritické otáčky odpovídají:" Margin="0, 0, 0, 5"/>
-                                    <TextBox Text="{Binding KritikCalculation.FirstCriticalSpeedRatioText, Mode=OneWay}" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Hidden" Height="38" IsReadOnly="True" MouseDoubleClick="TextBoxSelectContentByMouse"/>
+                                    <TextBlock Text="{StaticResource First_critical_speed_corresponds_to}" Margin="0, 0, 0, 5"/>
+                                    <TextBox Text="{Binding KritikCalculation.FirstCriticalSpeedRatioText, Mode=OneWay}" 
+                                             TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Hidden" Height="38" IsReadOnly="True" 
+                                             MouseDoubleClick="TextBoxSelectContentByMouse"/>
                                 </StackPanel>
 
                                 <StackPanel Grid.Row="2" Orientation="Vertical" Margin="0, 0, 0, 10" VerticalAlignment="Bottom">
-                                    <TextBlock Text="Poznámky k výpočtu:" Margin="0, 0, 0, 5"/>
+                                    <TextBlock Text="{StaticResource Calculation_notes}" Margin="0, 0, 0, 5"/>
                                     <TextBox AcceptsReturn="True" MinHeight="190" Width="182" 
                                              ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"
                                              MaxHeight="{Binding ElementName=MainGrid, Path=ActualHeight, Converter={StaticResource NotesTextBoxHeightConverter}}" 
@@ -673,14 +680,12 @@
 
                                 <StackPanel Grid.Row="3" Orientation="Vertical">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="Max. kritické otáčky:" Margin="0, 0, 5, 0" VerticalAlignment="Center"/>
-                                        <TextBox Text="{Binding Shaft.Properties.MaxCriticalSpeed, Converter={StaticResource FormatDefaultConverter}}" Width="35" GotKeyboardFocus="TextBoxSelectContentByKeyboard"/>
+                                        <TextBlock Text="{StaticResource Max_critical_speed}" Margin="0, 0, 5, 0" VerticalAlignment="Center"/>
+                                        <TextBox Text="{Binding Shaft.Properties.MaxCriticalSpeed, Converter={StaticResource FormatDefaultConverter}}" 
+                                                 Width="35" GotKeyboardFocus="TextBoxSelectContentByKeyboard"/>
                                         <TextBlock Margin="5, 0, 5, 0" Text="min&#x207B;&#x00B9;" VerticalAlignment="Center"/>
                                     </StackPanel>
-                                    <Button Height="30" Margin="0, 10, 0, 0" Command="{Binding KritikCalculateCommand}" ToolTip="(F5)">
-                                        Výpočet kritických otáček
-                                    </Button>
-
+                                    <Button Height="30" Margin="0, 10, 0, 0" Command="{Binding KritikCalculateCommand}" ToolTip="(F5)" Content="{StaticResource Calculate_critical_speed}"/>
                                 </StackPanel>
                             </Grid>
                         </Border>
@@ -701,7 +706,7 @@
             </TabItem>
             <TabItem IsEnabled="{Binding OscillationShapesTabIsEnabled}">
                 <TabItem.Header>
-                    <Label Content="Tvary kmitů"/>
+                    <Label Content="{StaticResource Oscillation_shapes}"/>
                 </TabItem.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -712,7 +717,7 @@
                         <Border Margin="15, 15, 0, 15" BorderThickness="1" BorderBrush="Gray" Padding="5" CornerRadius="3"  VerticalAlignment="Top">
                             <StackPanel Orientation="Vertical">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Číslo kritických otáček:" Margin="0, 0, 7, 0"/>
+                                    <TextBlock Text="{StaticResource Critical_speed_number}" Margin="0, 0, 7, 0"/>
                                     <StackPanel Orientation="Horizontal" Height="20" VerticalAlignment="Center">
                                         <TextBox Width="20" Text="{Binding OscillationShapesViewModel.ShapeNumber, Mode=OneWay}" Focusable="False"/>
                                         <StackPanel Orientation="Vertical">
@@ -726,28 +731,28 @@
                                 <Separator Margin="0, 5, 0, 5"/>
                                 <TextBlock Text="{Binding OscillationShapesViewModel.Description}"/>
                                 <Separator Margin="0, 5, 0, 5"/>
-                                <TextBlock Text="Zobrazení:"/>
+                                <TextBlock Text="{StaticResource Display}"/>
                                 <Grid Margin="15, 2, 0, 0">
                                     <StackPanel Orientation="Vertical">
-                                        <CheckBox Content="vykreslit uzly" 
+                                        <CheckBox Content="{StaticResource draw_nodes}" 
                                                   IsChecked="{Binding OscillationShapesViewModel.ShowNodesIsChecked}"/>
-                                        <CheckBox Content="vykreslit mřížku" 
+                                        <CheckBox Content="{StaticResource draw_grid}" 
                                                   IsChecked="{Binding OscillationShapesViewModel.ShowGridIsChecked}"/>
                                     </StackPanel>
                                 </Grid>
                                 <Separator Margin="0, 5, 0, 5"/>
-                                <TextBlock Text="Uložení tvaru kmitu:"/>
+                                <TextBlock Text="{StaticResource Oscillation_shape_saving}"/>
                                 <Grid Margin="15, 2, 0, 0">
                                     <StackPanel Orientation="Vertical">
-                                        <CheckBox Content="schéma hřídele" IsChecked="{Binding OscillationShapesViewModel.SaveSchemeIsChecked}"/>
-                                        <CheckBox Content="tvar kmitu" IsChecked="{Binding OscillationShapesViewModel.SaveShapeIsChecked}"/>
-                                        <CheckBox Content="textový popisek" IsChecked="{Binding OscillationShapesViewModel.SaveDescriptionIsChecked}"/>
+                                        <CheckBox Content="{StaticResource shaft_scheme}" IsChecked="{Binding OscillationShapesViewModel.SaveSchemeIsChecked}"/>
+                                        <CheckBox Content="{StaticResource oscillation_shape}" IsChecked="{Binding OscillationShapesViewModel.SaveShapeIsChecked}"/>
+                                        <CheckBox Content="{StaticResource text_label}" IsChecked="{Binding OscillationShapesViewModel.SaveDescriptionIsChecked}"/>
                                     </StackPanel>
                                 </Grid>
                                 <Button Height="25" Width="150" Margin="0, 5, 0, 5" Padding="3" Command="{Binding OscillationShapesViewModel.SaveToPNGCommand}">
                                     <StackPanel Orientation="Horizontal">
                                         <Image Source="/icons/Save_16x.png"/>
-                                        <TextBlock Text="Uložit tvar kmitu" VerticalAlignment="Center" Margin="5, 0, 0, 0"/>
+                                        <TextBlock Text="{StaticResource Save_oscillation_shape}" VerticalAlignment="Center" Margin="5, 0, 0, 0"/>
                                     </StackPanel>
                                 </Button>
                             </StackPanel>
@@ -789,7 +794,7 @@
                                             <b:InvokeCommandAction Command="{Binding OscillationShapesViewModel.ChangeMainPlotCommand}" CommandParameter="0"/>
                                         </b:EventTrigger>
                                     </b:Interaction.Triggers>
-                                    <TextBlock Grid.Row="0" Text="Průhyb hřídele w" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 2, 0, 0"/>
+                                    <TextBlock Grid.Row="0" Text="{StaticResource Shaft_deflection_w}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 2, 0, 0"/>
                                     <oxy:PlotView Model="{Binding OscillationShapesViewModel.ThumbnailPlotW}" DefaultTrackerTemplate="{x:Null}" Grid.Row="1"/>
                                 </Grid>
                             </Border>
@@ -804,7 +809,7 @@
                                             <b:InvokeCommandAction Command="{Binding OscillationShapesViewModel.ChangeMainPlotCommand}" CommandParameter="1"/>
                                         </b:EventTrigger>
                                     </b:Interaction.Triggers>
-                                    <TextBlock Grid.Row="0" Text="Natočení hřídele φ" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 2, 0, 0"/>
+                                    <TextBlock Grid.Row="0" Text="{StaticResource Shaft_rotation_phi}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 2, 0, 0"/>
                                     <oxy:PlotView Model="{Binding OscillationShapesViewModel.ThumbnailPlotPhi}" DefaultTrackerTemplate="{x:Null}" Grid.Row="1"/>
                                 </Grid>
                             </Border>
@@ -819,7 +824,7 @@
                                             <b:InvokeCommandAction Command="{Binding OscillationShapesViewModel.ChangeMainPlotCommand}" CommandParameter="2"/>
                                         </b:EventTrigger>
                                     </b:Interaction.Triggers>
-                                    <TextBlock Grid.Row="0" Text="Ohybový moment M" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 2, 0, 0"/>
+                                    <TextBlock Grid.Row="0" Text="{StaticResource Bending_moment_M}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 2, 0, 0"/>
                                     <oxy:PlotView Model="{Binding OscillationShapesViewModel.ThumbnailPlotM}" DefaultTrackerTemplate="{x:Null}" Grid.Row="1"/>
                                 </Grid>
                             </Border>
@@ -834,7 +839,7 @@
                                             <b:InvokeCommandAction Command="{Binding OscillationShapesViewModel.ChangeMainPlotCommand}" CommandParameter="3"/>
                                         </b:EventTrigger>
                                     </b:Interaction.Triggers>
-                                    <TextBlock Grid.Row="0" Text="Posouvající síla T" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 2, 0, 0"/>
+                                    <TextBlock Grid.Row="0" Text="{StaticResource Shear_force_T}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 2, 0, 0"/>
                                     <oxy:PlotView Model="{Binding OscillationShapesViewModel.ThumbnailPlotT}" DefaultTrackerTemplate="{x:Null}" Grid.Row="1"/>
                                 </Grid>
                             </Border>
@@ -844,8 +849,9 @@
 
             </TabItem>
         </TabControl>
+        
         <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0, 5, 20, 0">
-            <TextBlock Text="Jazyk výstupu:" Margin="0, 0, 5, 0" VerticalAlignment="Center"/>
+            <TextBlock Text="{StaticResource Output_language}" Margin="0, 0, 5, 0" VerticalAlignment="Center"/>
             <ComboBox Width="80" Height="23" ItemsSource="{Binding Strings.LanguageNames}" 
                       SelectedValue="{Binding Strings.SelectedLanguage, Converter={StaticResource EnumToStringConverter}}">
                 <b:Interaction.Triggers>
@@ -853,6 +859,13 @@
                         <b:InvokeCommandAction Command="{Binding LanguageDropDownClosedCommand}"/>
                     </b:EventTrigger>
                 </b:Interaction.Triggers>
+            </ComboBox>
+
+            <TextBlock Text="{StaticResource Application_language}" Margin="10, 0, 5, 0" VerticalAlignment="Center"/>
+            <ComboBox Width="80" Height="23"
+                      ItemsSource="{Binding ElementName=KritikMainWindow, Path=Languages}"
+                      x:Name="ApplicationLanguageComboBox"
+                      DropDownClosed="ApplicationLanguageComboBox_DropDownClosed">
             </ComboBox>
         </StackPanel>
 

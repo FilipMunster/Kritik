@@ -106,5 +106,29 @@ namespace Kritik.Properties {
                 this["drawGrid"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("english")]
+        public string applicationLanguage {
+            get {
+                return ((string)(this["applicationLanguage"]));
+            }
+            set {
+                this["applicationLanguage"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("english")]
+        public string outputLanguage {
+            get {
+                return ((string)(this["outputLanguage"]));
+            }
+            set {
+                this["outputLanguage"] = value;
+            }
+        }
     }
 }

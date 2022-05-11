@@ -4,6 +4,11 @@
              xmlns:local="clr-namespace:Kritik"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources\KritikDictionary.cs.xaml" x:Name="čeština"/>
+                <ResourceDictionary Source="Resources\KritikDictionary.en.xaml" x:Name="english"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

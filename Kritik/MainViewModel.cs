@@ -14,13 +14,22 @@ namespace Kritik
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        private const string newCalculationFileName = "Nový výpočet.xlsx";
+        /// <summary>
+        /// Resource dictionary containing currently selected language
+        /// </summary>
+        public readonly ResourceDictionary resourceDictionary;
+
+        private readonly string newCalculationFileName;
+
         private bool shaftRotationInfluenceControlsAreVisible;
         private string customSheetName = String.Empty;
         public MainViewModel()
         {
-            InitializeNewCalculation();
             Strings = new Strings((Strings.Language)Properties.Settings.Default.lang);
+            this.resourceDictionary = Application.Current.Resources.MergedDictionaries.Last();
+            this.newCalculationFileName = (string)resourceDictionary["New_calculation"] + ".xlsx";
+            string enumName = BoundaryCondition.free.GetNameUsingResourceDictionary(resourceDictionary);
+            InitializeNewCalculation();
         }
 
         public delegate void SelectedElementChangedEventHandler(object sender, int elementId);
@@ -157,9 +166,9 @@ namespace Kritik
         }
         public int TabControlSelectedIndex { get; set; }
         private string[] boundaryConditionsItems;
-        public string[] BoundaryConditionsItems => boundaryConditionsItems ??= Enums.GetNames<BoundaryCondition>();
+        public string[] BoundaryConditionsItems => boundaryConditionsItems ??= Enums.GetNamesUsingResourceDictionary<BoundaryCondition>(this.resourceDictionary);
         private string[] gyroscopicEffectsItems;
-        public string[] GyroscopicEffectsItems => gyroscopicEffectsItems ??= Enums.GetNames<GyroscopicEffect>();
+        public string[] GyroscopicEffectsItems => gyroscopicEffectsItems ??= Enums.GetNamesUsingResourceDictionary<GyroscopicEffect>(this.resourceDictionary);
         private double shaftScheme1Width;
         public double ShaftScheme1Width
         {
@@ -428,7 +437,7 @@ namespace Kritik
             if (fileName is null)
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog();
-                openFileDialog.Filter = "Zadání hřídele (*.xlsx)|*.xlsx";
+                openFileDialog.Filter = this.resourceDictionary["Shaft_input"] + " (*.xlsx)|*.xlsx";
                 if (openFileDialog.ShowDialog() == false)
                     return;
                 fileName = openFileDialog.FileName;
@@ -438,7 +447,9 @@ namespace Kritik
 
             if (loadResult is null)
             {
-                MessageBox.Show("Soubor \"" + fileName + "\" se nepodařilo načíst.", "Chyba načítání souboru",
+                MessageBox.Show(this.resourceDictionary["File"] +
+                    " \"" + fileName + "\" " + this.resourceDictionary["failed_to_load"], 
+                    (string)this.resourceDictionary["Error_loading_file"],
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
@@ -465,10 +476,12 @@ namespace Kritik
         /// <param name="saveAs">opens save file dialog when true</param>
         private void SaveFile(bool saveAs, string resultsSheetName = "")
         {
+            string fileNameBackup = FileName;
+
             if (saveAs || FileName == newCalculationFileName)
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
-                saveFileDialog.Filter = "Zadání hřídele (*.xlsx)|*.xlsx";
+                saveFileDialog.Filter = this.resourceDictionary["Shaft_input"] + " (*.xlsx)|*.xlsx";
                 saveFileDialog.FileName = System.IO.Path.GetFileName(FileName);
                 if (saveFileDialog.ShowDialog() == false)
                     return;
@@ -482,7 +495,14 @@ namespace Kritik
             if (saveResultsSuccess && saveDataSuccess)
                 AnyPropertyChanged = false;
             else
-                MessageBox.Show("Soubor \"" + FileName + "\" se nepodařilo uložit.", "Chyba ukládání souboru", MessageBoxButton.OK, MessageBoxImage.Error);
+            {
+                MessageBox.Show(this.resourceDictionary["File"] +
+                    " \"" + FileName + "\" " + this.resourceDictionary["failed_to_save"],
+                    (string)this.resourceDictionary["Error_saving_file"],
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                FileName = fileNameBackup;
+                NotifyPropertyChanged(nameof(WindowTitle));
+            }                
         }
         private async Task RunCalculationAsync()
         {

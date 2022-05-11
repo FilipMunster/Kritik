@@ -33,6 +33,23 @@ namespace Kritik
         }
 
         /// <summary>
+        /// Gets description of Enum using resource dictionary
+        /// </summary>
+        /// <param name="GenericEnum"></param>
+        /// <param name="resourceDictionary">Dictionary containing key in form "(EnumType.Name)_(EnumValue)"</param>
+        /// <returns></returns>
+        public static string GetNameUsingResourceDictionary(this Enum GenericEnum, ResourceDictionary resourceDictionary)
+        {
+            string key = GenericEnum.GetType().Name + "_" + GenericEnum.ToString();
+            string value = (string)resourceDictionary[key];
+
+            if (value is null)
+                return GenericEnum.ToString();
+
+            return value;
+        }
+
+        /// <summary>
         /// Creates a new <see cref="ObservableCollection{T}"/> that is copy of the current instance.
         /// </summary>
         /// <typeparam name="T"></typeparam>

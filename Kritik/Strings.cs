@@ -20,7 +20,7 @@ namespace Kritik
         {
             [Description("čeština")]
             cs,
-            [Description("angličtina")]
+            [Description("english")]
             en
         }
 
@@ -120,7 +120,7 @@ namespace Kritik
             {nameof(KritickeOtackykrouzivehoKmitani), "CRITICAL SPEED OF CIRCULAR OSCILLATION" },
             {nameof(NazevDT), "Title:" },
             {nameof(PopisDT), "Description:" },
-            {nameof(ResilDT), "Solved by:" },
+            {nameof(ResilDT), "Author:" },
             {nameof(DatumDT), "Date:" },
             {nameof(OkrajovePodminkyDT), "Boundary conditions:" },
             {nameof(LEVYKonecRotoru), "LEFT end of rotor:" },

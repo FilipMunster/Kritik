@@ -1,0 +1,104 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+    <system:String x:Key="@languageName">english</system:String>
+    <system:String x:Key="changesWillTakeEfectAfterRestart">The changes will only take effect after restarting the application.</system:String>
+    <system:String x:Key="Notice">Notice</system:String>
+    <system:String x:Key="CRITICAL_SPEED">CRITICAL SPEED</system:String>
+    <system:String x:Key="Calculation">Calculation</system:String>
+    <system:String x:Key="New_calculation_CtrlN">New calculation (Ctrl+N)</system:String>
+    <system:String x:Key="Open_calculation_CtrlO">Open calculation... (Ctrl+O)</system:String>
+    <system:String x:Key="Save_calculation_CtrlS">Save calculation (Ctrl+S)</system:String>
+    <system:String x:Key="Save_calculation_as_Right_button" xml:space="preserve">Save calculation as... (Ctrl+Shift+S)&#13;Right mouse button: Save to custom sheet...</system:String>
+    <system:String x:Key="Save_to_custom_sheet">Save to custom sheet</system:String>
+    <system:String x:Key="Title">Title:</system:String>
+    <system:String x:Key="Description">Description:</system:String>
+    <system:String x:Key="Author">Author:</system:String>
+    <system:String x:Key="Date">Date:</system:String>
+    <system:String x:Key="Today">Today</system:String>
+    <system:String x:Key="Boundary_conditions">Boundary conditions:</system:String>
+    <system:String x:Key="Left_end">Left end:</system:String>
+    <system:String x:Key="Right_end">Right end:</system:String>
+    <system:String x:Key="Gyroscopic_effects">Gyroscopic effects</system:String>
+    <system:String x:Key="Shaft_rotation_influence">Shaft rotation influence...</system:String>
+    <system:String x:Key="with_shaft_rotation_influence">with shaft rotation influence</system:String>
+    <system:String x:Key="operating">operating speed</system:String>
+    <system:String x:Key="runaway">runaway speed</system:String>
+    <system:String x:Key="other">custom:</system:String>
+    <system:String x:Key="Shaft_material">Shaft material:</system:String>
+    <system:String x:Key="Operating_speed">Operating speed:</system:String>
+    <system:String x:Key="Runaway_speed">Runaway speed:</system:String>
+    <system:String x:Key="Beam_plus">Beam +</system:String>
+    <system:String x:Key="Element_number">Element number:</system:String>
+    <system:String x:Key="Split_into">Split into</system:String>
+    <system:String x:Key="parts">parts.</system:String>
+    <system:String x:Key="Calculation_of_Jdi">Calculation of Jd&#x1D62;</system:String>
+    <system:String x:Key="Method_of_calculating_Jdi">Method of calculating the moment of inertia perpendicular to the rotor axis</system:String>
+    <system:String x:Key="custom_value">custom value</system:String>
+    <system:String x:Key="Add_element_Insert">Add element (Insert)</system:String>
+    <system:String x:Key="Remove_element_Delete">Remove element (Delete)</system:String>
+    <system:String x:Key="Move_element_up_Ctrl">Move element up (Ctrl+↑)</system:String>
+    <system:String x:Key="Move_element_down_Ctrl">Move element down (Ctrl+↓)</system:String>
+    <system:String x:Key="Mirror_shaft_Ctrl">Mirror shaft (Ctrl+M)</system:String>
+    <system:String x:Key="Remove_all_Ctrl">Remove all (Ctrl+Delete)</system:String>
+    <system:String x:Key="Undo_Ctrl">Undo (Ctrl+Z)</system:String>
+    <system:String x:Key="Redo_Ctrl">Redo (Ctrl+Y)</system:String>
+    <system:String x:Key="Element_type">Element type</system:String>
+    <system:String x:Key="Section_length" xml:space="preserve">Section length&#13;L [mm]</system:String>
+    <system:String x:Key="Outer_diameter" xml:space="preserve">Outer diameter&#13;De [mm]</system:String>
+    <system:String x:Key="Inner_diameter" xml:space="preserve">Inner diameter&#13;Di [mm]</system:String>
+    <system:String x:Key="Disc_weight" xml:space="preserve">Disc weight&#13;m [kg]</system:String>
+    <system:String x:Key="Moment_of_inertia_to_axis" xml:space="preserve">Moment of inertia to rotor axis&#13;Jo [kg.m&#x00B2;]</system:String>
+    <system:String x:Key="Moment_of_inertia_perp_to_axis" xml:space="preserve">Moment of inert. perp. to rot. axis&#13;Jd [kg.m&#x00B2;]</system:String>
+    <system:String x:Key="Radial_support_stiffness" xml:space="preserve">Radial support stiffness&#13;k [N/m]</system:String>
+    <system:String x:Key="Magnetic_elastic_constant" xml:space="preserve">Magnetic elastic constant&#13;Cm [N/m]</system:String>
+    <system:String x:Key="Calculated_critical_speeds">Calculated critical speeds:</system:String>
+    <system:String x:Key="First_critical_speed_corresponds_to">1st critical speed corresponds to:</system:String>
+    <system:String x:Key="Calculation_notes">Calculation notes:</system:String>
+    <system:String x:Key="Max_critical_speed">Max. critical speed:</system:String>
+    <system:String x:Key="Calculate_critical_speed">Calculate critical speed</system:String>
+    <system:String x:Key="Oscillation_shapes">Oscillation shapes</system:String>
+    <system:String x:Key="Critical_speed_number">Critical speed number:</system:String>
+    <system:String x:Key="Display">Display:</system:String>
+    <system:String x:Key="draw_nodes">draw nodes</system:String>
+    <system:String x:Key="draw_grid">draw grid</system:String>
+    <system:String x:Key="Oscillation_shape_saving">Oscillation shape saving:</system:String>
+    <system:String x:Key="shaft_scheme">shaft scheme</system:String>
+    <system:String x:Key="oscillation_shape">oscillation shape</system:String>
+    <system:String x:Key="text_label">text label</system:String>
+    <system:String x:Key="Save_oscillation_shape">Save oscillation shape</system:String>
+    <system:String x:Key="Shaft_deflection_w">Shaft deflection w</system:String>
+    <system:String x:Key="Shaft_rotation_phi">Shaft rotation φ</system:String>
+    <system:String x:Key="Bending_moment_M">Bending moment M</system:String>
+    <system:String x:Key="Shear_force_T">Shear force T</system:String>
+    <system:String x:Key="Output_language">Output language:</system:String>
+    <system:String x:Key="Application_language">Application language:</system:String>
+    <system:String x:Key="New_calculation">New_calculation</system:String>
+    <system:String x:Key="Shaft_input">Shaft input</system:String>
+    <system:String x:Key="File">File</system:String>
+    <system:String x:Key="failed_to_load">failed to load.</system:String>
+    <system:String x:Key="Error_loading_file">Error loading file</system:String>
+    <system:String x:Key="failed_to_save">failed to save.</system:String>
+    <system:String x:Key="Error_saving_file">Error saving file</system:String>
+    <system:String x:Key="Shaft_speed">Shaft speed</system:String>
+    <system:String x:Key="No_critical_speeds_were_calculated" xml:space="preserve">No critical speeds have been&#13;calculated for the specified rotor.</system:String>
+    <system:String x:Key="critical_speed">critical speed</system:String>
+    <system:String x:Key="of_operating_speed">of operating speed</system:String>
+    <system:String x:Key="of_runaway_speed">of runaway speed</system:String>
+    <system:String x:Key="Calculation_in_progress">Calculation in progress...</system:String>
+    <system:String x:Key="PNG_image">PNG image</system:String>
+    <system:String x:Key="Division_value_must_not_be_less_than_1">The value must not be less than 1.</system:String>
+    <system:String x:Key="Incorrect_value">Incorrect value</system:String>
+    <system:String x:Key="BoundaryCondition_free">free</system:String>
+    <system:String x:Key="BoundaryCondition_joint">joint</system:String>
+    <system:String x:Key="BoundaryCondition_fix">fix</system:String>
+    <system:String x:Key="ElementType_beam">Beam</system:String>
+    <system:String x:Key="ElementType_beamPlus">Beam+</system:String>
+    <system:String x:Key="ElementType_rigid">Rigid</system:String>
+    <system:String x:Key="ElementType_disc">Disc</system:String>
+    <system:String x:Key="ElementType_support">Support</system:String>
+    <system:String x:Key="ElementType_magnet">Magnet. thrust</system:String>
+    <system:String x:Key="GyroscopicEffect_none">neglect</system:String>
+    <system:String x:Key="GyroscopicEffect_forward">forward precession</system:String>
+    <system:String x:Key="GyroscopicEffect_backward">backward precession</system:String>
+</ResourceDictionary>

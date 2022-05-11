@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Windows;
 using System.Windows.Data;
 
 namespace Kritik
@@ -150,6 +151,29 @@ namespace Kritik
             foreach (Enum enumValue in enumValues)
             {
                 if (enumValue.GetDescription() == (string)value)
+                    return enumValue;
+            }
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Converts Enum to string and vice versa using current application resource dictionary
+    /// </summary>
+    public class EnumToStringByResourceDictionaryConverter : IValueConverter
+    {
+        private ResourceDictionary resourceDictionary = Application.Current.Resources.MergedDictionaries[^1];
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return ((Enum)value).GetNameUsingResourceDictionary(resourceDictionary);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            Array enumValues = Enum.GetValues(targetType);
+            foreach (Enum enumValue in enumValues)
+            {
+                if (enumValue.GetNameUsingResourceDictionary(resourceDictionary) == (string)value)
                     return enumValue;
             }
             return null;
