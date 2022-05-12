@@ -101,4 +101,7 @@
     <system:String x:Key="GyroscopicEffect_none">zanedbání</system:String>
     <system:String x:Key="GyroscopicEffect_forward">souběžná precese</system:String>
     <system:String x:Key="GyroscopicEffect_backward">protiběžná precese</system:String>
+    <system:String x:Key="Campbell_diagram">Campbellův diagram</system:String>
+    <system:String x:Key="Save_Campbell_diagram">Uložit Campbellův diagram</system:String>
+    <system:String x:Key="Create_Campbell_diagram">Vytvořit Campbellův diagram</system:String>
 </ResourceDictionary>

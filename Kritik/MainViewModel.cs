@@ -28,7 +28,6 @@ namespace Kritik
             Strings = new Strings((Strings.Language)Properties.Settings.Default.lang);
             this.resourceDictionary = Application.Current.Resources.MergedDictionaries.Last();
             this.newCalculationFileName = (string)resourceDictionary["New_calculation"] + ".xlsx";
-            string enumName = BoundaryCondition.free.GetNameUsingResourceDictionary(resourceDictionary);
             InitializeNewCalculation();
         }
 
@@ -116,6 +115,17 @@ namespace Kritik
             set
             {
                 oscillationShapesViewModel = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private CampbellViewModel campbellViewModel;
+        public CampbellViewModel CampbellViewModel
+        {
+            get => campbellViewModel;
+            set
+            {
+                campbellViewModel = value;
                 NotifyPropertyChanged();
             }
         }
@@ -510,10 +520,14 @@ namespace Kritik
             await KritikCalculation.CalculateCriticalSpeedsAsync();
             await KritikCalculation.CalculateOscillationShapesAsync();
             if (KritikCalculation.CriticalSpeeds.Length > 0)
+            {
                 OscillationShapesViewModel = new OscillationShapesViewModel(KritikCalculation, ShaftScheme2, Strings);
+                CampbellViewModel = new CampbellViewModel(KritikCalculation);
+            }                
 
             NotifyPropertyChanged(nameof(OscillationShapesTabIsEnabled));
             NotifyPropertyChanged(nameof(ShaftScheme2));
+            CommandManager.InvalidateRequerySuggested();
         }
         #endregion
 

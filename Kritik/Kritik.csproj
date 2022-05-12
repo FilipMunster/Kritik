@@ -30,6 +30,7 @@
     <None Remove="icons\Remove_16x.png" />
     <None Remove="icons\SaveAs_16x.png" />
     <None Remove="icons\Save_16x.png" />
+    <None Remove="icons\StartWithoutDebug_16x.png" />
     <None Remove="icons\StepBackArrow_16x.png" />
     <None Remove="icons\StepBackwards_16x.png" />
     <None Remove="icons\StepForwards_16x.png" />
@@ -73,6 +74,7 @@
     <Resource Include="icons\Remove_16x.png" />
     <Resource Include="icons\SaveAs_16x.png" />
     <Resource Include="icons\Save_16x.png" />
+    <Resource Include="icons\StartWithoutDebug_16x.png" />
     <Resource Include="icons\StepBackArrow_16x.png" />
     <Resource Include="icons\StepBackwards_16x.png" />
     <Resource Include="icons\StepForward_16x.png" />

@@ -101,4 +101,7 @@
     <system:String x:Key="GyroscopicEffect_none">neglect</system:String>
     <system:String x:Key="GyroscopicEffect_forward">forward precession</system:String>
     <system:String x:Key="GyroscopicEffect_backward">backward precession</system:String>
+    <system:String x:Key="Campbell_diagram">Campbell diagram</system:String>
+    <system:String x:Key="Save_Campbell_diagram">Save Campbell diagram</system:String>
+    <system:String x:Key="Create_Campbell_diagram">Create Campbell diagram</system:String>
 </ResourceDictionary>

@@ -685,7 +685,14 @@
                                                  Width="35" GotKeyboardFocus="TextBoxSelectContentByKeyboard"/>
                                         <TextBlock Margin="5, 0, 5, 0" Text="min&#x207B;&#x00B9;" VerticalAlignment="Center"/>
                                     </StackPanel>
-                                    <Button Height="30" Margin="0, 10, 0, 0" Command="{Binding KritikCalculateCommand}" ToolTip="(F5)" Content="{StaticResource Calculate_critical_speed}"/>
+                                    <Button Height="30" Margin="0, 10, 0, 0" 
+                                            Command="{Binding KritikCalculateCommand}" 
+                                            ToolTip="(F5)">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Source="/icons/StartWithoutDebug_16x.png"/>
+                                            <TextBlock Text="{StaticResource Calculate_critical_speed}" VerticalAlignment="Center" Margin="5, 0, 0, 0"/>
+                                        </StackPanel>
+                                    </Button>
                                 </StackPanel>
                             </Grid>
                         </Border>
@@ -848,6 +855,119 @@
                 </Grid>
 
             </TabItem>
+
+            <TabItem IsEnabled="{Binding OscillationShapesTabIsEnabled}" IsSelected="{Binding CampbellViewModel.CampbellTabIsSelected}">
+                <TabItem.Header>
+                    <Label Content="{StaticResource Campbell_diagram}"/>
+                </TabItem.Header>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="250"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0">
+                        <Border Margin="15, 15, 0, 15" BorderThickness="1" BorderBrush="Gray" Padding="5" CornerRadius="3"  VerticalAlignment="Top">
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="Nastavení výpočtu:"/>
+                                <Grid Margin="10, 5, 0, 0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Max. otáčky:"/>
+                                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" Margin="0, 0, 0, 5">
+                                        <TextBox Width="50" 
+                                                 Text="{Binding CampbellViewModel.MaxShaftRpm, Converter={StaticResource FormatToIntConverter}, UpdateSourceTrigger=PropertyChanged}"
+                                                 GotKeyboardFocus="TextBoxSelectContentByKeyboard"
+                                                 IsEnabled="{Binding CampbellViewModel.NotInProgress}"/>
+                                        <TextBlock Text="rpm" Margin="2, 0, 0, 0"/>
+                                    </StackPanel>
+
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Počet kroků:"/>
+                                    <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Margin="0, 0, 0, 5">
+                                        <TextBox Width="50"
+                                                 Text="{Binding CampbellViewModel.RpmDivision, Converter={StaticResource FormatToIntConverter}, UpdateSourceTrigger=PropertyChanged}"
+                                                 GotKeyboardFocus="TextBoxSelectContentByKeyboard"
+                                                 IsEnabled="{Binding CampbellViewModel.NotInProgress}"/>
+                                        <TextBlock Text="[-]" Margin="2, 0, 0, 0"/>
+                                    </StackPanel>
+
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Krok otáček:"/>
+                                    <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Margin="0, 0, 0, 5">
+                                        <TextBlock Width="50"
+                                                   Text="{Binding CampbellViewModel.RpmStep, Mode=OneWay, Converter={StaticResource FormatDefaultConverter}}"/>
+                                        <TextBlock Text="rpm" Margin="2, 0, 0, 0"/>
+                                    </StackPanel>
+
+                                </Grid>
+                                <Button Height="25" Width="190" Margin="0, 5, 0, 5" Padding="3" Command="{Binding CampbellViewModel.CreateDiagramCommand}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="/icons/StartWithoutDebug_16x.png"/>
+                                        <TextBlock Text="{StaticResource Create_Campbell_diagram}" VerticalAlignment="Center" Margin="5, 0, 0, 0"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button Height="25" Width="190" Margin="0, 5, 0, 5" Padding="3" Command="{Binding CampbellViewModel.SaveDiagramCommand}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="/icons/Save_16x.png"/>
+                                        <TextBlock Text="{StaticResource Save_Campbell_diagram}" VerticalAlignment="Center" Margin="5, 0, 0, 0"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                    <Grid Margin="15" Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Row="0" Margin="0, 0, 0, 10" BorderThickness="1" BorderBrush="Gray" CornerRadius="3">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <oxy:PlotView Model="{Binding CampbellViewModel.CampbellDiagramPlotModel}" DefaultTrackerTemplate="{x:Null}" Grid.Row="0" Margin="0, 2, 0, 4"/>
+                                <Border BorderBrush="Black" 
+                                        BorderThickness="1" 
+                                        CornerRadius="3" 
+                                        Background="White" 
+                                        Grid.Row="0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Visibility="{Binding CampbellViewModel.ProgressBarVisibility, Mode=OneWay}"
+                                        Padding="7">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0"
+                                                   Text="Vytváření Campbellova diagramu..." Margin="0, 0, 0, 5"/>
+                                        <ProgressBar Grid.Row="1"
+                                                     Height="20" Width="150" 
+                                                     Minimum="0" 
+                                                     Maximum="100" 
+                                                     Value="{Binding CampbellViewModel.ProgressPercentage, Mode=OneWay}"/>
+                                        <TextBlock Grid.Row="1"
+                                                   HorizontalAlignment="Center"
+                                                   Margin="0, 2, 0, 0">
+                                            <Run Text="{Binding CampbellViewModel.ProgressPercentage, Mode=OneWay}"/>
+                                            <Run Text="%"/>
+                                        </TextBlock>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Grid>
+            </TabItem>
         </TabControl>
         
         <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0, 5, 20, 0">
@@ -884,5 +1004,6 @@
         <KeyBinding Command="{Binding HistoryBackCommand}" Key="Z" Modifiers="Ctrl"/>
         <KeyBinding Command="{Binding HistoryForwardCommand}" Key="Y" Modifiers="Ctrl"/>
         <KeyBinding Command="{Binding KritikCalculateCommand}" Key="F5"/>
+        <KeyBinding Command="{Binding CampbellViewModel.CreateDiagramCommand}" Key="Return"/>
     </Window.InputBindings>
 </Window>

@@ -99,6 +99,7 @@ namespace Kritik
             return v;
         }
     }
+
     /// <summary>
     /// Converts string representation of number to integer, replaces ',' with '.' and deletes '-' -> stores absolute value of number
     /// </summary>
