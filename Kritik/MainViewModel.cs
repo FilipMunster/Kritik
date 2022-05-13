@@ -39,7 +39,15 @@ namespace Kritik
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            AnyPropertyChanged = true;
+            if (TabControlSelectedIndex == 0)
+            {
+                AnyPropertyChanged = true;
+                AnyPropertyChangedSinceKritikCalculation = true;
+            }
+        }
+        private void NotifySenderPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            NotifyPropertyChanged(sender.GetType().Name);
         }
 
         private bool anyPropertyChanged;
@@ -58,6 +66,17 @@ namespace Kritik
                 }
             }
         }
+
+        private bool anyPropertyChangedSinceKritikCalculation;
+        public bool AnyPropertyChangedSinceKritikCalculation
+        {
+            get => anyPropertyChangedSinceKritikCalculation;
+            private set
+            {
+                anyPropertyChangedSinceKritikCalculation = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OscillationShapesTabIsEnabled)));
+            }
+        }
         #endregion
 
         #region Model Properties
@@ -69,6 +88,7 @@ namespace Kritik
             set
             {
                 calculationProperties = value;
+                calculationProperties.PropertyChanged += new PropertyChangedEventHandler(NotifySenderPropertyChanged);
                 NotifyPropertyChanged();
             }
         }
@@ -80,6 +100,7 @@ namespace Kritik
             set
             {
                 shaft = value;
+                shaft.PropertyChanged += new PropertyChangedEventHandler(NotifySenderPropertyChanged);
                 NotifyPropertyChanged();
                 BeamPlusControlsUpdate();
             }
@@ -225,7 +246,7 @@ namespace Kritik
                 ShaftRPMUpdate();
             }
         }
-        public bool OscillationShapesTabIsEnabled => KritikCalculation.CriticalSpeeds?.Length > 0;
+        public bool OscillationShapesTabIsEnabled => KritikCalculation.CriticalSpeeds?.Length > 0 && !AnyPropertyChangedSinceKritikCalculation;
 
         #region Beam+ controls
         /// <summary>
@@ -435,8 +456,8 @@ namespace Kritik
             NotifyPropertyChanged(nameof(ShaftOperatingSpeed));
             NotifyPropertyChanged(nameof(ShaftRunawaySpeed));
             NotifyPropertyChanged(nameof(OscillationShapesTabIsEnabled));
-            AnyPropertyChanged = false;
             ShaftRotationInfluenceSelectedOption = ShaftRotationInfluenceOption.operatingSpeed;
+            AnyPropertyChanged = false;
         }
 
         /// <summary>
@@ -521,12 +542,14 @@ namespace Kritik
             await KritikCalculation.CalculateOscillationShapesAsync();
             if (KritikCalculation.CriticalSpeeds.Length > 0)
             {
-                OscillationShapesViewModel = new OscillationShapesViewModel(KritikCalculation, ShaftScheme2, Strings);
-                CampbellViewModel = new CampbellViewModel(KritikCalculation);
-            }                
+                OscillationShapesViewModel = new OscillationShapesViewModel(KritikCalculation, ShaftScheme, Strings);
+                CampbellViewModel = new CampbellViewModel(KritikCalculation, Strings);
+            }
 
+            AnyPropertyChangedSinceKritikCalculation = false;
             NotifyPropertyChanged(nameof(OscillationShapesTabIsEnabled));
             NotifyPropertyChanged(nameof(ShaftScheme2));
+            AnyPropertyChangedSinceKritikCalculation = false;
             CommandManager.InvalidateRequerySuggested();
         }
         #endregion
@@ -576,6 +599,9 @@ namespace Kritik
         }
         private void BeamPlusControlsUpdate([CallerMemberName] string caller = "")
         {
+            bool anyPropertyChangedBackup = AnyPropertyChanged;
+            bool anyPropertyChangedSinceCalculationBackup = AnyPropertyChangedSinceKritikCalculation;
+
             if (caller != nameof(ShaftElementSelected))
                 NotifyPropertyChanged(nameof(BeamPlusComboBoxItems));
 
@@ -587,6 +613,12 @@ namespace Kritik
             NotifyPropertyChanged(nameof(BeamPlusIdN));
             NotifyPropertyChanged(nameof(BeamPlusIdNValue));
             NotifyPropertyChanged(nameof(BeamPlusText));
+
+            if (caller == nameof(ShaftElementSelected))
+            {
+                AnyPropertyChanged = anyPropertyChangedBackup;
+                AnyPropertyChangedSinceKritikCalculation = anyPropertyChangedSinceCalculationBackup;
+            }
         }
         /// <summary>
         /// Batch call of: <see cref="History"/>.Add(), invoking <see cref="SelectedElementChanged"/> and <see cref="BeamPlusControlsUpdate(string)"/>

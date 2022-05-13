@@ -20,8 +20,8 @@
     <system:String x:Key="Left_end">Left end:</system:String>
     <system:String x:Key="Right_end">Right end:</system:String>
     <system:String x:Key="Gyroscopic_effects">Gyroscopic effects</system:String>
-    <system:String x:Key="Shaft_rotation_influence">Shaft rotation influence...</system:String>
-    <system:String x:Key="with_shaft_rotation_influence">with shaft rotation influence</system:String>
+    <system:String x:Key="Shaft_rotation_influence">Rotor rotation influence...</system:String>
+    <system:String x:Key="with_shaft_rotation_influence">with rotor rotation influence</system:String>
     <system:String x:Key="operating">operating speed</system:String>
     <system:String x:Key="runaway">runaway speed</system:String>
     <system:String x:Key="other">custom:</system:String>

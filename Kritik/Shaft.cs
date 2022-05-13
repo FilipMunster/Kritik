@@ -14,6 +14,10 @@ namespace Kritik
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+        public void NotifySenderPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            NotifyPropertyChanged(sender.GetType().Name);
+        }
 
         private ObservableCollection<ShaftElementForDataGrid> elements;
         public ObservableCollection<ShaftElementForDataGrid> Elements
@@ -33,6 +37,7 @@ namespace Kritik
             set
             {
                 properties = value;
+                properties.PropertyChanged += new PropertyChangedEventHandler(NotifySenderPropertyChanged);
                 NotifyPropertyChanged();
             }
         }

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -6,9 +6,9 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>icons\kritik.ico</ApplicationIcon>
     <StartupObject></StartupObject>
-    <Version>0.1.3</Version>
-    <FileVersion>0.1.3.0</FileVersion>
-    <AssemblyVersion>0.1.3.0</AssemblyVersion>
+    <Version>0.2</Version>
+    <FileVersion>0.2.0.0</FileVersion>
+    <AssemblyVersion>0.2.0.0</AssemblyVersion>
     <Authors>Ing. Filip Münster</Authors>
     <Company>Litostroj Engineering</Company>
     <Description>Výpočet kritických otáček krouživého kmitání</Description>
@@ -28,6 +28,7 @@
     <None Remove="icons\rd.dat" />
     <None Remove="icons\rd.jpg" />
     <None Remove="icons\Remove_16x.png" />
+    <None Remove="icons\RestoreImage_16x.png" />
     <None Remove="icons\SaveAs_16x.png" />
     <None Remove="icons\Save_16x.png" />
     <None Remove="icons\StartWithoutDebug_16x.png" />
@@ -72,6 +73,7 @@
     <Resource Include="icons\OpenFolder_16x.png" />
     <Resource Include="icons\rd.dat" />
     <Resource Include="icons\Remove_16x.png" />
+    <Resource Include="icons\RestoreImage_16x.png" />
     <Resource Include="icons\SaveAs_16x.png" />
     <Resource Include="icons\Save_16x.png" />
     <Resource Include="icons\StartWithoutDebug_16x.png" />

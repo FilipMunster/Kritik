@@ -31,7 +31,7 @@
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>
-    
+
     <Window.Title>
         <Binding Path="WindowTitle"/>
     </Window.Title>
@@ -681,13 +681,14 @@
                                 <StackPanel Grid.Row="3" Orientation="Vertical">
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="{StaticResource Max_critical_speed}" Margin="0, 0, 5, 0" VerticalAlignment="Center"/>
-                                        <TextBox Text="{Binding Shaft.Properties.MaxCriticalSpeed, Converter={StaticResource FormatDefaultConverter}}" 
+                                        <TextBox Text="{Binding Shaft.Properties.MaxCriticalSpeed, Converter={StaticResource FormatDefaultConverter}, UpdateSourceTrigger=PropertyChanged}" 
                                                  Width="35" GotKeyboardFocus="TextBoxSelectContentByKeyboard"/>
                                         <TextBlock Margin="5, 0, 5, 0" Text="min&#x207B;&#x00B9;" VerticalAlignment="Center"/>
                                     </StackPanel>
                                     <Button Height="30" Margin="0, 10, 0, 0" 
                                             Command="{Binding KritikCalculateCommand}" 
-                                            ToolTip="(F5)">
+                                            ToolTip="(F5)"
+                                            Padding="3">
                                         <StackPanel Orientation="Horizontal">
                                             <Image Source="/icons/StartWithoutDebug_16x.png"/>
                                             <TextBlock Text="{StaticResource Calculate_critical_speed}" VerticalAlignment="Center" Margin="5, 0, 0, 0"/>
@@ -856,7 +857,9 @@
 
             </TabItem>
 
-            <TabItem IsEnabled="{Binding OscillationShapesTabIsEnabled}" IsSelected="{Binding CampbellViewModel.CampbellTabIsSelected}">
+            <TabItem 
+                IsEnabled="{Binding OscillationShapesTabIsEnabled}" 
+                IsSelected="{Binding CampbellViewModel.CampbellTabIsSelected}">
                 <TabItem.Header>
                     <Label Content="{StaticResource Campbell_diagram}"/>
                 </TabItem.Header>
@@ -875,13 +878,23 @@
                                         <RowDefinition/>
                                         <RowDefinition/>
                                         <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="1.1*"/>
+                                        <ColumnDefinition Width="0.9*"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Max. otáčky:"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{StaticResource Max_critical_speed}"/>
                                     <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" Margin="0, 0, 0, 5">
+                                        <TextBox Width="50" 
+                                                 Text="{Binding CampbellViewModel.MaxCriticalSpeed, Converter={StaticResource FormatToIntConverter}, UpdateSourceTrigger=LostFocus}"
+                                                 GotKeyboardFocus="TextBoxSelectContentByKeyboard"
+                                                 IsEnabled="{Binding CampbellViewModel.NotInProgress}"/>
+                                        <TextBlock Text="rpm" Margin="2, 0, 0, 0"/>
+                                    </StackPanel>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Max. otáčky rotoru:"/>
+                                    <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Margin="0, 0, 0, 5">
                                         <TextBox Width="50" 
                                                  Text="{Binding CampbellViewModel.MaxShaftRpm, Converter={StaticResource FormatToIntConverter}, UpdateSourceTrigger=PropertyChanged}"
                                                  GotKeyboardFocus="TextBoxSelectContentByKeyboard"
@@ -889,8 +902,8 @@
                                         <TextBlock Text="rpm" Margin="2, 0, 0, 0"/>
                                     </StackPanel>
 
-                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Počet kroků:"/>
-                                    <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Margin="0, 0, 0, 5">
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Počet kroků:"/>
+                                    <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Margin="0, 0, 0, 5">
                                         <TextBox Width="50"
                                                  Text="{Binding CampbellViewModel.RpmDivision, Converter={StaticResource FormatToIntConverter}, UpdateSourceTrigger=PropertyChanged}"
                                                  GotKeyboardFocus="TextBoxSelectContentByKeyboard"
@@ -898,12 +911,19 @@
                                         <TextBlock Text="[-]" Margin="2, 0, 0, 0"/>
                                     </StackPanel>
 
-                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Krok otáček:"/>
-                                    <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Margin="0, 0, 0, 5">
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Krok otáček:"/>
+                                    <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" Margin="0, 0, 0, 5">
                                         <TextBlock Width="50"
                                                    Text="{Binding CampbellViewModel.RpmStep, Mode=OneWay, Converter={StaticResource FormatDefaultConverter}}"/>
                                         <TextBlock Text="rpm" Margin="2, 0, 0, 0"/>
                                     </StackPanel>
+
+                                    <CheckBox Grid.Row="4" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"
+                                              Content="{StaticResource GyroscopicEffect_forward}" 
+                                              IsChecked="True"/>
+                                    <CheckBox Grid.Row="5" Grid.ColumnSpan="2" 
+                                              Content="{StaticResource GyroscopicEffect_backward}"
+                                              IsChecked="True"/>
 
                                 </Grid>
                                 <Button Height="25" Width="190" Margin="0, 5, 0, 5" Padding="3" Command="{Binding CampbellViewModel.CreateDiagramCommand}">
@@ -912,6 +932,70 @@
                                         <TextBlock Text="{StaticResource Create_Campbell_diagram}" VerticalAlignment="Center" Margin="5, 0, 0, 0"/>
                                     </StackPanel>
                                 </Button>
+                                <Separator Grid.Row="8" Grid.ColumnSpan="2" Margin="0, 5, 0, 5"/>
+                                <TextBlock Text="{StaticResource Display}"/>
+                                <StackPanel Margin="10, 5, 0, 0" Orientation="Vertical">
+                                    <CheckBox Margin="0, 0, 0, 5"
+                                              Content="provozní otáčky" 
+                                              IsChecked="True"/>
+                                    <CheckBox Margin="0, 0, 0, 5"
+                                              Content="průběžné otáčky"
+                                              IsChecked="True"/>
+                                    <CheckBox Margin="0, 0, 0, 5"
+                                              Content="rozsah provozních otáček"
+                                              IsChecked="True"
+                                              x:Name="operatingSpeedRangeCheckBox"/>
+                                    <StackPanel Orientation="Horizontal" Margin="20, 0, 0, 5"
+                                                IsEnabled="{Binding ElementName=operatingSpeedRangeCheckBox, Path=IsChecked}">
+                                        <TextBox Text="0" Width="40"/>
+                                        <TextBlock Text=" – "/>
+                                        <TextBox Text="500" Width="40"/>
+                                        <TextBlock Text="rpm" Margin="2, 0, 0, 0"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
+                                        <CheckBox Content="Zobrazit popisky" IsChecked="True"/>
+                                        <Button VerticalAlignment="Center"
+                                                Height="17"
+                                                Width="70"
+                                                Margin="10, 0, 0, 0">
+                                            <TextBlock Text="Reset polohy" 
+                                                       VerticalAlignment="Center"
+                                                       FontSize="11"/>
+                                        </Button>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <Separator Grid.Row="8" Grid.ColumnSpan="2" Margin="0, 5, 0, 5"/>
+                                <Grid Margin="0, 5, 5, 0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Rozměry obrázku:"/>
+                                    <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                                        <TextBox Text="1920" Width="40" Margin="0, 0, 2, 0"/>
+                                        <TextBlock Text="×" Margin="0, 0, 2, 0"/>
+                                        <TextBox Text="1485" Width="40" Margin="0, 0, 2, 0"/>
+                                        <TextBlock Text="px"/>
+                                    </StackPanel>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Rozlišení obrázku:" Margin="0, 5, 0, 0"/>
+                                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0, 5, 0, 0">
+                                        <TextBox Text="300" Width="40" Margin="0, 0, 2, 0"/>
+                                        <TextBlock Text="DPI"/>
+                                        <Button Height="17" Width="17" Margin="10, 0, 0, 0" 
+                                                VerticalAlignment="Center"
+                                                ToolTip="Výchozí hodnoty">
+                                            <Image Source="/icons/RestoreImage_16x.png"/>
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
+
                                 <Button Height="25" Width="190" Margin="0, 5, 0, 5" Padding="3" Command="{Binding CampbellViewModel.SaveDiagramCommand}">
                                     <StackPanel Orientation="Horizontal">
                                         <Image Source="/icons/Save_16x.png"/>
@@ -969,7 +1053,7 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        
+
         <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0, 5, 20, 0">
             <TextBlock Text="{StaticResource Output_language}" Margin="0, 0, 5, 0" VerticalAlignment="Center"/>
             <ComboBox Width="80" Height="23" ItemsSource="{Binding Strings.LanguageNames}" 

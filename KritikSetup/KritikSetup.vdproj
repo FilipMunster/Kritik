@@ -15,6 +15,12 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_24A13FF4C38F49A78458186F625273A2"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_FDA75EE9363543B1BFD994778AFF700C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -157,34 +163,12 @@
             "{1525181F-901A-416C-8A58-119130FE478E}:_7B74CF0713854728B56098FCD3484AAD"
             {
             "Name" = "8:#1916"
-            "AlwaysCreate" = "11:FALSE"
+            "AlwaysCreate" = "11:TRUE"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Property" = "8:DesktopFolder"
                 "Folders"
                 {
-                }
-            }
-            "{1525181F-901A-416C-8A58-119130FE478E}:_84D2B541506D4BBEA31AAEC2406C61D2"
-            {
-            "Name" = "8:#1919"
-            "AlwaysCreate" = "11:FALSE"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Property" = "8:ProgramMenuFolder"
-                "Folders"
-                {
-                    "{9EF0B969-E518-4E46-987F-47570745A589}:_F2560652B4364663BED41C6F52749CCE"
-                    {
-                    "Name" = "8:Kritik"
-                    "AlwaysCreate" = "11:FALSE"
-                    "Condition" = "8:"
-                    "Transitive" = "11:FALSE"
-                    "Property" = "8:_06DD0F4C5EC545F8866760A66BF39200"
-                        "Folders"
-                        {
-                        }
-                    }
                 }
             }
         }
@@ -203,19 +187,19 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Kritik"
-        "ProductCode" = "8:{5316AA02-62DA-4301-ACA9-6DF5B9B356F3}"
-        "PackageCode" = "8:{8F3A8E3F-BFA7-42D7-A0B1-6A7E1F2D64F8}"
+        "ProductCode" = "8:{BA4E2C7E-A5A4-4442-965C-B471989F8998}"
+        "PackageCode" = "8:{8A820CA3-F739-4DC3-A466-1DE5E862AC41}"
         "UpgradeCode" = "8:{0990E662-D7AD-422B-8ECE-4AE3EEDFB8FB}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:0.1.3"
+        "ProductVersion" = "8:0.2"
         "Manufacturer" = "8:Litostroj Engineering"
         "ARPHELPTELEPHONE" = "8:515554806"
         "ARPHELPLINK" = "8:"
-        "Title" = "8:Kritik 0.1.3 Setup"
+        "Title" = "8:Kritik 0.2 Setup"
         "Subject" = "8:"
         "ARPCONTACT" = "8:Ing. Filip Münster"
         "Keywords" = "8:"
@@ -324,7 +308,7 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_3F80146110E94024AC7EA06F144DAA89"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_7D67ACDF8EFB40E294B6C374B4EC8591"
             {
             "Name" = "8:Kritik"
             "Arguments" = "8:"
@@ -332,22 +316,8 @@
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:"
+            "Target" = "8:_24A13FF4C38F49A78458186F625273A2"
             "Folder" = "8:_7B74CF0713854728B56098FCD3484AAD"
-            "WorkingFolder" = "8:_77AB727EB6894A5790DBF278A0C294B4"
-            "Icon" = "8:_FDA75EE9363543B1BFD994778AFF700C"
-            "Feature" = "8:"
-            }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_DCDCA33BC82F4ECFAD238E531A8867AB"
-            {
-            "Name" = "8:Kritik"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:"
-            "Folder" = "8:_F2560652B4364663BED41C6F52749CCE"
             "WorkingFolder" = "8:_77AB727EB6894A5790DBF278A0C294B4"
             "Icon" = "8:_FDA75EE9363543B1BFD994778AFF700C"
             "Feature" = "8:"
@@ -751,6 +721,34 @@
         }
         "ProjectOutput"
         {
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_24A13FF4C38F49A78458186F625273A2"
+            {
+            "SourcePath" = "8:..\\Kritik\\obj\\Release\\net5.0-windows\\apphost.exe"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_77AB727EB6894A5790DBF278A0C294B4"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:PublishItems"
+            "OutputProjectGuid" = "8:{7813D381-AD96-4526-9B71-8BADD828F640}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
         }
     }
 }

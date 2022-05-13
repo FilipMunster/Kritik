@@ -23,6 +23,7 @@ namespace Kritik
         {
             this.collection = collection;
             history = new();
+            this.Add();
         }
         /// <summary>
         /// History length
@@ -35,6 +36,7 @@ namespace Kritik
         public void SetCollection(ObservableCollection<T> collection)
         {
             this.collection = collection;
+            //this.Add();
         }
         /// <summary>
         /// Adds current state of collection to history

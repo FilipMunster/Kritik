@@ -17,16 +17,18 @@ namespace Kritik
     {
         private KritikCalculation kritikCalculation;
         private CampbellDiagram campbellDiagram;
-        public CampbellViewModel(KritikCalculation kritikCalculation)
+        private readonly Strings strings;
+        public CampbellViewModel(KritikCalculation kritikCalculation, Strings strings)
         {
             Shaft shaftClone = (Shaft)kritikCalculation.Shaft.Clone();
             CalculationProperties propertiesClone = (CalculationProperties)kritikCalculation.CalculationProperties.Clone();
             this.kritikCalculation = new KritikCalculation(shaftClone, propertiesClone);
 
+            this.strings = strings;
             double runawaySpeed = kritikCalculation.Shaft.Properties.RunawaySpeed;
-            MaxShaftRpm = runawaySpeed > 0 ? Convert.ToInt32(Math.Ceiling(runawaySpeed / 100) * 100) : 1000;
+            
+            MaxShaftRpm = Convert.ToInt32(Math.Ceiling(kritikCalculation.CriticalSpeeds.Max() / 100) * 100);
             NotifyPropertyChanged(nameof(ProgressBarVisibility));
-            NotifyPropertyChanged(nameof(CampbellDiagramPlotModel));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -45,6 +47,13 @@ namespace Kritik
                 NotifyPropertyChanged(nameof(RpmStep));
             }
         }
+
+        public double MaxCriticalSpeed
+        {
+            get => this.kritikCalculation.Shaft.Properties.MaxCriticalSpeed;
+            set => this.kritikCalculation.Shaft.Properties.MaxCriticalSpeed = value;
+        }
+
         private int rpmDivision = 10;
         public int RpmDivision
         {
@@ -71,7 +80,7 @@ namespace Kritik
         public string ProgressBarVisibility => InProgress ? "Visible" : "Collapsed";
         public bool CampbellTabIsSelected { get; set; }
 
-        public PlotModel CampbellDiagramPlotModel { get; private set; }
+        public PlotModel CampbellDiagramPlotModel { get; private set; } = new PlotModel();
 
         private ICommand createDiagramCommand;
         public ICommand CreateDiagramCommand => createDiagramCommand ??= new CommandHandler(
@@ -81,6 +90,8 @@ namespace Kritik
         public ICommand SaveDiagramCommand => saveDiagramCommand ??= new CommandHandler(
             () => SaveToPng(),
             () => MaxShaftRpm > 0 && RpmDivision >= 10 && !InProgress);
+
+
         private async Task CreateDiagramAsync()
         {
             InProgress = true;
@@ -91,7 +102,7 @@ namespace Kritik
                     NotifyPropertyChanged(nameof(ProgressPercentage));
                 });
 
-            this.campbellDiagram = new CampbellDiagram(kritikCalculation, MaxShaftRpm, RpmDivision);
+            this.campbellDiagram = new CampbellDiagram(kritikCalculation, MaxShaftRpm, RpmDivision, this.strings);
             await this.campbellDiagram.CreateDiagramAsync(progress);
             CampbellDiagramPlotModel = this.campbellDiagram.GetPlotModel();
             NotifyPropertyChanged(nameof(CampbellDiagramPlotModel));

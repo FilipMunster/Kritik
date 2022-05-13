@@ -13,15 +13,17 @@ namespace Kritik
         private readonly KritikCalculation calculation;
         private readonly double maxRpm;
         private readonly double rpmStep;
+        private readonly Strings strings;
 
         private List<Precession> forwardPrecessions = new List<Precession>();
         private List<Precession> backwardPrecessions = new List<Precession>();
 
-        public CampbellDiagram(KritikCalculation kritikCalculation, double maxRpm, int rpmDivision)
+        public CampbellDiagram(KritikCalculation kritikCalculation, double maxRpm, int rpmDivision, Strings strings)
         {
             this.calculation = kritikCalculation;
             this.maxRpm = maxRpm;
             this.rpmStep = maxRpm / rpmDivision;
+            this.strings = strings;
         }
 
         public async Task CreateDiagramAsync(IProgress<int> progress)
@@ -83,7 +85,7 @@ namespace Kritik
             {
                 Position = OxyPlot.Axes.AxisPosition.Bottom,
                 MajorGridlineStyle = LineStyle.Dot,
-                Title = "Shaft speed (RPM)",
+                Title = "Rotor speed (RPM)",
                 Minimum = 0
             });
 
