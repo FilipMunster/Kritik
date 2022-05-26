@@ -120,4 +120,7 @@
     <system:String x:Key="Default_values">Default values</system:String>
     <system:String x:Key="Creating_Campbell_diagram">Creating Campbell diagram...</system:String>
     <system:String x:Key="Cancel">Cancel</system:String>
+    <system:String x:Key="Enter_custom_sheet_name">Enter a custom sheet name to save the results:</system:String>
+    <system:String x:Key="Existing_list_will_be_deleted">(Exiting list will be deleted!)</system:String>
+    <system:String x:Key="Excel_sheet">Excel sheet</system:String>
 </ResourceDictionary>

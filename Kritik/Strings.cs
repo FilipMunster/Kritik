@@ -108,7 +108,9 @@ namespace Kritik
             {nameof(provozniOtacky), "provozní otáčky" },
             {nameof(prubezneOtacky), "průběžné otáčky" },
             {nameof(minimalni), "minimální" },
-            {nameof(maximalni), "maximální" }
+            {nameof(maximalni), "maximální" },
+            {nameof(CampbellDiagram), "Campbellův diagram" },
+            {nameof(data), "data" },
         };
         #endregion
 
@@ -164,7 +166,9 @@ namespace Kritik
             {nameof(provozniOtacky), "operating speed" },
             {nameof(prubezneOtacky), "runaway speed" },
             {nameof(minimalni), "minimal" },
-            {nameof(maximalni), "maximal" }
+            {nameof(maximalni), "maximal" },
+            {nameof(CampbellDiagram), "Campbell diagram" },
+            {nameof(data), "data" },
         };
         #endregion
 
@@ -213,6 +217,9 @@ namespace Kritik
         public string prubezneOtacky => dictionary[This()];
         public string minimalni => dictionary[This()];
         public string maximalni => dictionary[This()];
+        public string CampbellDiagram => dictionary[This()];
+        public string data => dictionary[This()];
+
 
         /// <summary>
         /// Converts <see cref="ElementType"/> enum to string according to language set in <see cref="SelectedLanguage"/>

@@ -19,7 +19,16 @@ namespace Kritik
     /// </summary>
     public partial class CustomSheetDialogWindow : Window
     {
-        public string CustomSheetName { get; set; } = String.Empty;
+        private string customSheetName = String.Empty;
+        public string CustomSheetName
+        {
+            get => customSheetName;
+            set
+            {
+                customSheetName = value;
+                sheetNameTextBox.Text = value;
+            }
+        }
         public CustomSheetDialogWindow()
         {
             InitializeComponent();

@@ -1,10 +1,13 @@
 ﻿using Microsoft.Win32;
+using OfficeOpenXml;
+using OfficeOpenXml.Drawing.Chart;
 using OxyPlot;
 using OxyPlot.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -224,7 +227,7 @@ namespace Kritik
         
         private ICommand saveDiagramCommand;
         public ICommand SaveDiagramCommand => saveDiagramCommand ??= new CommandHandler(
-            () => SaveToPng(),
+            () => SaveDiagram(),
             () => MaxShaftRpm > 0 && RpmDivision >= 10 && !InProgress && CampbellDiagramPlotModel.Axes.Count > 0);
 
         private ICommand resetImagePropertiesCommand;
@@ -233,7 +236,7 @@ namespace Kritik
             {
                 ImageWidth = 1920;
                 ImageHeight = 1440;
-                ImageDPI = 300;
+                ImageDPI = 250;
                 NotifyPropertyChanged(nameof(ImageHeight));
                 NotifyPropertyChanged(nameof(ImageWidth));
                 NotifyPropertyChanged(nameof(ImageDPI));
@@ -310,7 +313,7 @@ namespace Kritik
             CommandManager.InvalidateRequerySuggested();
         }
 
-        private void SaveToPng()
+        private void SaveDiagram()
         {
             string fullFilePath = this.kritikCalculation.CalculationProperties.FileName;
             string path = Path.GetDirectoryName(fullFilePath);
@@ -318,16 +321,31 @@ namespace Kritik
 
             SaveFileDialog saveFileDialog = new SaveFileDialog()
             {
-                Filter = Application.Current.Resources.MergedDictionaries[^1]["PNG_image"] + " (*.png)|*.png",
-                FileName = Path.GetFileName(path + "\\" + fileName + "_Campbell.png")
+                Filter = Application.Current.Resources.MergedDictionaries[^1]["PNG_image"] + " (*.png)|*.png" +
+                "|" + Application.Current.Resources.MergedDictionaries[^1]["Excel_sheet"] + " (*.xlsx)|*.xlsx",
+                FileName = Path.GetFileName(path + "\\" + fileName + "_Campbell")
             };
 
             if (saveFileDialog.ShowDialog() == false)
                 return;
 
-            OxyModelToPng oxyModelToPng = new OxyModelToPng(ImageDPI, ImageWidth, 0);
-            oxyModelToPng.AddModel(CampbellDiagramPlotModel, ImageHeight);
-            oxyModelToPng.SaveToFile(saveFileDialog.FileName);
+            switch (saveFileDialog.FilterIndex)
+            {
+                case 1:
+                    {
+                        OxyModelToPng oxyModelToPng = new OxyModelToPng(ImageDPI, ImageWidth, 0);
+                        oxyModelToPng.AddModel(CampbellDiagramPlotModel, ImageHeight);
+                        oxyModelToPng.SaveToFile(saveFileDialog.FileName);
+                        break;
+                    }
+                case 2:
+                    {
+                        SaveDiagramToExcel(saveFileDialog.FileName);
+                        break;
+                    }
+            }
+
+            CampbellDiagramPlotModel.InvalidatePlot(false);
         }
 
         private void UpdateSpeedAnnotations(bool setInitialPosition = false)
@@ -457,7 +475,7 @@ namespace Kritik
 
                 TextAnnotation annotation = new TextAnnotation();
                 annotation.StrokeThickness = 1;
-                annotation.Padding = new OxyThickness(2);
+                annotation.Padding = new OxyThickness(3, 2, 3, 2);
                 annotation.TextColor = ShowLabelsIsChecked ? OxyColors.Black : OxyColors.Transparent;
                 annotation.Font = "Calibri";
                 annotation.FontSize = 13;
@@ -490,6 +508,101 @@ namespace Kritik
             CampbellDiagramPlotModel.Axes[0].Title = this.strings.OtackyRotoru + " (rpm)";
             CampbellDiagramPlotModel.Axes[1].Title = this.strings.KritickeOtacky + " (rpm)";
             CampbellDiagramPlotModel.InvalidatePlot(false);
+        }
+
+        private void SaveDiagramToExcel(string fileName)
+        {
+            string sheetName = "KRITIK_Campbell";
+            ResourceDictionary dictionary = Application.Current.Resources.MergedDictionaries[^1];
+
+            if (File.Exists(fileName))
+            {
+                CustomSheetDialogWindow dialogWindow = new CustomSheetDialogWindow();
+                dialogWindow.CustomSheetName = sheetName;
+                dialogWindow.Owner = Application.Current.MainWindow;
+                dialogWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                if (dialogWindow.ShowDialog() == false) 
+                    return;
+                sheetName = dialogWindow.CustomSheetName;
+            }
+
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            FileInfo fileInfo = new FileInfo(fileName);
+            try
+            {
+                using (ExcelPackage p = new ExcelPackage(fileInfo))
+                {
+                    if (p.Workbook.Worksheets[sheetName] is not null)
+                    {
+                        p.Workbook.Worksheets.Delete(sheetName);
+                    }
+                    ExcelWorksheet ws = p.Workbook.Worksheets.Add(sheetName);
+
+                    ExcelChart chart = ws.Drawings.AddChart("Campbell diagram", eChartType.XYScatterLinesNoMarkers);
+                    chart.Title.Text = this.kritikCalculation.CalculationProperties.Title + " - " + this.strings.CampbellDiagram;
+                    chart.RoundedCorners = false;
+                    chart.SetSize(800, 600);
+
+                    ws.Cells.Style.Font.Bold = false;
+                    ws.Cells.Style.Font.Color.SetColor(Color.Black);
+                    ws.Cells.Style.Font.Italic = false;
+                    ws.Cells.Style.Font.UnderLine = false;
+                    ws.Cells.Style.Font.Size = 11;
+                    ws.Cells.Style.Font.Name = "Calibri";
+
+                    ws.Cells[1, 1].Value = this.kritikCalculation.CalculationProperties.Title + " - " + this.strings.CampbellDiagram + " " + this.strings.data;
+                    ws.Cells[1, 1].Style.Font.Bold = true;
+                    ws.Cells[2, 1].Value = this.strings.OtackyRotoru.ToLower() + " (rpm)";
+                    ws.Cells[2, 1].AutoFitColumns();
+                    ws.Cells[2, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                    ws.Cells[2, 2].Value = this.strings.KritickeOtacky.ToLower() + " (rpm)";
+                    ws.Cells[2, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
+                    int col = 2;
+                    foreach (CampbellDiagram.Precession precession in campbellDiagram.ForwardPrecessions.Concat(campbellDiagram.BackwardPrecessions))
+                    {
+                        // Fill table header
+                        string number = strings.OrdinalNumber(precession.PrecessionNumber + 1);
+                        string name = precession.PrecessionType == GyroscopicEffect.forward ? strings.SoubeznaPrecese.ToLower() : strings.ProtibeznaPrecese.ToLower();
+                        ws.Cells[3, col].Value = number + " " + name;
+
+                        // Fill Rotor speed column
+                        if (col == 2)
+                        {
+                            (double[] rotorSpeeds, _) = precession.GetValues();
+                            for (int i = 0; i < rotorSpeeds.Length; i++)
+                            {
+                                ws.Cells[4 + i, 1].Value = rotorSpeeds[i];
+                            }
+                        }
+
+                        // Fill data
+                        (_, double[] criticalSpeeds) = precession.GetValues();
+                        for (int i = 0; i < criticalSpeeds.Length; i++)
+                        {
+                            ws.Cells[4 + i, col].Value = criticalSpeeds[i];
+                        }
+
+                        // Add series to chart
+                        chart.Series.Add(ws.Cells[4, col, 3 + criticalSpeeds.Length, col], ws.Cells[4, 1, 3 + criticalSpeeds.Length, 1]);
+                        chart.Series[^1].Header = (string)ws.Cells[3, col].Value;
+
+                        col++;
+                    }
+                    ws.Cells[2, 2, 2, col - 1].Merge = true;
+                    chart.SetPosition(ws.Dimension.End.Row + 1, 0, 1, 0);
+
+                    p.Save();
+                }
+            }
+            catch
+            {
+                MessageBox.Show(dictionary["File"] +
+                    " \"" + fileName + "\" " + dictionary["failed_to_save"],
+                    (string)dictionary["Error_saving_file"],
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            return;
         }
     }
 }
