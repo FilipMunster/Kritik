@@ -29,5 +29,14 @@
     <Setting Name="outputLanguage" Type="System.String" Scope="User">
       <Value Profile="(Default)">english</Value>
     </Setting>
+    <Setting Name="CampbellImgW" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1920</Value>
+    </Setting>
+    <Setting Name="CampbellImgH" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1440</Value>
+    </Setting>
+    <Setting Name="CampbellImgDPI" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">300</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

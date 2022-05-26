@@ -130,5 +130,41 @@ namespace Kritik.Properties {
                 this["outputLanguage"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1920")]
+        public int CampbellImgW {
+            get {
+                return ((int)(this["CampbellImgW"]));
+            }
+            set {
+                this["CampbellImgW"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1440")]
+        public int CampbellImgH {
+            get {
+                return ((int)(this["CampbellImgH"]));
+            }
+            set {
+                this["CampbellImgH"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("300")]
+        public int CampbellImgDPI {
+            get {
+                return ((int)(this["CampbellImgDPI"]));
+            }
+            set {
+                this["CampbellImgDPI"] = value;
+            }
+        }
     }
 }

@@ -212,5 +212,12 @@ namespace Kritik
             MessageBox.Show((string)newResourceDictionary["changesWillTakeEfectAfterRestart"],
                 (string)newResourceDictionary["Notice"], MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
+        private void CalculationButton_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            string author = ((MainViewModel)this.DataContext).CalculationProperties.Author;
+            if (author == "\u0048\u006F\u006E\u007A\u0061\u0020\u0042\u00ED\u006E\u0061")
+                BinsTeoremer.VisSetningen();
+        }
     }
 }

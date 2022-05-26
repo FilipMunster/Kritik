@@ -104,4 +104,20 @@
     <system:String x:Key="Campbell_diagram">Campbellův diagram</system:String>
     <system:String x:Key="Save_Campbell_diagram">Uložit Campbellův diagram</system:String>
     <system:String x:Key="Create_Campbell_diagram">Vytvořit Campbellův diagram</system:String>
+    <system:String x:Key="Calculation_settings">Nastavení výpočtu:</system:String>
+    <system:String x:Key="Max_rotor_speed">Max. otáčky rotoru:</system:String>
+    <system:String x:Key="No_of_steps">Počet kroků:</system:String>
+    <system:String x:Key="Speed_step">Krok otáček:</system:String>
+    <system:String x:Key="operating_speed">provozní otáčky</system:String>
+    <system:String x:Key="runaway_speed">průběžné otáčky</system:String>
+    <system:String x:Key="critical_speed_lower_limit">dolní mez kritických otáček</system:String>
+    <system:String x:Key="operating_speed_range">rozsah provozních otáček</system:String>
+    <system:String x:Key="Show_labels">Zobrazit popisky</system:String>
+    <system:String x:Key="label_background">pozadí popisků</system:String>
+    <system:String x:Key="Reset_positions">Resetovat polohu</system:String>
+    <system:String x:Key="Image_dimensions">Rozměry obrázku:</system:String>
+    <system:String x:Key="Image_resolution">Rozlišení obrázku:</system:String>
+    <system:String x:Key="Default_values">Výchozí hodnoty</system:String>
+    <system:String x:Key="Creating_Campbell_diagram">Vytváření Campbellova diagramu...</system:String>
+    <system:String x:Key="Cancel">Zrušit</system:String>
 </ResourceDictionary>

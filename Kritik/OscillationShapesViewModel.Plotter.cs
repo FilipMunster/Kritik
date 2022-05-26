@@ -15,7 +15,9 @@ namespace Kritik
                     Position = OxyPlot.Axes.AxisPosition.Bottom,
                     IsZoomEnabled = false,
                     IsPanEnabled = false,
-                    Title = "x [m]"
+                    Title = "x [m]",
+                    Font = "Calibri",
+                    FontSize = 13
                 });
                 model.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Left, IsAxisVisible = false });
                 model.Padding = new OxyThickness(0);
@@ -34,7 +36,7 @@ namespace Kritik
                 return model;
             }
 
-            public static PlotModel ModelFromString(string text, int x, int y, int fontSize)
+            public static PlotModel ModelFromString(string text, int x, int y, string font, int fontSize)
             {
                 PlotModel model = new PlotModel();
                 model.Axes.Add(new OxyPlot.Axes.LinearAxis { Position = OxyPlot.Axes.AxisPosition.Bottom, IsAxisVisible = false });
@@ -46,6 +48,7 @@ namespace Kritik
                 textAnnotation.Text = text;
                 textAnnotation.TextPosition = new DataPoint(x, y);
                 textAnnotation.StrokeThickness = 0;
+                textAnnotation.Font = font;
                 textAnnotation.FontSize = fontSize;
                 model.Annotations.Add(textAnnotation);
                 return model;

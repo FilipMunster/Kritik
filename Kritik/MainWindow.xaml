@@ -26,6 +26,7 @@
         <local:EnumToStringByResourceDictionaryConverter x:Key="EnumToStringByResourceDictionaryConverter"/>
         <local:EnumToBoolConverter x:Key="EnumToBoolConverter"/>
         <local:NewDataGridItemConverter x:Key="NewDataGridItemConverter"/>
+        <local:RemoveDecimalSeparatorAtTheEndConverter x:Key="RemoveDecimalSeparatorAtTheEndConverter"/>
         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="SlateGray"/>
     </Window.Resources>
     <Window.DataContext>
@@ -688,7 +689,8 @@
                                     <Button Height="30" Margin="0, 10, 0, 0" 
                                             Command="{Binding KritikCalculateCommand}" 
                                             ToolTip="(F5)"
-                                            Padding="3">
+                                            Padding="3"
+                                            PreviewMouseRightButtonUp="CalculationButton_MouseUp">
                                         <StackPanel Orientation="Horizontal">
                                             <Image Source="/icons/StartWithoutDebug_16x.png"/>
                                             <TextBlock Text="{StaticResource Calculate_critical_speed}" VerticalAlignment="Center" Margin="5, 0, 0, 0"/>
@@ -871,7 +873,7 @@
                     <Grid Grid.Column="0">
                         <Border Margin="15, 15, 0, 15" BorderThickness="1" BorderBrush="Gray" Padding="5" CornerRadius="3"  VerticalAlignment="Top">
                             <StackPanel Orientation="Vertical">
-                                <TextBlock Text="Nastavení výpočtu:"/>
+                                <TextBlock Text="{StaticResource Calculation_settings}"/>
                                 <Grid Margin="10, 5, 0, 0">
                                     <Grid.RowDefinitions>
                                         <RowDefinition/>
@@ -888,12 +890,12 @@
                                     <TextBlock Grid.Row="0" Grid.Column="0" Text="{StaticResource Max_critical_speed}"/>
                                     <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" Margin="0, 0, 0, 5">
                                         <TextBox Width="50" 
-                                                 Text="{Binding CampbellViewModel.MaxCriticalSpeed, Converter={StaticResource FormatToIntConverter}, UpdateSourceTrigger=LostFocus}"
+                                                 Text="{Binding CampbellViewModel.MaxCriticalSpeed, Converter={StaticResource FormatToIntConverter}, UpdateSourceTrigger=PropertyChanged}"
                                                  GotKeyboardFocus="TextBoxSelectContentByKeyboard"
                                                  IsEnabled="{Binding CampbellViewModel.NotInProgress}"/>
                                         <TextBlock Text="rpm" Margin="2, 0, 0, 0"/>
                                     </StackPanel>
-                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Max. otáčky rotoru:"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{StaticResource Max_rotor_speed}"/>
                                     <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Margin="0, 0, 0, 5">
                                         <TextBox Width="50" 
                                                  Text="{Binding CampbellViewModel.MaxShaftRpm, Converter={StaticResource FormatToIntConverter}, UpdateSourceTrigger=PropertyChanged}"
@@ -902,7 +904,7 @@
                                         <TextBlock Text="rpm" Margin="2, 0, 0, 0"/>
                                     </StackPanel>
 
-                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Počet kroků:"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{StaticResource No_of_steps}"/>
                                     <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Margin="0, 0, 0, 5">
                                         <TextBox Width="50"
                                                  Text="{Binding CampbellViewModel.RpmDivision, Converter={StaticResource FormatToIntConverter}, UpdateSourceTrigger=PropertyChanged}"
@@ -911,19 +913,21 @@
                                         <TextBlock Text="[-]" Margin="2, 0, 0, 0"/>
                                     </StackPanel>
 
-                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Krok otáček:"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="{StaticResource Speed_step}"/>
                                     <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" Margin="0, 0, 0, 5">
                                         <TextBlock Width="50"
-                                                   Text="{Binding CampbellViewModel.RpmStep, Mode=OneWay, Converter={StaticResource FormatDefaultConverter}}"/>
+                                                   Text="{Binding CampbellViewModel.RpmStep, Mode=OneWay}"/>
                                         <TextBlock Text="rpm" Margin="2, 0, 0, 0"/>
                                     </StackPanel>
 
                                     <CheckBox Grid.Row="4" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"
                                               Content="{StaticResource GyroscopicEffect_forward}" 
-                                              IsChecked="True"/>
+                                              IsChecked="{Binding CampbellViewModel.ForwardPrecessionIsChecked}"
+                                              IsEnabled="{Binding CampbellViewModel.NotInProgress}"/>
                                     <CheckBox Grid.Row="5" Grid.ColumnSpan="2" 
                                               Content="{StaticResource GyroscopicEffect_backward}"
-                                              IsChecked="True"/>
+                                              IsChecked="{Binding CampbellViewModel.BackwardPrecessionIsChecked}"
+                                              IsEnabled="{Binding CampbellViewModel.NotInProgress}"/>
 
                                 </Grid>
                                 <Button Height="25" Width="190" Margin="0, 5, 0, 5" Padding="3" Command="{Binding CampbellViewModel.CreateDiagramCommand}">
@@ -936,29 +940,54 @@
                                 <TextBlock Text="{StaticResource Display}"/>
                                 <StackPanel Margin="10, 5, 0, 0" Orientation="Vertical">
                                     <CheckBox Margin="0, 0, 0, 5"
-                                              Content="provozní otáčky" 
-                                              IsChecked="True"/>
+                                              Content="{StaticResource operating_speed}" 
+                                              IsChecked="{Binding CampbellViewModel.OperatingSpeedIsChecked}"/>
                                     <CheckBox Margin="0, 0, 0, 5"
-                                              Content="průběžné otáčky"
-                                              IsChecked="True"/>
+                                              Content="{StaticResource runaway_speed}"
+                                              IsChecked="{Binding CampbellViewModel.RunawaySpeedIsChecked}"/>
+                                    <CheckBox x:Name="criticalSpeedLowerLimitCheckBox" 
+                                              Content="{StaticResource critical_speed_lower_limit}" 
+                                              IsChecked="{Binding CampbellViewModel.CriticalSpeedLowerLimitIsChecked}"
+                                              Margin="0, 0, 0, 5"/>
+                                    <StackPanel Orientation="Horizontal" Margin="20, 0, 0, 5"
+                                                IsEnabled="{Binding ElementName=criticalSpeedLowerLimitCheckBox, Path=IsChecked}">
+                                        <TextBox Text="{Binding CampbellViewModel.CriticalSpeedLowerLimitFactor, 
+                                            UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RemoveDecimalSeparatorAtTheEndConverter}}" 
+                                                 GotKeyboardFocus="TextBoxSelectContentByKeyboard"
+                                                 Width="40"/>
+                                        <TextBlock Text="×"/>
+                                        <TextBlock Text="{StaticResource runaway_speed}" Margin="2, 0, 0, 0"/>
+                                    </StackPanel>
                                     <CheckBox Margin="0, 0, 0, 5"
-                                              Content="rozsah provozních otáček"
-                                              IsChecked="True"
+                                              Content="{StaticResource operating_speed_range}"
+                                              IsChecked="{Binding CampbellViewModel.OperatingSpeedRangeIsChecked}"
                                               x:Name="operatingSpeedRangeCheckBox"/>
                                     <StackPanel Orientation="Horizontal" Margin="20, 0, 0, 5"
                                                 IsEnabled="{Binding ElementName=operatingSpeedRangeCheckBox, Path=IsChecked}">
-                                        <TextBox Text="0" Width="40"/>
+                                        <TextBox Text="{Binding CampbellViewModel.OperatingSpeedRangeMin, UpdateSourceTrigger=PropertyChanged}" 
+                                                 GotKeyboardFocus="TextBoxSelectContentByKeyboard"
+                                                 Width="40"/>
                                         <TextBlock Text=" – "/>
-                                        <TextBox Text="500" Width="40"/>
+                                        <TextBox Text="{Binding CampbellViewModel.OperatingSpeedRangeMax, UpdateSourceTrigger=PropertyChanged}" 
+                                                 GotKeyboardFocus="TextBoxSelectContentByKeyboard"
+                                                 Width="40"/>
                                         <TextBlock Text="rpm" Margin="2, 0, 0, 0"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
-                                        <CheckBox Content="Zobrazit popisky" IsChecked="True"/>
+                                        <CheckBox Content="{StaticResource Show_labels}" 
+                                                  IsChecked="{Binding CampbellViewModel.ShowLabelsIsChecked}"/>
+                                        <TextBlock Text="(" Margin="5, -4, 0, 0" FontSize="15"/>
+                                        <CheckBox Content="{StaticResource label_background}" 
+                                                  IsChecked="{Binding CampbellViewModel.LabelsBackgroundIsChecked}"/>
+                                        <TextBlock Text=")" Margin="0, -4, 0, 0" FontSize="15"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5" HorizontalAlignment="Right">
                                         <Button VerticalAlignment="Center"
                                                 Height="17"
-                                                Width="70"
-                                                Margin="10, 0, 0, 0">
-                                            <TextBlock Text="Reset polohy" 
+                                                Width="100"
+                                                Margin="0, 0, 6, 0"
+                                                Command="{Binding CampbellViewModel.ResetLabelsCommand}">
+                                            <TextBlock Text="{StaticResource Reset_positions}" 
                                                        VerticalAlignment="Center"
                                                        FontSize="11"/>
                                         </Button>
@@ -977,20 +1006,27 @@
                                         <ColumnDefinition/>
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Rozměry obrázku:"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{StaticResource Image_dimensions}"/>
                                     <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
-                                        <TextBox Text="1920" Width="40" Margin="0, 0, 2, 0"/>
+                                        <TextBox Text="{Binding CampbellViewModel.ImageWidth, UpdateSourceTrigger=PropertyChanged}" 
+                                                 GotKeyboardFocus="TextBoxSelectContentByKeyboard"
+                                                 Width="40" Margin="0, 0, 2, 0"/>
                                         <TextBlock Text="×" Margin="0, 0, 2, 0"/>
-                                        <TextBox Text="1485" Width="40" Margin="0, 0, 2, 0"/>
+                                        <TextBox Text="{Binding CampbellViewModel.ImageHeight, UpdateSourceTrigger=PropertyChanged}" 
+                                                 GotKeyboardFocus="TextBoxSelectContentByKeyboard"
+                                                 Width="40" Margin="0, 0, 2, 0"/>
                                         <TextBlock Text="px"/>
                                     </StackPanel>
-                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Rozlišení obrázku:" Margin="0, 5, 0, 0"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{StaticResource Image_resolution}" Margin="0, 5, 0, 0"/>
                                     <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0, 5, 0, 0">
-                                        <TextBox Text="300" Width="40" Margin="0, 0, 2, 0"/>
+                                        <TextBox Text="{Binding CampbellViewModel.ImageDPI, UpdateSourceTrigger=PropertyChanged}" 
+                                                 GotKeyboardFocus="TextBoxSelectContentByKeyboard"
+                                                 Width="40" Margin="0, 0, 2, 0"/>
                                         <TextBlock Text="DPI"/>
                                         <Button Height="17" Width="17" Margin="10, 0, 0, 0" 
                                                 VerticalAlignment="Center"
-                                                ToolTip="Výchozí hodnoty">
+                                                ToolTip="{StaticResource Default_values}"
+                                                Command="{Binding CampbellViewModel.ResetImagePropertiesCommand}">
                                             <Image Source="/icons/RestoreImage_16x.png"/>
                                         </Button>
                                     </StackPanel>
@@ -1005,7 +1041,7 @@
                             </StackPanel>
                         </Border>
                     </Grid>
-                    <Grid Margin="15" Grid.Column="1">
+                    <Grid Margin="15, 15, 15, 5.2" Grid.Column="1">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
@@ -1032,8 +1068,20 @@
                                             <RowDefinition/>
                                             <RowDefinition/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0"
-                                                   Text="Vytváření Campbellova diagramu..." Margin="0, 0, 0, 5"/>
+                                        <StackPanel Orientation="Horizontal" Grid.Row="0">
+                                            <TextBlock Text="{StaticResource Creating_Campbell_diagram}" Margin="0, 0, 0, 5"/>
+                                            <Button Command="{Binding CampbellViewModel.CancelCommand}"
+                                                    Width="15" Height="15"
+                                                    VerticalAlignment="Center"
+                                                    Margin="2, 0, 0, 5" 
+                                                    Background="Transparent"
+                                                    BorderBrush="Transparent"
+                                                    Padding="0"
+                                                    ToolTip="{StaticResource Cancel}">
+                                                <Image Source="/icons/Cancel_16x.png"/>
+                                            </Button>
+                                        </StackPanel>
+                                        
                                         <ProgressBar Grid.Row="1"
                                                      Height="20" Width="150" 
                                                      Minimum="0" 

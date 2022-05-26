@@ -102,7 +102,13 @@ namespace Kritik
             {nameof(castiODelce), "částí o délce" },
             {nameof(meziKterymiJsouUmistenyPrvkyDT), "mezi kterými jsou umístěny prvky:" },
             {nameof(NebylyVypoctenyZadneKritickeOtacky), "Nebyly vypočteny žádné kritické otáčky." },
-            {nameof(VypocetNebylDosudProveden), "Výpočet nebyl dosud proveden." }
+            {nameof(VypocetNebylDosudProveden), "Výpočet nebyl dosud proveden." },
+            {nameof(KritickeOtacky), "Kritické otáčky" },
+            {nameof(OtackyRotoru), "Otáčky rotoru" },
+            {nameof(provozniOtacky), "provozní otáčky" },
+            {nameof(prubezneOtacky), "průběžné otáčky" },
+            {nameof(minimalni), "minimální" },
+            {nameof(maximalni), "maximální" }
         };
         #endregion
 
@@ -141,9 +147,9 @@ namespace Kritik
             {nameof(odpovidajiDT), "corresponds to:" },
             {nameof(provoznichOtacek), "of operating speed" },
             {nameof(prubeznychOtacek), "of runaway speed" },
-            {nameof(GeometrieHrideleDT), "Shaft geometry:" },
-            {ElementType.beam.ToString(), "Beam" },
-            {ElementType.beamPlus.ToString(), "Beam+" },
+            {nameof(GeometrieHrideleDT), "Rotor geometry:" },
+            {ElementType.beam.ToString(), "Shaft" },
+            {ElementType.beamPlus.ToString(), "Shaft+" },
             {ElementType.rigid.ToString(), "Rigid" },
             {ElementType.disc.ToString(), "Disc" },
             {ElementType.support.ToString(),"Support" },
@@ -152,7 +158,13 @@ namespace Kritik
             {nameof(castiODelce), "parts with length of" },
             {nameof(meziKterymiJsouUmistenyPrvkyDT), "between which are placed these elements:" },
             {nameof(NebylyVypoctenyZadneKritickeOtacky), "No critical speed was computed." },
-            {nameof(VypocetNebylDosudProveden), "The calculation has not been done yet." }
+            {nameof(VypocetNebylDosudProveden), "The calculation has not been done yet." },
+            {nameof(KritickeOtacky), "Critical speed" },
+            {nameof(OtackyRotoru), "Rotor speed" },
+            {nameof(provozniOtacky), "operating speed" },
+            {nameof(prubezneOtacky), "runaway speed" },
+            {nameof(minimalni), "minimal" },
+            {nameof(maximalni), "maximal" }
         };
         #endregion
 
@@ -195,6 +207,12 @@ namespace Kritik
         public string meziKterymiJsouUmistenyPrvkyDT => dictionary[This()];
         public string NebylyVypoctenyZadneKritickeOtacky => dictionary[This()];
         public string VypocetNebylDosudProveden => dictionary[This()];
+        public string KritickeOtacky => dictionary[This()];
+        public string OtackyRotoru => dictionary[This()];
+        public string provozniOtacky => dictionary[This()];
+        public string prubezneOtacky => dictionary[This()];
+        public string minimalni => dictionary[This()];
+        public string maximalni => dictionary[This()];
 
         /// <summary>
         /// Converts <see cref="ElementType"/> enum to string according to language set in <see cref="SelectedLanguage"/>
@@ -208,7 +226,7 @@ namespace Kritik
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
-        public string OrdinalNumber(int number)
+        public string OrdinalNumber(int number, bool superScript = false)
         {
             int num = Math.Abs(number) % 100;
 
@@ -216,15 +234,28 @@ namespace Kritik
             {
                 case Language.en:
                     {
+                        string st = "st";
+                        string nd = "nd";
+                        string rd = "rd";
+                        string th = "th";
+
+                        if (superScript)
+                        {
+                            st = "ˢᵗ";
+                            nd = "ⁿᵈ";
+                            rd = "ʳᵈ";
+                            th = "ᵗʰ";
+                        }
+
                         if (num > 10 && num < 20)
-                            return number + "th";
+                            return number + th;
 
                         switch (num % 10)
                         {
-                            case 1: return number + "st";
-                            case 2: return number + "nd";
-                            case 3: return number + "rd";
-                            default: return number + "th";
+                            case 1: return number + st;
+                            case 2: return number + nd;
+                            case 3: return number + rd;
+                            default: return number + th;
                         }
                     }
                 case Language.cs:

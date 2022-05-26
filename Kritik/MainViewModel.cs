@@ -28,11 +28,15 @@ namespace Kritik
             Strings = new Strings((Strings.Language)Properties.Settings.Default.lang);
             this.resourceDictionary = Application.Current.Resources.MergedDictionaries.Last();
             this.newCalculationFileName = (string)resourceDictionary["New_calculation"] + ".xlsx";
+
+            OutputLanguageChanged += (_, _) => NotifyPropertyChanged(nameof(OscillationShapesViewModel));
+            OutputLanguageChanged += (_, _) => CampbellViewModel.OnLanguageChanged();
             InitializeNewCalculation();
         }
 
         public delegate void SelectedElementChangedEventHandler(object sender, int elementId);
         public event SelectedElementChangedEventHandler SelectedElementChanged;
+        public event EventHandler OutputLanguageChanged;
 
         #region PropertyChanged Implementation
         public event PropertyChangedEventHandler PropertyChanged;
@@ -430,7 +434,7 @@ namespace Kritik
             () => true);
         private ICommand languageDropDownClosedCommand;
         public ICommand LanguageDropDownClosedCommand => languageDropDownClosedCommand ??= new CommandHandler(
-            () => NotifyPropertyChanged(nameof(OscillationShapesViewModel)),
+            () => OutputLanguageChanged?.Invoke(this, null),
             () => true);
         private ICommand historyAddCommand;
         public ICommand HistoryAddCommand => historyAddCommand ??= new CommandHandler(
@@ -542,8 +546,9 @@ namespace Kritik
             await KritikCalculation.CalculateOscillationShapesAsync();
             if (KritikCalculation.CriticalSpeeds.Length > 0)
             {
-                OscillationShapesViewModel = new OscillationShapesViewModel(KritikCalculation, ShaftScheme, Strings);
+                OscillationShapesViewModel = new OscillationShapesViewModel(KritikCalculation, ShaftScheme2, Strings);
                 CampbellViewModel = new CampbellViewModel(KritikCalculation, Strings);
+                await CampbellViewModel.FindMaxCriticalSpeedAsync();
             }
 
             AnyPropertyChangedSinceKritikCalculation = false;

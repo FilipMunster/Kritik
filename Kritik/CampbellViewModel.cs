@@ -1,12 +1,15 @@
 ﻿using Microsoft.Win32;
 using OxyPlot;
+using OxyPlot.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -17,16 +20,18 @@ namespace Kritik
     {
         private KritikCalculation kritikCalculation;
         private CampbellDiagram campbellDiagram;
+        private MovableAnnotations<LineAnnotation> speedAnnotations = new MovableAnnotations<LineAnnotation>();
+        private MovableAnnotations<TextAnnotation> precessionAnnotations = new MovableAnnotations<TextAnnotation>();
         private readonly Strings strings;
+
+        private CancellationTokenSource cancellationTokenSource;
         public CampbellViewModel(KritikCalculation kritikCalculation, Strings strings)
         {
             Shaft shaftClone = (Shaft)kritikCalculation.Shaft.Clone();
             CalculationProperties propertiesClone = (CalculationProperties)kritikCalculation.CalculationProperties.Clone();
             this.kritikCalculation = new KritikCalculation(shaftClone, propertiesClone);
-
             this.strings = strings;
-            double runawaySpeed = kritikCalculation.Shaft.Properties.RunawaySpeed;
-            
+                                  
             MaxShaftRpm = Convert.ToInt32(Math.Ceiling(kritikCalculation.CriticalSpeeds.Max() / 100) * 100);
             NotifyPropertyChanged(nameof(ProgressBarVisibility));
         }
@@ -73,6 +78,7 @@ namespace Kritik
             set
             {
                 inProgress = value;
+                NotifyPropertyChanged(nameof(ProgressBarVisibility));
                 NotifyPropertyChanged(nameof(NotInProgress));
             }
         }
@@ -80,22 +86,194 @@ namespace Kritik
         public string ProgressBarVisibility => InProgress ? "Visible" : "Collapsed";
         public bool CampbellTabIsSelected { get; set; }
 
+        public bool ForwardPrecessionIsChecked { get; set; } = true;
+        public bool BackwardPrecessionIsChecked { get; set; } = true;
+
+        private bool operatingSpeedIsChecked;
+        public bool OperatingSpeedIsChecked
+        {
+            get => operatingSpeedIsChecked;
+            set
+            {
+                operatingSpeedIsChecked = value;
+                UpdateSpeedAnnotations();
+            }
+        }
+        private bool runawaySpeedIsChecked;
+        public bool RunawaySpeedIsChecked
+        {
+            get => runawaySpeedIsChecked;
+            set
+            {
+                runawaySpeedIsChecked = value;
+                UpdateSpeedAnnotations();
+            }
+        }
+
+        private bool criticalSpeedLowerLimitIsChecked;
+        public bool CriticalSpeedLowerLimitIsChecked
+        {
+            get => criticalSpeedLowerLimitIsChecked;
+            set
+            {
+                criticalSpeedLowerLimitIsChecked = value;
+                UpdateSpeedAnnotations();
+            }
+        }
+
+        private bool operatingSpeedRangeIsChecked;
+        public bool OperatingSpeedRangeIsChecked
+        {
+            get => operatingSpeedRangeIsChecked;
+            set
+            {
+                operatingSpeedRangeIsChecked = value;
+                UpdateSpeedAnnotations();
+            }
+        }
+        private (int Min, int Max) operatingSpeedRange;
+        public int OperatingSpeedRangeMin
+        {
+            get => operatingSpeedRange.Min;
+            set
+            {
+                operatingSpeedRange.Min = value;
+                UpdateSpeedAnnotations();
+            }
+        }
+        public int OperatingSpeedRangeMax
+        {
+            get => operatingSpeedRange.Max;
+            set
+            {
+                operatingSpeedRange.Max = value;
+                UpdateSpeedAnnotations();
+            }
+        }
+        private double criticalSpeedLowerLimitFactor;
+        public double CriticalSpeedLowerLimitFactor
+        {
+            get => criticalSpeedLowerLimitFactor;
+            set
+            {
+                criticalSpeedLowerLimitFactor = value;
+                UpdateSpeedAnnotations();
+            }
+        }
+        public bool showLabelsIsChecked;
+        public bool ShowLabelsIsChecked
+        {
+            get => showLabelsIsChecked;
+            set
+            {
+                showLabelsIsChecked = value;
+                UpdatePrecessionAnnotations();
+            }
+        }
+        public bool labelsBackgroundIsChecked = true;
+        public bool LabelsBackgroundIsChecked
+        {
+            get => labelsBackgroundIsChecked;
+            set
+            {
+                labelsBackgroundIsChecked = value;
+                UpdatePrecessionAnnotations();
+            }
+        }
+
+        private (int Width, int Height, int DPI) image = 
+            (Properties.Settings.Default.CampbellImgW, Properties.Settings.Default.CampbellImgH, Properties.Settings.Default.CampbellImgDPI);
+        public int ImageWidth
+        {
+            get => image.Width;
+            set
+            {
+                image.Width = value;
+                Properties.Settings.Default.CampbellImgW = value;
+            }
+        }
+        public int ImageHeight
+        {
+            get => image.Height;
+            set
+            {
+                image.Height = value;
+                Properties.Settings.Default.CampbellImgH = value;
+            }
+        }
+        public int ImageDPI
+        {
+            get => image.DPI;
+            set
+            {
+                image.DPI = value;
+                Properties.Settings.Default.CampbellImgDPI = value;
+            }
+        }
+
         public PlotModel CampbellDiagramPlotModel { get; private set; } = new PlotModel();
 
         private ICommand createDiagramCommand;
         public ICommand CreateDiagramCommand => createDiagramCommand ??= new CommandHandler(
             async () => await CreateDiagramAsync(),
-            () => MaxShaftRpm > 0 && RpmDivision >= 10 && !InProgress && CampbellTabIsSelected);
+            () => MaxShaftRpm > 0
+            && RpmDivision >= 10 
+            && !InProgress 
+            && CampbellTabIsSelected 
+            && (ForwardPrecessionIsChecked || BackwardPrecessionIsChecked));
+        
         private ICommand saveDiagramCommand;
         public ICommand SaveDiagramCommand => saveDiagramCommand ??= new CommandHandler(
             () => SaveToPng(),
-            () => MaxShaftRpm > 0 && RpmDivision >= 10 && !InProgress);
+            () => MaxShaftRpm > 0 && RpmDivision >= 10 && !InProgress && CampbellDiagramPlotModel.Axes.Count > 0);
 
+        private ICommand resetImagePropertiesCommand;
+        public ICommand ResetImagePropertiesCommand => resetImagePropertiesCommand ??= new CommandHandler(
+            () =>
+            {
+                ImageWidth = 1920;
+                ImageHeight = 1440;
+                ImageDPI = 300;
+                NotifyPropertyChanged(nameof(ImageHeight));
+                NotifyPropertyChanged(nameof(ImageWidth));
+                NotifyPropertyChanged(nameof(ImageDPI));
+            },
+            () => true);
+
+        private ICommand cancelCommand;
+        public ICommand CancelCommand => cancelCommand ??= new CommandHandler(
+            () => cancellationTokenSource?.Cancel(),
+            () => true);
+        private ICommand resetLabelsCommand;
+        public ICommand ResetLabelsCommand => resetLabelsCommand ??= new CommandHandler(
+            () => { UpdateSpeedAnnotations(true); UpdatePrecessionAnnotations(true); },
+            () => true);
+
+        /// <summary>
+        /// Finds max critical speed and updates <see cref="MaxShaftRpm"/>
+        /// </summary>
+        /// <returns></returns>
+        public async Task FindMaxCriticalSpeedAsync()
+        {
+            ShaftProperties shaftProperties = kritikCalculation.Shaft.Properties;
+            shaftProperties.ShaftRotationInfluence = false;
+
+            shaftProperties.Gyros = GyroscopicEffect.forward;
+            await kritikCalculation.CalculateCriticalSpeedsAsync();
+            double maxCriticalSpeed = kritikCalculation.CriticalSpeeds.Max();
+
+            shaftProperties.Gyros = GyroscopicEffect.backward;
+            await kritikCalculation.CalculateCriticalSpeedsAsync();
+            if (kritikCalculation.CriticalSpeeds.Max() > maxCriticalSpeed)
+                maxCriticalSpeed = kritikCalculation.CriticalSpeeds.Max();
+
+            MaxShaftRpm = Convert.ToInt32(Math.Ceiling(maxCriticalSpeed / 100) * 100);
+            NotifyPropertyChanged(nameof(MaxShaftRpm));
+        }
 
         private async Task CreateDiagramAsync()
         {
             InProgress = true;
-            NotifyPropertyChanged(nameof(ProgressBarVisibility));
             Progress<int> progress = new Progress<int>(
                 (val) => { 
                     ProgressPercentage = Convert.ToInt32(Math.Round((double)val / RpmDivision * 100));
@@ -103,34 +281,215 @@ namespace Kritik
                 });
 
             this.campbellDiagram = new CampbellDiagram(kritikCalculation, MaxShaftRpm, RpmDivision, this.strings);
-            await this.campbellDiagram.CreateDiagramAsync(progress);
-            CampbellDiagramPlotModel = this.campbellDiagram.GetPlotModel();
+
+            this.cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken token = cancellationTokenSource.Token;
+            await this.campbellDiagram.CreateDiagramAsync(progress, token, ForwardPrecessionIsChecked, BackwardPrecessionIsChecked);
+            this.cancellationTokenSource.Dispose();
+
+            if (CampbellDiagramPlotModel.Axes.Count == 0)
+            {
+                // If it's first time creating the Diagram:
+                CampbellDiagramPlotModel = this.campbellDiagram.GetPlotModel();
+                CampbellDiagramPlotModel.MouseMove += CampbellDiagramPlotModel_MouseMove;
+                
+                UpdateSpeedAnnotations(true);
+                UpdatePrecessionAnnotations(true);
+            }
+            else
+            {
+                // Else just update the axes and series of plot model and the annotations
+                this.campbellDiagram.UpdateModelData(CampbellDiagramPlotModel);
+                UpdateSpeedAnnotations();
+                UpdatePrecessionAnnotations();
+            }
+
             NotifyPropertyChanged(nameof(CampbellDiagramPlotModel));
             
             InProgress = false;
-            NotifyPropertyChanged(nameof(ProgressBarVisibility));
             CommandManager.InvalidateRequerySuggested();
         }
 
         private void SaveToPng()
         {
             string fullFilePath = this.kritikCalculation.CalculationProperties.FileName;
-            string path = System.IO.Path.GetDirectoryName(fullFilePath);
-            string fileName = System.IO.Path.GetFileNameWithoutExtension(fullFilePath);
+            string path = Path.GetDirectoryName(fullFilePath);
+            string fileName = Path.GetFileNameWithoutExtension(fullFilePath);
 
             SaveFileDialog saveFileDialog = new SaveFileDialog()
             {
                 Filter = Application.Current.Resources.MergedDictionaries[^1]["PNG_image"] + " (*.png)|*.png",
-                FileName = System.IO.Path.GetFileName(path + "\\" + fileName + "_Campbell.png")
+                FileName = Path.GetFileName(path + "\\" + fileName + "_Campbell.png")
             };
 
             if (saveFileDialog.ShowDialog() == false)
                 return;
 
-            OxyModelToPng oxyModelToPng = new OxyModelToPng(300, 1920, 0);
-            oxyModelToPng.AddModel(CampbellDiagramPlotModel, 1485);
+            OxyModelToPng oxyModelToPng = new OxyModelToPng(ImageDPI, ImageWidth, 0);
+            oxyModelToPng.AddModel(CampbellDiagramPlotModel, ImageHeight);
             oxyModelToPng.SaveToFile(saveFileDialog.FileName);
         }
 
+        private void UpdateSpeedAnnotations(bool setInitialPosition = false)
+        {
+            if (CampbellDiagramPlotModel.Axes.Count == 0)
+                return;
+
+            bool[] checkedValues = new bool[]
+            {
+                OperatingSpeedIsChecked,
+                RunawaySpeedIsChecked,
+                CriticalSpeedLowerLimitIsChecked,
+                OperatingSpeedRangeIsChecked,
+                OperatingSpeedRangeIsChecked
+            };
+            double[] rpmValues = new double[]
+            {
+                this.kritikCalculation.Shaft.Properties.OperatingSpeed,
+                this.kritikCalculation.Shaft.Properties.RunawaySpeed,
+                this.kritikCalculation.Shaft.Properties.RunawaySpeed * CriticalSpeedLowerLimitFactor,
+                OperatingSpeedRangeMin,
+                OperatingSpeedRangeMax
+            };
+            string[] textValues = new string[]
+            {
+                this.strings.provozniOtacky,
+                this.strings.prubezneOtacky,
+                this.strings.prubezneOtacky,
+                "min. " + this.strings.provozniOtacky,
+                "max. " + this.strings.provozniOtacky,
+            };
+
+            if (this.speedAnnotations.Count == 0)
+            {
+                // Create 5 new Line annotations and add reference for plot model
+                for (int i = 0; i < checkedValues.Length; i++)
+                {
+                    this.speedAnnotations.Add(new LineAnnotation());
+                    CampbellDiagramPlotModel.Annotations.Add(speedAnnotations[i]);
+                }
+            }
+
+            for (int i = 0; i < checkedValues.Length; i++)
+            {
+                LineAnnotation line = this.speedAnnotations[i];
+
+                line.StrokeThickness = 1;
+                line.Color = OxyColors.Black;
+                line.TextColor = OxyColors.Black;
+                line.FontSize = 13;
+                line.Font = "Calibri";
+                line.Type = LineAnnotationType.Vertical;
+                line.TextHorizontalAlignment = OxyPlot.HorizontalAlignment.Left;
+
+                line.Text = textValues[i] + " " + rpmValues[i] + " rpm";
+                if (i == 2)
+                    line.Text = textValues[i] + " × " + criticalSpeedLowerLimitFactor;
+                line.X = rpmValues[i];
+                if (setInitialPosition)
+                    line.TextPosition = new DataPoint(rpmValues[i], this.campbellDiagram.MaxCriticalSpeed * 0.01);
+                else
+                    line.TextPosition = new DataPoint(rpmValues[i], line.TextPosition.Y);
+                line.TextRotation = 270;
+
+                if (!checkedValues[i])
+                {
+                    line.Color = OxyColors.Transparent;
+                    line.TextColor = OxyColors.Transparent;
+                }
+            }                     
+            CampbellDiagramPlotModel.InvalidatePlot(false);
+        }
+
+        private void UpdatePrecessionAnnotations(bool setInitialPosition = false)
+        {
+            if (campbellDiagram is null)
+                return;
+
+            CampbellDiagram.Precession[] forwardPrecessions = this.campbellDiagram.ForwardPrecessions;
+            CampbellDiagram.Precession[] backwardPrecessions = this.campbellDiagram.BackwardPrecessions;
+
+            List<TextAnnotation> forwardAnnotations = new List<TextAnnotation>(
+                this.precessionAnnotations.Where((a) => ((CampbellDiagram.Precession)a.Tag).PrecessionType == GyroscopicEffect.forward));
+            List<TextAnnotation> backwardAnnotations = new List<TextAnnotation>(
+                this.precessionAnnotations.Where((a) => ((CampbellDiagram.Precession)a.Tag).PrecessionType == GyroscopicEffect.backward));
+
+            bool resetPosition = setInitialPosition 
+                || forwardPrecessions.Length != forwardAnnotations.Count 
+                || backwardPrecessions.Length != backwardAnnotations.Count;
+
+            // If theres no change in precessions, just update the annotations text and appearance
+            if (!resetPosition)
+            {
+                foreach (TextAnnotation annotation in this.precessionAnnotations)
+                {
+                    string precessionNumber = this.strings.OrdinalNumber(((CampbellDiagram.Precession)annotation.Tag).PrecessionNumber + 1, true).ToUpper();
+                    string precessionName = ((CampbellDiagram.Precession)annotation.Tag).PrecessionType == GyroscopicEffect.forward ?
+                        this.strings.SOUBEZNAPRECESE : this.strings.PROTIBEZNAPRECESE;
+                    annotation.Text = precessionNumber + " " + precessionName;
+
+                    annotation.TextColor = ShowLabelsIsChecked ? OxyColors.Black : OxyColors.Transparent;
+                    annotation.Background = (ShowLabelsIsChecked && LabelsBackgroundIsChecked) ? OxyColors.White : OxyColors.Transparent;
+                    annotation.Stroke = (ShowLabelsIsChecked && LabelsBackgroundIsChecked) ? OxyColors.Black : OxyColors.Transparent;
+                }
+                CampbellDiagramPlotModel.InvalidatePlot(false);
+                return;
+            }                
+
+            double maxCriticalSpeed = this.campbellDiagram.MaxCriticalSpeed;
+            while (this.precessionAnnotations.Count > 0)
+            {
+                CampbellDiagramPlotModel.Annotations.Remove(this.precessionAnnotations[0]);
+                this.precessionAnnotations.RemoveAt(0);
+            }
+
+            foreach (CampbellDiagram.Precession precession in forwardPrecessions.Concat(backwardPrecessions))
+            {
+                this.precessionAnnotations.Add(GetAnnotation(precession));
+                CampbellDiagramPlotModel.Annotations.Add(this.precessionAnnotations[^1]);
+            }
+            CampbellDiagramPlotModel.InvalidatePlot(false);
+
+            TextAnnotation GetAnnotation(CampbellDiagram.Precession precession)
+            {
+                string precessionNumber = this.strings.OrdinalNumber(precession.PrecessionNumber + 1, true).ToUpper();
+                string precessionName = precession.PrecessionType == GyroscopicEffect.forward ? this.strings.SOUBEZNAPRECESE : this.strings.PROTIBEZNAPRECESE;
+
+                TextAnnotation annotation = new TextAnnotation();
+                annotation.StrokeThickness = 1;
+                annotation.Padding = new OxyThickness(2);
+                annotation.TextColor = ShowLabelsIsChecked ? OxyColors.Black : OxyColors.Transparent;
+                annotation.Font = "Calibri";
+                annotation.FontSize = 13;
+                annotation.TextHorizontalAlignment = OxyPlot.HorizontalAlignment.Center;
+                annotation.Background = (ShowLabelsIsChecked && LabelsBackgroundIsChecked) ? OxyColors.White : OxyColors.Transparent;
+                annotation.Stroke = (ShowLabelsIsChecked && LabelsBackgroundIsChecked) ? OxyColors.Black : OxyColors.Transparent;
+                annotation.Tag = precession;
+
+                annotation.Text = precessionNumber + " " + precessionName;
+
+                (double[] rotorSpeeds, double[] criticalSpeeds) = precession.GetValues();
+                double textXPosition = rotorSpeeds[rotorSpeeds.Length * 2 / 3];
+                double textYPosition = criticalSpeeds[criticalSpeeds.Length / 2] - maxCriticalSpeed * 0.03;
+                annotation.TextPosition = new DataPoint(textXPosition, textYPosition);
+
+                return annotation;
+            }
+        }
+
+        private void CampbellDiagramPlotModel_MouseMove(object sender, OxyMouseEventArgs e)
+        {
+            this.speedAnnotations.MoveAnnotation(e, CampbellDiagramPlotModel, false, true);
+            this.precessionAnnotations.MoveAnnotation(e, CampbellDiagramPlotModel, true, true);
+        }
+
+        public void OnLanguageChanged()
+        {
+            UpdateSpeedAnnotations();
+            UpdatePrecessionAnnotations();
+            CampbellDiagramPlotModel.Axes[0].Title = this.strings.OtackyRotoru + " (rpm)";
+            CampbellDiagramPlotModel.Axes[1].Title = this.strings.KritickeOtacky + " (rpm)";
+            CampbellDiagramPlotModel.InvalidatePlot(false);
+        }
     }
 }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Kritik
@@ -26,7 +27,24 @@ namespace Kritik
             this.strings = strings;
         }
 
-        public async Task CreateDiagramAsync(IProgress<int> progress)
+        public double MaxCriticalSpeed
+        {
+            get
+            {
+                double[] forwardCriticalSpeeds = new double[] { 0 };
+                double[] backwardCriticalSpeeds = new double[] { 0 };
+                if (forwardPrecessions.Count > 0)
+                    (_, forwardCriticalSpeeds) = forwardPrecessions[^1].GetValues();
+                if (backwardPrecessions.Count > 0)
+                    (_, backwardCriticalSpeeds) = backwardPrecessions[^1].GetValues();
+                return Math.Max(forwardCriticalSpeeds.Max(), backwardCriticalSpeeds.Max());
+            }
+        }
+
+        public Precession[] ForwardPrecessions => this.forwardPrecessions.ToArray();
+        public Precession[] BackwardPrecessions => this.backwardPrecessions.ToArray();
+
+        public async Task CreateDiagramAsync(IProgress<int> progress, CancellationToken cancellationToken, bool createForwardPrecession, bool createBackwardPrecession)
         {
             calculation.Shaft.Properties.ShaftRotationInfluence = true;
 
@@ -34,15 +52,30 @@ namespace Kritik
             int i = 0;
             while (rpm <= this.maxRpm)
             {
+                try
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }                
+
                 calculation.Shaft.Properties.ShaftRPM = rpm;
 
-                calculation.Shaft.Properties.Gyros = GyroscopicEffect.forward;
-                await calculation.CalculateCriticalSpeedsAsync();
-                AddToPrecession(calculation.Shaft.Properties.Gyros, rpm, calculation.CriticalSpeeds);
-
-                calculation.Shaft.Properties.Gyros = GyroscopicEffect.backward;
-                await calculation.CalculateCriticalSpeedsAsync();
-                AddToPrecession(calculation.Shaft.Properties.Gyros, rpm, calculation.CriticalSpeeds);
+                if (createForwardPrecession)
+                {
+                    calculation.Shaft.Properties.Gyros = GyroscopicEffect.forward;
+                    await calculation.CalculateCriticalSpeedsAsync();
+                    AddToPrecession(calculation.Shaft.Properties.Gyros, rpm, calculation.CriticalSpeeds);
+                }
+                
+                if (createBackwardPrecession)
+                {
+                    calculation.Shaft.Properties.Gyros = GyroscopicEffect.backward;
+                    await calculation.CalculateCriticalSpeedsAsync();
+                    AddToPrecession(calculation.Shaft.Properties.Gyros, rpm, calculation.CriticalSpeeds);
+                }                
 
                 progress.Report(++i);
                 rpm += this.rpmStep;
@@ -78,49 +111,64 @@ namespace Kritik
         public PlotModel GetPlotModel()
         {
             if (this.forwardPrecessions.Count == 0 && this.backwardPrecessions.Count == 0)
-                return null;
+                return new PlotModel();
 
             PlotModel model = new PlotModel();
-            model.Axes.Add(new OxyPlot.Axes.LinearAxis
+            UpdateModelData(model);
+
+            return model;
+        }
+
+        public void UpdateModelData(PlotModel plotModel)
+        {
+            plotModel.Axes.Clear();
+            plotModel.Series.Clear();
+
+            plotModel.Axes.Add(new OxyPlot.Axes.LinearAxis
             {
                 Position = OxyPlot.Axes.AxisPosition.Bottom,
                 MajorGridlineStyle = LineStyle.Dot,
-                Title = "Rotor speed (RPM)",
+                Title = strings.OtackyRotoru + " (rpm)",
+                Font = "Calibri",
+                FontSize = 13,
                 Minimum = 0
             });
 
-            model.Axes.Add(new OxyPlot.Axes.LinearAxis
+            plotModel.Axes.Add(new OxyPlot.Axes.LinearAxis
             {
                 Position = OxyPlot.Axes.AxisPosition.Left,
                 MajorGridlineStyle = LineStyle.Dot,
-                Title = "Critical speed (RPM)",
+                Title = strings.KritickeOtacky + " (rpm)",
+                Font = "Calibri",
+                FontSize = 13,
                 Minimum = 0
-            });            
+            });
 
             LineSeries axis = new LineSeries();
             axis.Points.Add(new DataPoint(0, 0));
             axis.Points.Add(new DataPoint(this.maxRpm, this.maxRpm));
             axis.LineStyle = LineStyle.DashDot;
             axis.Color = OxyColors.Gray;
-            model.Series.Add(axis);
+            axis.StrokeThickness = 1.5;
+            plotModel.Series.Add(axis);
 
             foreach (Precession item in this.forwardPrecessions)
             {
                 LineSeries line = item.ToLineSeries();
                 line.Color = OxyColors.Black;
                 line.Title = item.PrecessionType.ToString();
-                model.Series.Add(line);
+                plotModel.Series.Add(line);
             }
             foreach (Precession item in this.backwardPrecessions)
             {
                 LineSeries line = item.ToLineSeries();
-                line.Color = OxyColors.SteelBlue;
-                model.Series.Add(line);
+                line.Color = this.forwardPrecessions.Count > 0 ? OxyColors.SteelBlue : OxyColors.Black;
+                plotModel.Series.Add(line);
             }
-            return model;
+            plotModel.InvalidatePlot(true);
         }
 
-        private class Precession
+        public class Precession
         {
             private readonly List<CampbellItem> items = new List<CampbellItem>();
             public Precession(GyroscopicEffect precessionType, int precessionNumber)
@@ -146,9 +194,22 @@ namespace Kritik
                 }
                 return lineSeries;
             }
+
+            public (double[] rotorSpeeds, double[] criticalSpeeds) GetValues()
+            {
+                List<double> x = new List<double>(items.Count);
+                List<double> y = new List<double>(items.Count);
+
+                foreach (CampbellItem item in items)
+                {
+                    x.Add(item.ShaftRpm);
+                    y.Add(item.CriticalSpeed);
+                }
+                return (x.ToArray(), y.ToArray());
+            }
         }
         
-        private struct CampbellItem
+        public struct CampbellItem
         {
             public CampbellItem(double shaftRpm, double criticalSpeed)
             {

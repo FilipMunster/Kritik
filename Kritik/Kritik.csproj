@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <None Remove="icons\Add_16x.png" />
+    <None Remove="icons\Cancel_16x.png" />
     <None Remove="icons\DeleteAllRows_16x.png" />
     <None Remove="icons\Download_16x.png" />
     <None Remove="icons\kritik.ico" />
@@ -65,6 +66,7 @@
 
   <ItemGroup>
     <Resource Include="icons\Add_16x.png" />
+    <Resource Include="icons\Cancel_16x.png" />
     <Resource Include="icons\DeleteAllRows_16x.png" />
     <Resource Include="icons\Download_16x.png" />
     <Resource Include="icons\kritik.ico" />

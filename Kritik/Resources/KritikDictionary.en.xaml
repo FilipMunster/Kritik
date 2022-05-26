@@ -2,7 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:system="clr-namespace:System;assembly=mscorlib">
     <system:String x:Key="@languageName">english</system:String>
-    <system:String x:Key="changesWillTakeEfectAfterRestart">The changes will only take effect after restarting the application.</system:String>
+    <system:String x:Key="changesWillTakeEfectAfterRestart">The changes will take effect after restarting the application.</system:String>
     <system:String x:Key="Notice">Notice</system:String>
     <system:String x:Key="CRITICAL_SPEED">CRITICAL SPEED</system:String>
     <system:String x:Key="Calculation">Calculation</system:String>
@@ -28,7 +28,7 @@
     <system:String x:Key="Shaft_material">Shaft material:</system:String>
     <system:String x:Key="Operating_speed">Operating speed:</system:String>
     <system:String x:Key="Runaway_speed">Runaway speed:</system:String>
-    <system:String x:Key="Beam_plus">Beam +</system:String>
+    <system:String x:Key="Beam_plus">Shaft +</system:String>
     <system:String x:Key="Element_number">Element number:</system:String>
     <system:String x:Key="Split_into">Split into</system:String>
     <system:String x:Key="parts">parts.</system:String>
@@ -92,8 +92,8 @@
     <system:String x:Key="BoundaryCondition_free">free</system:String>
     <system:String x:Key="BoundaryCondition_joint">joint</system:String>
     <system:String x:Key="BoundaryCondition_fix">fix</system:String>
-    <system:String x:Key="ElementType_beam">Beam</system:String>
-    <system:String x:Key="ElementType_beamPlus">Beam+</system:String>
+    <system:String x:Key="ElementType_beam">Shaft</system:String>
+    <system:String x:Key="ElementType_beamPlus">Shaft+</system:String>
     <system:String x:Key="ElementType_rigid">Rigid</system:String>
     <system:String x:Key="ElementType_disc">Disc</system:String>
     <system:String x:Key="ElementType_support">Support</system:String>
@@ -104,4 +104,20 @@
     <system:String x:Key="Campbell_diagram">Campbell diagram</system:String>
     <system:String x:Key="Save_Campbell_diagram">Save Campbell diagram</system:String>
     <system:String x:Key="Create_Campbell_diagram">Create Campbell diagram</system:String>
+    <system:String x:Key="Calculation_settings">Calculation settings:</system:String>
+    <system:String x:Key="Max_rotor_speed">Max. rotor speed:</system:String>
+    <system:String x:Key="No_of_steps">Number of steps:</system:String>
+    <system:String x:Key="Speed_step">Speed step of:</system:String>
+    <system:String x:Key="operating_speed">operating speed</system:String>
+    <system:String x:Key="runaway_speed">runaway speed</system:String>
+    <system:String x:Key="critical_speed_lower_limit">critical speed lower limit</system:String>
+    <system:String x:Key="operating_speed_range">operating speed range</system:String>
+    <system:String x:Key="Show_labels">Show labels</system:String>
+    <system:String x:Key="label_background">label background</system:String>
+    <system:String x:Key="Reset_positions">Reset positions</system:String>
+    <system:String x:Key="Image_dimensions">Image dimensions:</system:String>
+    <system:String x:Key="Image_resolution">Image resolution:</system:String>
+    <system:String x:Key="Default_values">Default values</system:String>
+    <system:String x:Key="Creating_Campbell_diagram">Creating Campbell diagram...</system:String>
+    <system:String x:Key="Cancel">Cancel</system:String>
 </ResourceDictionary>

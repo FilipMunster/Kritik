@@ -6,10 +6,10 @@ using System.Windows.Data;
 
 namespace Kritik
 {
-    public static class GetOnlyNumbers
+    public static class Converters
     {
         private static char[] chars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ',', 'e', 'E' };
-        public static string GON(string input)
+        public static string GetOnlyNumbers(string input)
         {
 
             return new string(input.Where(c => chars.Contains(c)).ToArray());
@@ -59,19 +59,21 @@ namespace Kritik
         /// <returns></returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (value is string)
+                return value;
+            
+            double val = (double)value;
             if (parameter is not null)
             {
-                int exponent;
-                if (Int32.TryParse(parameter as string, out exponent))
+                if (Int32.TryParse(parameter as string, out int exponent))
                 {
-                    double val = (double)value * Math.Pow(10, -1 * exponent);
+                    val = (double)value * Math.Pow(10, -1 * exponent);
                     if (val == 0)
                         return "0";
-                    return String.Format("{0:#.############}", val);
                 }
             }
 
-            return value;
+            return String.Format("{0:#.############}", val).Replace(".", NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
         }
         /// <summary>
         /// Converts string representation of number, replaces ',' with '.' and deletes '-' -> stores absolute value of number
@@ -86,13 +88,12 @@ namespace Kritik
             string v = (string)value;
             v = v.Replace(",", ".");
             v = v.TrimStart('-');
-            v = GetOnlyNumbers.GON(v);
+            v = Converters.GetOnlyNumbers(v);
 
             if (parameter is not null)
-            {
-                double val;
-                int exponent;
-                if (Double.TryParse(v, out val) && Int32.TryParse(parameter as string, out exponent))
+            { 
+                if (Double.TryParse(v, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out double val) && 
+                    Int32.TryParse(parameter as string, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out int exponent))
                     return val * Math.Pow(10, exponent);
             }
 
@@ -115,8 +116,8 @@ namespace Kritik
             string v = (string)value;
             v = v.Replace(",", ".");
             v = v.TrimStart('-');
-            v = GetOnlyNumbers.GON(v);
-            try { v = Math.Round(System.Convert.ToDouble(v)).ToString(); }
+            v = Converters.GetOnlyNumbers(v);
+            try { v = Math.Round(System.Convert.ToDouble(v, NumberFormatInfo.InvariantInfo)).ToString(); }
             catch { return ""; }
             return v;
         }
@@ -224,6 +225,37 @@ namespace Kritik
             if (targetType == typeof(ShaftElementForDataGrid) && value?.GetType().Name == "NamedObject")
                 return new ShaftElementForDataGrid();
             return value;
+        }
+    }
+
+    public class RemoveDecimalSeparatorAtTheEndConverter : IValueConverter
+    {
+        private char removedChar = '\0';
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (value + removedChar.ToString()).Replace(".", NumberFormatInfo.CurrentInfo.NumberDecimalSeparator); ;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            string val = (string)value;
+
+            val = val.Replace(",", ".");
+
+            if (val.Length > 0 && val.ToCharArray()[^1] == '\0')
+                val = val.Substring(0, val.Length - 1);
+
+            if (val.Length == 0)
+                return value;
+
+            if (!char.IsDigit(val[^1]))
+            {
+                removedChar = val[^1];
+                return val.Substring(0, val.Length - 1);
+            }
+
+            removedChar = '\0';
+            return System.Convert.ToDouble(val, NumberFormatInfo.InvariantInfo);
         }
     }
 }

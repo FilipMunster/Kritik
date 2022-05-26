@@ -254,7 +254,7 @@ namespace Kritik
         }
         private PlotModel GetDescriptionPlot()
         {
-            return Plotter.ModelFromString(Description, 4, 0, 15);
+            return Plotter.ModelFromString(Description, 4, 0, "Calibri", 16);
         }
         private void ThumbnailPlotBorderUpdate()
         {
