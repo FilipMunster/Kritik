@@ -120,7 +120,8 @@
     <system:String x:Key="Default_values">Výchozí hodnoty</system:String>
     <system:String x:Key="Creating_Campbell_diagram">Vytváření Campbellova diagramu...</system:String>
     <system:String x:Key="Cancel">Zrušit</system:String>
-    <system:String x:Key="Enter_custom_sheet_name">Zadejte vlastní název listu pro uložení výsledků:</system:String>
+    <system:String x:Key="Enter_custom_sheet_name">Zadejte vlastní název listu...</system:String>
+    <system:String x:Key="Enter_custom_sheet_name_to_save_the_results">Zadejte vlastní název listu pro uložení výsledků:</system:String>
     <system:String x:Key="Existing_list_will_be_deleted">(Stávající list bude vymazán!)</system:String>
     <system:String x:Key="Excel_sheet">Sešit Excelu</system:String>
 </ResourceDictionary>

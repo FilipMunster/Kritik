@@ -30,7 +30,6 @@ namespace Kritik
             this.newCalculationFileName = (string)resourceDictionary["New_calculation"] + ".xlsx";
 
             OutputLanguageChanged += (_, _) => NotifyPropertyChanged(nameof(OscillationShapesViewModel));
-            OutputLanguageChanged += (_, _) => CampbellViewModel.OnLanguageChanged();
             InitializeNewCalculation();
         }
 
@@ -549,6 +548,7 @@ namespace Kritik
                 OscillationShapesViewModel = new OscillationShapesViewModel(KritikCalculation, ShaftScheme2, Strings);
                 CampbellViewModel = new CampbellViewModel(KritikCalculation, Strings);
                 await CampbellViewModel.FindMaxCriticalSpeedAsync();
+                OutputLanguageChanged += (_, _) => CampbellViewModel.OnLanguageChanged();
             }
 
             AnyPropertyChangedSinceKritikCalculation = false;

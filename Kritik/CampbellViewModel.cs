@@ -503,6 +503,9 @@ namespace Kritik
 
         public void OnLanguageChanged()
         {
+            if (campbellDiagram is null || CampbellDiagramPlotModel.Axes.Count == 0)
+                return;
+
             UpdateSpeedAnnotations();
             UpdatePrecessionAnnotations();
             CampbellDiagramPlotModel.Axes[0].Title = this.strings.OtackyRotoru + " (rpm)";
@@ -550,7 +553,7 @@ namespace Kritik
                     ws.Cells.Style.Font.Size = 11;
                     ws.Cells.Style.Font.Name = "Calibri";
 
-                    ws.Cells[1, 1].Value = this.kritikCalculation.CalculationProperties.Title + " - " + this.strings.CampbellDiagram + " " + this.strings.data;
+                    ws.Cells[1, 1].Value = this.kritikCalculation.CalculationProperties.Title + " - " + this.strings.CampbellDiagram;
                     ws.Cells[1, 1].Style.Font.Bold = true;
                     ws.Cells[2, 1].Value = this.strings.OtackyRotoru.ToLower() + " (rpm)";
                     ws.Cells[2, 1].AutoFitColumns();
@@ -569,28 +572,39 @@ namespace Kritik
                         // Fill Rotor speed column
                         if (col == 2)
                         {
-                            (double[] rotorSpeeds, _) = precession.GetValues();
-                            for (int i = 0; i < rotorSpeeds.Length; i++)
+                            (double[] _rotorSpeeds, _) = precession.GetValues();
+                            for (int i = 0; i < _rotorSpeeds.Length; i++)
                             {
-                                ws.Cells[4 + i, 1].Value = rotorSpeeds[i];
+                                ws.Cells[4 + i, 1].Value = _rotorSpeeds[i];
                             }
                         }
 
                         // Fill data
-                        (_, double[] criticalSpeeds) = precession.GetValues();
+                        (double[] rotorSpeeds, double[] criticalSpeeds) = precession.GetValues();
+                        int firstRow = 0;
+                        int lastRow = 0;
                         for (int i = 0; i < criticalSpeeds.Length; i++)
                         {
-                            ws.Cells[4 + i, col].Value = criticalSpeeds[i];
+                            // Ensure that values are filled into the right rows
+                            int rotorSpeedRow = 4 + i;
+                            while ((double)ws.Cells[rotorSpeedRow, 1].Value != rotorSpeeds[i])
+                                rotorSpeedRow++;
+                            if (i == 0)
+                                firstRow = rotorSpeedRow;
+                            if (i == criticalSpeeds.Length - 1)
+                                lastRow = rotorSpeedRow;
+
+                            ws.Cells[rotorSpeedRow, col].Value = criticalSpeeds[i];
                         }
 
                         // Add series to chart
-                        chart.Series.Add(ws.Cells[4, col, 3 + criticalSpeeds.Length, col], ws.Cells[4, 1, 3 + criticalSpeeds.Length, 1]);
+                        chart.Series.Add(ws.Cells[firstRow, col, lastRow, col], ws.Cells[firstRow, 1, lastRow, 1]);
                         chart.Series[^1].Header = (string)ws.Cells[3, col].Value;
 
                         col++;
                     }
                     ws.Cells[2, 2, 2, col - 1].Merge = true;
-                    chart.SetPosition(ws.Dimension.End.Row + 1, 0, 1, 0);
+                    chart.SetPosition(3, 0, ws.Dimension.End.Column + 1, 0);
 
                     p.Save();
                 }

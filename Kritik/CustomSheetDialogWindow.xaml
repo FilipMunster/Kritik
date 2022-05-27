@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Kritik"
         mc:Ignorable="d"
-        Title="Zadejte vlastní název listu..." 
+        Title="{StaticResource Enter_custom_sheet_name}" 
         MinHeight="120" 
         MinWidth="270"
         SizeToContent="WidthAndHeight"
@@ -14,7 +14,7 @@
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Grid Margin="10">
         <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <TextBlock Text="{StaticResource Enter_custom_sheet_name}"/>
+            <TextBlock Text="{StaticResource Enter_custom_sheet_name_to_save_the_results}"/>
             <TextBlock Text="{StaticResource Existing_list_will_be_deleted}"/>
             <TextBox Margin="0, 10, 0, 10" Width="200" MaxLength="31" Text="{Binding CustomSheetName}" x:Name="sheetNameTextBox"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
