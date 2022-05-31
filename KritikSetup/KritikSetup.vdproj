@@ -187,8 +187,8 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Kritik"
-        "ProductCode" = "8:{BA4E2C7E-A5A4-4442-965C-B471989F8998}"
-        "PackageCode" = "8:{6095A3AF-2867-46D6-AC07-D249FB2B8707}"
+        "ProductCode" = "8:{FC34B5C3-DD4E-4C5C-89E3-A0991CCD7C43}"
+        "PackageCode" = "8:{5E071D0C-6458-4526-847C-72A1AD294158}"
         "UpgradeCode" = "8:{0990E662-D7AD-422B-8ECE-4AE3EEDFB8FB}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

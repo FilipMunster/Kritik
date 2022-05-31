@@ -73,7 +73,6 @@
     <Resource Include="icons\Mirror.png" />
     <Resource Include="icons\NewFile_16x.png" />
     <Resource Include="icons\OpenFolder_16x.png" />
-    <Resource Include="icons\rd.dat" />
     <Resource Include="icons\Remove_16x.png" />
     <Resource Include="icons\RestoreImage_16x.png" />
     <Resource Include="icons\SaveAs_16x.png" />

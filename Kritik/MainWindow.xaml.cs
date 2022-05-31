@@ -177,7 +177,8 @@ namespace Kritik
 
         private void BeamPlusIndexComboBox_DropDownClosed(object sender, EventArgs e)
         {
-            ShaftDataGrid.ScrollIntoView(ShaftDataGrid.SelectedItem);
+            if (ShaftDataGrid.SelectedItem is not null)
+                ShaftDataGrid.ScrollIntoView(ShaftDataGrid.SelectedItem);
         }
 
         private void SetApplicationLanguage(out ResourceDictionary resourceDictionary)
